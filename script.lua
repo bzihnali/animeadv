@@ -103,7 +103,7 @@ end
 local function babywebhook()
 	pcall(function()
 		local url = tostring(getgenv().weburl) --webhook
-		print("baby webhook?")
+		print("baby webhookAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?")
 		if url == "" then
 			return
 			print("bruh")
@@ -111,10 +111,6 @@ local function babywebhook()
 			
     	XP = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text)
 		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text)
-		cwaves = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text
-		ctime = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.Timer.Text
-		waves = cwaves:split(": ")
-		ttime = ctime:split(": ")
 
 		local data = {
 			["content"] = "",
@@ -153,7 +149,7 @@ local function babywebhook()
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
 		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
-		warn("Sending webhook notification...")
+		warn("Sending baby webhook notification...")
 		request(sex)
 	end)
 end
@@ -663,6 +659,8 @@ function sex()
         local autoloadtab = autofrmserver:Channel("⌛ Auto Load Script")
 		autoloadtab:Label("This Automatically executes script when you teleport to man.")
         autoloadtab:Label("You don't need to put the script in AutoExec folder!")
+        autoloadtab:Toggle("Auto Load Script", getgenv().AutoLoadTP, function(bool)
+            --queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
             getgenv().AutoLoadTP = bool
             updatejson()
             if exec == "Synapse X" and getgenv().AutoLoadTP then
@@ -679,13 +677,13 @@ function sex()
 		local webhooktab = webhookserver:Channel("🌐 Webhook")
 		webhooktab:Label("Webhook sends notification in discord everytime\nGame is Finished!")
 		
-		local webhoolPlaceholder
+		local webhookPlaceholder
 		if getgenv().weburl == "" then
-			webhoolPlaceholder = "Insert url here!"
+			webhookPlaceholder = "Insert url here!"
 		else
-			webhoolPlaceholder = getgenv().weburl
+			webhookPlaceholder = getgenv().weburl
 		end
-		webhooktab:Textbox("Webhook URL {Press Enter}" , webhoolPlaceholder, false, function(web_url)
+		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
             getgenv().weburl = web_url
             updatejson()
         end)
@@ -1071,13 +1069,13 @@ end)
 --#region Webhook
 		--//Webhook Tab (in-game)\\--
 		webhooktab:Label("Webhook sends notification in discord everytime game Finishes.")
-		local webhoolPlaceholder
+		local webhookPlaceholder
 		if getgenv().weburl == "" then
-			webhoolPlaceholder = "Insert url here!"
+			webhookPlaceholder = "Insert url here!"
 		else
-			webhoolPlaceholder = getgenv().weburl
+			webhookPlaceholder = getgenv().weburl
 		end
-		webhooktab:Textbox("Webhook URL {Press Enter}" , webhoolPlaceholder, false, function(web_url)
+		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
             getgenv().weburl = web_url
             updatejson()
         end)
