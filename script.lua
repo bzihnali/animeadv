@@ -1646,7 +1646,7 @@ coroutine.resume(coroutine.create(function()
         print(wave)
         print(_wave)
         if wave ~= _wave then
-            wave = game:GetService("Workspace"):WaitForChild("_wave_num")
+            wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
             print("AAAAAAAAAAAAAAAAAA");
             pcall(function() babywebhook() end)
         end
