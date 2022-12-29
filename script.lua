@@ -663,14 +663,12 @@ function sex()
         local autoloadtab = autofrmserver:Channel("⌛ Auto Load Script")
 		autoloadtab:Label("This Automatically executes script when you teleport to man.")
         autoloadtab:Label("You don't need to put the script in AutoExec folder!")
-        autoloadtab:Toggle("Auto Load Script", getgenv().AutoLoadTP, function(bool)
-            --queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ArponAG/Scripts/main/AnimeAdventures.lua'))()")
             getgenv().AutoLoadTP = bool
             updatejson()
             if exec == "Synapse X" and getgenv().AutoLoadTP then
-                syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ArponAG/Scripts/main/AnimeAdventures.lua'))()")
+                syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
             elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
-                queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ArponAG/Scripts/main/AnimeAdventures.lua'))()")
+                queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
             end
 
         end)
@@ -825,9 +823,9 @@ function sex()
             getgenv().AutoLoadTP = bool
             updatejson()
             if exec == "Synapse X" and getgenv().AutoLoadTP then
-                syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ArponAG/Scripts/main/AnimeAdventures.lua'))()")
+                syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
             elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
-                queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ArponAG/Scripts/main/AnimeAdventures.lua'))()")
+                queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
             end
 
         end)
@@ -2865,9 +2863,9 @@ if getgenv().AutoLoadTP == true then
     local exec = tostring(identifyexecutor())
 
     if exec == "Synapse X" then
-        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ArponAG/Scripts/main/AnimeAdventures.lua'))()")
+        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
     else
-        queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ArponAG/Scripts/main/AnimeAdventures.lua'))()")
+        queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
     end
 
 end
