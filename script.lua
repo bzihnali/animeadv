@@ -1639,10 +1639,10 @@ end
 --#region Auto Farm Loop
 
 coroutine.resume(coroutine.create(function()
-    local wave = game:GetService("Workspace"):WaitForChild("_wave_num")
+    local wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
 
     while task.wait(1.5) do
-        local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
+        local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
         print(wave)
         print(_wave)
         if wave ~= _wave then
