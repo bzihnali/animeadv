@@ -1643,6 +1643,8 @@ coroutine.resume(coroutine.create(function()
 
     while task.wait(1.5) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
+        print(wave)
+        print(_wave)
         if wave ~= _wave then
             wave = game:GetService("Workspace"):WaitForChild("_wave_num")
             print("AAAAAAAAAAAAAAAAAA");
