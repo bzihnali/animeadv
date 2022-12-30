@@ -45,9 +45,6 @@ local levels = {
 			["6"] = {
 				id = "namek_level_6"
 			}
-		}, 
-		infinite = {
-			id = "namek_infinite"
 		}
 	}, 
 	aot = {
