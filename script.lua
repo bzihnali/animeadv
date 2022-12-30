@@ -2662,7 +2662,7 @@ coroutine.resume(coroutine.create(function()
             task.wait(2.1)
 
             if getgenv().AutoContinue then
-                if (game:GetService("Players").LocalPlayer.Name.PlayerGui.ResultsUI.bg.Win) then
+                if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
                     getgenv().level = getNextLevel(getCurrentLevel())
                     Teleport()
                 else
