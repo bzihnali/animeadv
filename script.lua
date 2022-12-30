@@ -181,7 +181,9 @@ local function getNextLevel(currentLevel)
                 else
                     if levels[tostring(i + 1)] then
                         return levels[tostring(i + 1)]["levels"][tostring(1)]["id"]
-                    then r
+                    else
+                        return currentLevel
+                    end
                 end
             end
         end
