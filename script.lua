@@ -1012,6 +1012,10 @@ function sex()
         autoloadtab:Label("⚠️ If it doesnt work properly then put the script in Autoexec\nfolder!!! ⚠️")
 
 --#region Auto Farm Tab
+        autofarmtab:Toggle("Auto Continue", getgenv().AutoContinue, function(bool)
+            getgenv().AutoContinue = bool
+            updatejson()
+        end)
         autofarmtab:Toggle("Auto Replay", getgenv().AutoReplay, function(bool)
             getgenv().AutoReplay = bool
             updatejson()
