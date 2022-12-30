@@ -315,11 +315,10 @@ local function webhook()
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Anime Adventures | Result ✔",
+						["name"] = "Current Level ID: " .. getCurrentLevel() .. " | Result",
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
-					["description"] = "🎮 ||**"..game:GetService("Players").LocalPlayer.Name.."**|| 🎮",
-					["color"] = 110335,
+					["color"] = 0x00ff00,
 
 					["thumbnail"] = {
 						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
@@ -377,7 +376,8 @@ local function babywebhook()
 			return
 			print("bruh")
 		end 
-			
+		
+        current_wave = tostring(game:GetService("Workspace")["_wave_num"].Value)
     	XP = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text)
 		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text)
 
@@ -388,11 +388,10 @@ local function babywebhook()
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Anime Adventures | Current Wave: " .. tostring(game:GetService("Workspace"):WaitForChild("_wave_num").Value),
+						["name"] = "Current Level ID: " .. getCurrentLevel() .. " | " .. "Current Wave: " .. current_wave,
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
-					["description"] = "🎮 ||**"..game:GetService("Players").LocalPlayer.Name.."**|| 🎮",
-					["color"] = 110335,
+					["color"] = 0x00FFFF,
 
 					["thumbnail"] = {
 						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
