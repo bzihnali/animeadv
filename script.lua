@@ -216,7 +216,31 @@ local levels = {
             
 		}
 	},
-    ["8"] = {
+	["8"] = {
+		name = "Ant Kingdom", 
+		map = "hxhant", 
+		levels = {
+			["1"] = {
+				id = "hxhant_level_1"
+			}, 
+			["2"] = {
+				id = "hxhant_level_2"
+			}, 
+			["3"] = {
+				id = "hxhant_level_3"
+			}, 
+			["4"] = {
+				id = "hxhant_level_4"
+			}, 
+			["5"] = {
+				id = "hxhant_level_5"
+			}, 
+			["6"] = {
+				id = "hxhant_level_6"
+			}
+		}
+	},
+    ["9"] = {
 		name = "Magic Town", 
 		map = "magnolia", 
 		levels = {
@@ -240,7 +264,7 @@ local levels = {
 			}
 		}
 	},
-    ["9"] = {
+    ["10"] = {
 		name = "Cursed Academy", 
 		map = "jjk", 
 		levels = {
@@ -261,6 +285,55 @@ local levels = {
 			}, 
 			["6"] = {
 				id = "jjk_level_6"
+			}
+		}
+	},
+	["11"] = {
+		name = "Clover Kingdom", 
+		map = "hage", 
+		levels = {
+			["1"] = {
+				id = "clover_level_1"
+			}, 
+			["2"] = {
+				id = "clover_level_2"
+			}, 
+			["3"] = {
+				id = "clover_level_3"
+			}, 
+			["4"] = {
+				id = "clover_level_4"
+			}, 
+			["5"] = {
+				id = "clover_level_5"
+			}, 
+			["6"] = {
+				id = "clover_level_6"
+			}
+		}
+	},
+	["12"] = {
+		name = "Cape Canaveral", 
+		map = "space_center", 
+		recommended_level = 100, 
+		levels = {
+			["1"] = {
+				id = "jojo_level_1"
+			}, 
+			["2"] = {
+				id = "jojo_level_2"
+			}, 
+			["3"] = {
+				id = "jojo_level_3"
+			}, 
+			["4"] = {
+				id = "jojo_level_4"
+			}, 
+			["5"] = {
+				id = "jojo_level_5"
+			}, 
+			["6"] = {
+				id = "jojo_level_6"
 			}
 		}
 	}
