@@ -23,7 +23,7 @@ getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name.
 getgenv().door = "_lobbytemplategreen1"
 
 local levels = {
-    namek = {
+    ["1"] = {
 		name = "Planet Namak", 
 		map = "namek_cartoon", 
 		levels = {
@@ -47,7 +47,7 @@ local levels = {
 			}
 		}
 	}, 
-	aot = {
+	["2"] = {
 		name = "Shiganshinu District", 
 		map = "aot", 
 		levels = {
@@ -71,7 +71,7 @@ local levels = {
 			}
 		}
 	},
-	demonslayer = {
+	["3"] = {
 		name = "Snowy Town", 
 		map = "demonslayer", 
 		levels = {
@@ -95,7 +95,7 @@ local levels = {
 			}
 		}
 	}, 
-	naruto = {
+	["4"] = {
 		name = "Hidden Sand Village", 
 		map = "naruto", 
 		levels = {
@@ -119,7 +119,7 @@ local levels = {
 			}
 		}
 	},
-    marineford = {
+    ["5"] = {
 		name = "Marine's Ford", 
 		map = "marineford", 
 		levels = {
@@ -143,7 +143,7 @@ local levels = {
 			}
 		}
     },
-	tokyo_ghoul = {
+	["6"] = {
 		name = "Ghoul City", 
 		map = "tokyo_ghoul", 
 		levels = {
