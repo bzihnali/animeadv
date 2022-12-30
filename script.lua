@@ -166,8 +166,106 @@ local levels = {
 				id = "tokyoghoul_level_6"
 			}
 		}
+	},
+	["7"] = {
+		name = "Hollow World", 
+		map = "hueco", 
+		levels = {
+			["1"] = {
+				id = "hueco_level_1"
+			}, 
+			["2"] = {
+				id = "hueco_level_2"
+			}, 
+			["3"] = {
+				id = "hueco_level_3"
+			}, 
+			["4"] = {
+				id = "hueco_level_4"
+			}, 
+			["5"] = {
+				id = "hueco_level_5"
+			}, 
+			["6"] = {
+				id = "hueco_level_6"
+			},
+            ["7"] = {
+                name = "Ant Kingdom", 
+                map = "hxhant", 
+                levels = {
+                    ["1"] = {
+                        id = "hxhant_level_1"
+                    }, 
+                    ["2"] = {
+                        id = "hxhant_level_2"
+                    }, 
+                    ["3"] = {
+                        id = "hxhant_level_3"
+                    }, 
+                    ["4"] = {
+                        id = "hxhant_level_4"
+                    }, 
+                    ["5"] = {
+                        id = "hxhant_level_5"
+                    }, 
+                    ["6"] = {
+                        id = "hxhant_level_6"
+                    }
+                }
+            }
+            
+		}
+	},
+    ["8"] = {
+		name = "Magic Town", 
+		map = "magnolia", 
+		levels = {
+			["1"] = {
+				id = "magnolia_level_1"
+			}, 
+			["2"] = {
+				id = "magnolia_level_2"
+			}, 
+			["3"] = {
+				id = "magnolia_level_3"
+			}, 
+			["4"] = {
+				id = "magnolia_level_4"
+			}, 
+			["5"] = {
+				id = "magnolia_level_5"
+			}, 
+			["6"] = {
+				id = "magnolia_level_6"
+			}
+		}
+	},
+    ["9"] = {
+		name = "Cursed Academy", 
+		map = "jjk", 
+		levels = {
+			["1"] = {
+				id = "jjk_level_1"
+			}, 
+			["2"] = {
+				id = "jjk_level_2"
+			}, 
+			["3"] = {
+				id = "jjk_level_3"
+			}, 
+			["4"] = {
+				id = "jjk_level_4"
+			}, 
+			["5"] = {
+				id = "jjk_level_5"
+			}, 
+			["6"] = {
+				id = "jjk_level_6"
+			}
+		}
 	}
 }
+
 
 local function getNextLevel(currentLevel)
     for i, v in pairs(levels) do
