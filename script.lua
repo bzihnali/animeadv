@@ -22,6 +22,178 @@ local UserInputService = game:GetService("UserInputService")
 getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
+local levels = {
+    namek = {
+		name = "Planet Namak", 
+		map = "namek_cartoon", 
+		levels = {
+			["1"] = {
+				id = "namek_level_1"
+			}, 
+			["2"] = {
+				id = "namek_level_2"
+			}, 
+			["3"] = {
+				id = "namek_level_3"
+			}, 
+			["4"] = {
+				id = "namek_level_4"
+			}, 
+			["5"] = {
+				id = "namek_level_5"
+			}, 
+			["6"] = {
+				id = "namek_level_6"
+			}
+		}, 
+		infinite = {
+			id = "namek_infinite"
+		}
+	}, 
+	aot = {
+		name = "Shiganshinu District", 
+		map = "aot", 
+		levels = {
+			["1"] = {
+				id = "aot_level_1"
+			}, 
+			["2"] = {
+				id = "aot_level_2"
+			}, 
+			["3"] = {
+				id = "aot_level_3"
+			}, 
+			["4"] = {
+				id = "aot_level_4"
+			}, 
+			["5"] = {
+				id = "aot_level_5"
+			}, 
+			["6"] = {
+				id = "aot_level_6"
+			}
+		}
+	},
+	demonslayer = {
+		name = "Snowy Town", 
+		map = "demonslayer", 
+		levels = {
+			["1"] = {
+				id = "demonslayer_level_1"
+			}, 
+			["2"] = {
+				id = "demonslayer_level_2"
+			}, 
+			["3"] = {
+				id = "demonslayer_level_3"
+			}, 
+			["4"] = {
+				id = "demonslayer_level_4"
+			}, 
+			["5"] = {
+				id = "demonslayer_level_5"
+			}, 
+			["6"] = {
+				id = "demonslayer_level_6"
+			}
+		}
+	}, 
+	naruto = {
+		name = "Hidden Sand Village", 
+		map = "naruto", 
+		levels = {
+			["1"] = {
+				id = "naruto_level_1"
+			}, 
+			["2"] = {
+				id = "naruto_level_2"
+			}, 
+			["3"] = {
+				id = "naruto_level_3"
+			}, 
+			["4"] = {
+				id = "naruto_level_4"
+			}, 
+			["5"] = {
+				id = "naruto_level_5"
+			}, 
+			["6"] = {
+				id = "naruto_level_6"
+			}
+		}
+	},
+    marineford = {
+		name = "Marine's Ford", 
+		map = "marineford", 
+		levels = {
+			["1"] = {
+				id = "marineford_level_1"
+			}, 
+			["2"] = {
+				id = "marineford_level_2"
+			}, 
+			["3"] = {
+				id = "marineford_level_3"
+			}, 
+			["4"] = {
+				id = "marineford_level_4"
+			}, 
+			["5"] = {
+				id = "marineford_level_5"
+			}, 
+			["6"] = {
+				id = "marineford_level_6"
+			}
+		}
+    },
+	tokyo_ghoul = {
+		name = "Ghoul City", 
+		map = "tokyo_ghoul", 
+		levels = {
+			["1"] = {
+				id = "tokyoghoul_level_1"
+			}, 
+			["2"] = {
+				id = "tokyoghoul_level_2"
+			}, 
+			["3"] = {
+				id = "tokyoghoul_level_3"
+			}, 
+			["4"] = {
+				id = "tokyoghoul_level_4"
+			}, 
+			["5"] = {
+				id = "tokyoghoul_level_5"
+			}, 
+			["6"] = {
+				id = "tokyoghoul_level_6"
+			}
+		}
+	}
+}
+
+local function getNextLevel(currentLevel)
+    for i, v in pairs(levels) do
+        for j, u in pairs(v.levels) do
+            if currentLevel == u["id"] then
+                if j ~= "6" then
+                    return v.levels[tostring(tonumber(j) + 1)]["id"]
+                else
+                    if levels[tostring(i + 1)] then
+                        return levels[tostring(i + 1)]["levels"][tostring(1)]["id"]
+                    then r
+                end
+            end
+        end
+    end
+end
+
+local function getCurrentLevel()
+    if game.Workspace._MAP_CONFIG then
+        return game:GetService("Workspace")._MAP_CONFIG.GetLevelData:InvokeServer()["id"]
+    end
+end
+
 --#region Webhook Sender
 local function webhook()
 	pcall(function()
@@ -193,6 +365,8 @@ function sex()
     getgenv().difficulty = data.difficulty
     getgenv().world = data.world
     getgenv().level = data.level
+    getgenv().AutoContinue = data.autocontinue
+    getgenv().nextLevel = data.nextlevel
     --getgenv().door = data.door
 
     getgenv().SpawnUnitPos = data.xspawnUnitPos
@@ -224,6 +398,8 @@ function sex()
             difficulty = getgenv().difficulty,
             world = getgenv().world,
             level = getgenv().level,
+            autocontinue = getgenv().AutoContinue,
+            nextlevel = getgenv().nextLevel,
             --door = getgenv().door,
 
             xspawnUnitPos = getgenv().SpawnUnitPos,
@@ -470,7 +646,7 @@ function sex()
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"marineford_infinite","marineford_level_1","marineford_level_2","marineford_level_3",
-                "marineford_level_4","marineford_level_5","marineford_level_6",}
+                "marineford_level_4","marineford_level_5","marineford_level_6"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
@@ -478,7 +654,7 @@ function sex()
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"tokyoghoul_infinite","tokyoghoul_level_1","tokyoghoul_level_2","tokyoghoul_level_3",
-                                    "tokyoghoul_level_4","tokyoghoul_level_5","tokyoghoul_level_6",}
+                                    "tokyoghoul_level_4","tokyoghoul_level_5","tokyoghoul_level_6"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
@@ -486,7 +662,7 @@ function sex()
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"hueco_infinite","hueco_level_1","hueco_level_2","hueco_level_3",
-                                    "hueco_level_4","hueco_level_5","hueco_level_6",}
+                                    "hueco_level_4","hueco_level_5","hueco_level_6"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
@@ -494,7 +670,7 @@ function sex()
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"hxhant_infinite","hxhant_level_1","hxhant_level_2","hxhant_level_3",
-                                    "hxhant_level_4","hxhant_level_5","hxhant_level_6",}
+                                    "hxhant_level_4","hxhant_level_5","hxhant_level_6"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
@@ -503,7 +679,7 @@ function sex()
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"magnolia_infinite","magnolia_level_1","magnolia_level_2","magnolia_level_3",
-                                    "magnolia_level_4","magnolia_level_5","magnolia_level_6",}
+                                    "magnolia_level_4","magnolia_level_5","magnolia_level_6"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
@@ -2477,6 +2653,18 @@ coroutine.resume(coroutine.create(function()
             pcall(function() webhook() end)
             print("next")
             task.wait(2.1)
+            
+            if getgenv().AutoContinue then
+                if (game:GetService("Players").LocalPlayer.Name.PlayerGui.ResultsUI.bg.Win) then
+                    getgenv().level = getNextLevel(getCurrentLevel())
+                    Teleport()
+                else
+                    getgenv().level = getCurrentLevel()
+                    local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
+                    local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
+                end
+                updatejson()
+
             if getgenv().AutoReplay then
                 local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
                 local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
@@ -2674,7 +2862,6 @@ local function startfarming()
             if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= plr.Name then
                 for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
                     if v.Name == "Owner" and v.Value == nil then
-
                         local args = {
                             [1] = tostring(v.Parent.Name)
                         }
@@ -2703,6 +2890,7 @@ local function startfarming()
                         local args = { 
                             [1] =tostring(v.Parent.Name)
                         }
+                        
                         game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
                         getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
                         plr.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
@@ -2725,19 +2913,6 @@ local function startfarming()
 
             warn("farming")
             task.wait(3)
-
-        --[[for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
-                if v.Name == "Owner" then
-                local n = tostring(v.Value)
-                    if n == game:GetService("Players").LocalPlayer.Name then
-                        if v.Parent.Teleporting.Value == true then
-                            getgenv().teleporting = false
-                        else
-                            getgenv().teleporting = true
-                        end
-                    end
-                end
-            end  ]]
 
         end
     end
