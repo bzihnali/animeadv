@@ -1919,7 +1919,7 @@ end
 --#region Auto Farm Loop
 
 coroutine.resume(coroutine.create(function()
-    local wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
+    local wave = 0
 
     while task.wait(1.5) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
