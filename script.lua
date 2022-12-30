@@ -734,6 +734,10 @@ function sex()
 ------------------ Auto Farm Tab -----------------
 --------------------------------------------------
 --#region Auto Farm Tab
+        autofarmtab:Toggle("Auto Continue", getgenv().AutoContinue, function(bool)
+            getgenv().AutoContinue = bool
+            updatejson()
+        end)
         autofarmtab:Toggle("Auto Replay", getgenv().AutoReplay, function(bool)
             getgenv().AutoReplay = bool
             updatejson()
@@ -2653,7 +2657,7 @@ coroutine.resume(coroutine.create(function()
             pcall(function() webhook() end)
             print("next")
             task.wait(2.1)
-            
+
             if getgenv().AutoContinue then
                 if (game:GetService("Players").LocalPlayer.Name.PlayerGui.ResultsUI.bg.Win) then
                     getgenv().level = getNextLevel(getCurrentLevel())
