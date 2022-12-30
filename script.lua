@@ -2668,6 +2668,7 @@ coroutine.resume(coroutine.create(function()
                     local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
                 end
                 updatejson()
+            end
 
             if getgenv().AutoReplay then
                 local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
