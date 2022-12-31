@@ -44,6 +44,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "namek_level_6"
+			},
+            ["inf"] = {
+				id = "namek_infinite"
 			}
 		}
 	}, 
@@ -68,6 +71,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "aot_level_6"
+			},
+            ["inf"] = {
+				id = "aot_infinite"
 			}
 		}
 	},
@@ -92,6 +98,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "demonslayer_level_6"
+			},
+            ["inf"] = {
+				id = "demonslayer_infinite"
 			}
 		}
 	}, 
@@ -116,6 +125,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "naruto_level_6"
+			},
+            ["inf"] = {
+				id = "naruto_infinite"
 			}
 		}
 	},
@@ -140,6 +152,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "marineford_level_6"
+			},
+            ["inf"] = {
+				id = "marineford_infinite"
 			}
 		}
     },
@@ -164,6 +179,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "tokyoghoul_level_6"
+			},
+            ["inf"] = {
+				id = "tokyoghoul_infinite"
 			}
 		}
 	},
@@ -188,6 +206,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "hueco_level_6"
+			},
+            ["inf"] = {
+				id = "hueco_infinite"
 			}
 		}
 	},
@@ -212,6 +233,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "hxhant_level_6"
+			},
+            ["inf"] = {
+				id = "hxhant_infinite"
 			}
 		}
 	},
@@ -236,6 +260,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "magnolia_level_6"
+			},
+            ["inf"] = {
+				id = "magnolia_infinite"
 			}
 		}
 	},
@@ -260,6 +287,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "jjk_level_6"
+			},
+            ["inf"] = {
+				id = "jjk_infinite"
 			}
 		}
 	},
@@ -284,6 +314,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "clover_level_6"
+			},
+            ["inf"] = {
+				id = "clover_infinite"
 			}
 		}
 	},
@@ -308,6 +341,9 @@ local storylevels = {
 			}, 
 			["6"] = {
 				id = "jojo_level_6"
+			},
+            ["inf"] = {
+				id = "jojo_infinite"
 			}
 		}
 	}
