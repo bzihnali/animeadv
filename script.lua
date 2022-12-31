@@ -550,6 +550,7 @@ function sex()
     getgenv().AutoChallengeAll = data.AutoChallengeAll
     getgenv().disableatuofarm = false
     getgenv().sellatwave = data.sellatwave 
+    getgenv().quitatwave = data.quitatwave
     getgenv().autosell = data.autosell
     getgenv().AutoFarm = data.autofarm
     getgenv().AutoFarmIC = data.autofarmic
@@ -584,6 +585,7 @@ function sex()
             selectedreward = getgenv().selectedreward,
             AutoChallengeAll = getgenv().AutoChallengeAll, 
             sellatwave = getgenv().sellatwave,
+            quitatwave = getgenv().quitatwave,
             autosell = getgenv().autosell,
             webhook = getgenv().weburl,
             autofarm = getgenv().AutoFarm,
@@ -1033,6 +1035,11 @@ function sex()
             updatejson()
         end)
         
+        autofarmtab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().sellatwave), false, function(t)
+            getgenv().quitatwave = tonumber(t)
+            updatejson()
+        end)
+
         local autoloadtab = autofrmserver:Channel("⌛ Auto Load Script")
 		autoloadtab:Label("This Automatically executes script when you teleport to man.")
         autoloadtab:Label("You don't need to put the script in AutoExec folder!")
@@ -1441,6 +1448,11 @@ end)
 
         autoseltab:Textbox("Select Wave Number for Auto Sell {Press Enter}", getgenv().sellatwave, false, function(t)
             getgenv().sellatwave = tonumber(t)
+            updatejson()
+        end)
+
+        autofarmtab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().sellatwave), false, function(t)
+            getgenv().quitatwave = tonumber(t)
             updatejson()
         end)
 --#endregion
@@ -2974,6 +2986,15 @@ coroutine.resume(coroutine.create(function()
                     end
                 end
             end
+        end
+    end
+end))
+
+coroutine.resume(coroutine.create(function()
+    while task.wait(1.5) do
+        local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
+        if getgenv().autosell and tonumber(getgenv().quitatwave) <= _wave.Value then
+            Teleport()
         end
     end
 end))
