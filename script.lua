@@ -472,7 +472,7 @@ local function babywebhook()
     	XP = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text)
 		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text)
         
-        elapsedTime = os.time(os.date("!*t")) - startTime
+        timeSinceStart = os.time(os.date("!*t")) - startTime
 
 		local data = {
 			["content"] = "",
@@ -501,7 +501,7 @@ local function babywebhook()
                         },
                         {
                             ["name"] = "Estimated Gems per Hour:",
-                            ["value"] = tostring(math.floor(game.Players.LocalPlayer._stats.gem_amount.Value / (elapsedTime / (60 * 60)))).." <:gem:997123585476927558>",
+                            ["value"] = tostring(math.floor(game.Players.LocalPlayer._stats.gem_amount.Value / (timeSinceStart / (60 * 60)))).." <:gem:997123585476927558>",
                             ["inline"] = true
                         }
 					}
