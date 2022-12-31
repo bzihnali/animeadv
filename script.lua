@@ -22,7 +22,7 @@ local UserInputService = game:GetService("UserInputService")
 getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
-startTime = os.clock()
+startTime = os.time(os.date("!*t"))
 
 local storyLevels = {
     ["1"] = {
@@ -473,6 +473,7 @@ local function babywebhook()
 		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text)
         
         timeSinceStart = os.time(os.date("!*t")) - startTime
+        print("timeSinceStart")
 
 		local data = {
 			["content"] = "",
