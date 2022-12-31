@@ -22,6 +22,8 @@ local UserInputService = game:GetService("UserInputService")
 getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
+startTime = os.clock()
+
 local storyLevels = {
     ["1"] = {
 		name = "Planet Namak", 
@@ -212,7 +214,7 @@ local storyLevels = {
 			}
 		}
 	},
-	["7"] = {
+	["8"] = {
 		name = "Ant Kingdom", 
 		map = "hxhant", 
 		levels = {
@@ -239,7 +241,7 @@ local storyLevels = {
 			}
 		}
 	},
-    ["8"] = {
+    ["9"] = {
 		name = "Magic Town", 
 		map = "magnolia", 
 		levels = {
@@ -266,7 +268,7 @@ local storyLevels = {
 			}
 		}
 	},
-    ["9"] = {
+    ["10"] = {
 		name = "Cursed Academy", 
 		map = "jjk", 
 		levels = {
@@ -293,7 +295,7 @@ local storyLevels = {
 			}
 		}
 	},
-	["10"] = {
+	["11"] = {
 		name = "Clover Kingdom", 
 		map = "hage", 
 		levels = {
@@ -320,7 +322,7 @@ local storyLevels = {
 			}
 		}
 	},
-	["11"] = {
+	["12"] = {
 		name = "Cape Canaveral", 
 		map = "space_center", 
 		levels = {
@@ -368,9 +370,15 @@ local function getNextLevel(currentLevel)
     end
 end
 
-local function getCurrentLevel()
+local function getCurrentLevelId()
     if game.Workspace._MAP_CONFIG then
         return game:GetService("Workspace")._MAP_CONFIG.GetLevelData:InvokeServer()["id"]
+    end
+end
+
+local function getCurrentLevelName()
+    if game.Workspace._MAP_CONFIG then
+        return game:GetService("Workspace")._MAP_CONFIG.GetLevelData:InvokeServer()["name"]
     end
 end
 
@@ -398,7 +406,7 @@ local function webhook()
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Current Level ID: " .. getCurrentLevel() .. " | Result",
+						["name"] = "Level Name: " .. getCurrentLevelName() .. " | Result",
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0x00ff00,
@@ -463,6 +471,8 @@ local function babywebhook()
         current_wave = tostring(game:GetService("Workspace")["_wave_num"].Value)
     	XP = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text)
 		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text)
+        
+        elapsedTime = os.time(os.date("!*t")) - startTime
 
 		local data = {
 			["content"] = "",
@@ -471,7 +481,7 @@ local function babywebhook()
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Current Level ID: " .. getCurrentLevel() .. " | " .. "Current Wave: " .. current_wave,
+						["name"] = "Current Level: " .. getCurrentLevelName() .. " | " .. "Current Wave: " .. current_wave,
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0x00FFFF,
@@ -479,7 +489,6 @@ local function babywebhook()
 					["thumbnail"] = {
 						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
 					},
-
 					["fields"] = {
 						{
                             ["name"] = "Current Gems:",
@@ -488,6 +497,11 @@ local function babywebhook()
                         }, {
                             ["name"] = "Current Level:",
                             ["value"] = tostring(game.Players.LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text).. " ✨",
+                            ["inline"] = true
+                        },
+                        {
+                            ["name"] = "Estimated Gems per Hour:",
+                            ["value"] = tostring(math.floor(game.Players.LocalPlayer._stats.gem_amount.Value / (elapsedTime / (60 * 60)))).." <:gem:997123585476927558>",
                             ["inline"] = true
                         }
 					}
