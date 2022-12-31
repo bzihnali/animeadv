@@ -22,7 +22,8 @@ local UserInputService = game:GetService("UserInputService")
 getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
-startTime = os.time(os.date("!*t"))
+local startTime = os.time(os.date("!*t"))
+local startGems = game.Players.LocalPlayer._stats.gem_amount.Value
 
 local storyLevels = {
     ["1"] = {
@@ -473,6 +474,7 @@ local function babywebhook()
 		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text)
         
         timeSinceStart = os.time(os.date("!*t")) - startTime
+        gemsSinceStart = game.Players.LocalPlayer._stats.gem_amount.Value - startGems
         print("timeSinceStart")
 
 		local data = {
@@ -502,7 +504,7 @@ local function babywebhook()
                         },
                         {
                             ["name"] = "Estimated Gems per Hour:",
-                            ["value"] = tostring(math.floor(game.Players.LocalPlayer._stats.gem_amount.Value / (timeSinceStart / (60 * 60)))).." <:gem:997123585476927558>",
+                            ["value"] = tostring(math.floor(gemsSinceStart / (timeSinceStart / (60 * 60)))).." <:gem:997123585476927558>",
                             ["inline"] = true
                         }
 					}
