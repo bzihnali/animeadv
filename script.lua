@@ -386,7 +386,7 @@ end
 --#region Webhook Sender
 local function webhook()
 	pcall(function()
-		local url = tostring(getgenv().weburl) --webhook
+		local url = tostring(getgenv().webUrl) --webhook
 		print("Webhook Check")
 		if url == "" then
             print("No Webhook URL")
@@ -462,7 +462,7 @@ end
 --#region BABY Webhook Sender
 local function babywebhook()
 	pcall(function()
-		local url = tostring(getgenv().weburl) --webhook
+		local url = tostring(getgenv().webUrl) --webhook
 		print("Wave Webhook?")
 		if url == "" then
             print("No Webhook Found!")
@@ -548,17 +548,18 @@ function sex()
     getgenv().AutoChallenge = data.AutoChallenge  
     getgenv().selectedreward = data.selectedreward
     getgenv().AutoChallengeAll = data.AutoChallengeAll
-    getgenv().disableatuofarm = false
+    getgenv().disableAutoFarm = false
     getgenv().sellatwave = data.sellatwave 
-    getgenv().quitatwave = data.quitatwave
-    getgenv().autosell = data.autosell
+    getgenv().quitAtWave = data.quitAtWave
+    getgenv().autoSell = data.autoSell
+    getgenv().autoQuit = data.autoQuit
     getgenv().AutoFarm = data.autofarm
     getgenv().AutoFarmIC = data.autofarmic
     getgenv().AutoFarmTP = data.autofarmtp
     getgenv().AutoLoadTP = data.autoloadtp
-    getgenv().weburl = data.webhook
-    getgenv().autostart = data.autostart
-    getgenv().autoupgrade = data.autoupgrade
+    getgenv().webUrl = data.webhook
+    getgenv().autoStart = data.autoStart
+    getgenv().autoUpgrade = data.autoUpgrade
     getgenv().difficulty = data.difficulty
     getgenv().world = data.world
     getgenv().level = data.level
@@ -585,14 +586,15 @@ function sex()
             selectedreward = getgenv().selectedreward,
             AutoChallengeAll = getgenv().AutoChallengeAll, 
             sellatwave = getgenv().sellatwave,
-            quitatwave = getgenv().quitatwave,
-            autosell = getgenv().autosell,
-            webhook = getgenv().weburl,
+            quitAtWave = getgenv().quitAtWave,
+            autoSell = getgenv().autoSell,
+            autoQuit = getgenv().autoQuit,
+            webhook = getgenv().webUrl,
             autofarm = getgenv().AutoFarm,
             autofarmic = getgenv().AutoFarmIC,
             autofarmtp = getgenv().AutoFarmTP,
-            autostart = getgenv().autostart,
-            autoupgrade = getgenv().autoupgrade,
+            autoStart = getgenv().autoStart,
+            autoUpgrade = getgenv().autoUpgrade,
             difficulty = getgenv().difficulty,
             world = getgenv().world,
             level = getgenv().level,
@@ -646,10 +648,10 @@ function sex()
 
     if game.PlaceId == 8304191830 then
 
-        local unitselecttab = autofrmserver:Channel("👷 Select Units")
-        local slectworld = autofrmserver:Channel("🌎 Select World")
+        local unitSelectTab = autofrmserver:Channel("👷 Select Units")
+        local selectWorldTab = autofrmserver:Channel("🌎 Select World")
         local autofarmtab = autofrmserver:Channel("🤖 Auto Farm")
-        local autoclngtab = autofrmserver:Channel("🎯 Auto Challenge")
+        local autoChallengeTab = autofrmserver:Channel("🎯 Auto Challenge")
     
 
 --------------------------------------------------
@@ -702,7 +704,7 @@ function sex()
             updatejson()
         end
 
-        unitselecttab:Button("Select Equipped Units", function()
+        unitSelectTab:Button("Select Equipped Units", function()
             for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui["spawn_units"].Lives.Frame.Units:GetChildren()) do
                 if v:IsA("ImageButton") then
                     local unitxx = v.Main.petimage.WorldModel:GetChildren()[1]
@@ -717,22 +719,22 @@ function sex()
 
         end)
 
-        local drop = unitselecttab:Dropdown("Unit 1", Units, getgenv().SelectedUnits["U1"], function(bool)
+        local drop = unitSelectTab:Dropdown("Unit 1", Units, getgenv().SelectedUnits["U1"], function(bool)
             getgenv().SelectedUnits["U1"] = bool
             Equip()
         end)
 
-        local drop2 = unitselecttab:Dropdown("Unit 2", Units, getgenv().SelectedUnits["U2"], function(bool)
+        local drop2 = unitSelectTab:Dropdown("Unit 2", Units, getgenv().SelectedUnits["U2"], function(bool)
             getgenv().SelectedUnits["U2"] = bool
             Equip()
         end)
 
-        local drop3 = unitselecttab:Dropdown("Unit 3", Units, getgenv().SelectedUnits["U3"], function(bool)
+        local drop3 = unitSelectTab:Dropdown("Unit 3", Units, getgenv().SelectedUnits["U3"], function(bool)
             getgenv().SelectedUnits["U3"] = bool
             Equip()
         end)
 
-        local drop4 = unitselecttab:Dropdown("Unit 4", Units, getgenv().SelectedUnits["U4"], function(bool)
+        local drop4 = unitSelectTab:Dropdown("Unit 4", Units, getgenv().SelectedUnits["U4"], function(bool)
             getgenv().SelectedUnits["U4"] = bool
             Equip()
         end)
@@ -741,20 +743,20 @@ function sex()
         _G.drop5 = nil
         _G.drop6 = nil
         if tonumber(axx[2]) >= 20 then
-            _G.drop5 = unitselecttab:Dropdown("Unit 5", Units, getgenv().SelectedUnits["U5"], function(bool)
+            _G.drop5 = unitSelectTab:Dropdown("Unit 5", Units, getgenv().SelectedUnits["U5"], function(bool)
                 getgenv().SelectedUnits["U5"] = bool
                 Equip()
             end)
         end
 
         if tonumber(axx[2]) >= 50 then
-            _G.drop6 = unitselecttab:Dropdown("Unit 6", Units, getgenv().SelectedUnits["U6"], function(bool)
+            _G.drop6 = unitSelectTab:Dropdown("Unit 6", Units, getgenv().SelectedUnits["U6"], function(bool)
                 getgenv().SelectedUnits["U6"] = bool
                 Equip()
             end)
         end
 --------------// Refresh Unit List \\------------- 
-        unitselecttab:Button("Refresh Unit List", function()
+        unitSelectTab:Button("Refresh Unit List", function()
             drop:Clear()
             drop2:Clear()
             drop3:Clear()
@@ -789,8 +791,8 @@ function sex()
                 U6 = nil
             }
         end) 
-        unitselecttab:Label(" ")
-        unitselecttab:Label(" ")
+        unitSelectTab:Label(" ")
+        unitSelectTab:Label(" ")
 --#endregion
 --------------------------------------------------
 --------------- Select World Tab -----------------
@@ -798,12 +800,12 @@ function sex()
 --#region Select world tab
         getgenv().levels = {"nill"}
 
-        getgenv().diff = slectworld:Dropdown("Select Difficulty", {"Normal", "Hard"}, getgenv().difficulty, function(diff)
+        getgenv().diff = selectWorldTab:Dropdown("Select Difficulty", {"Normal", "Hard"}, getgenv().difficulty, function(diff)
             getgenv().difficulty = diff
             updatejson()
         end)
 
-        local worlddrop = slectworld:Dropdown("Select World", {"Plannet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
+        local worlddrop = selectWorldTab:Dropdown("Select World", {"Plannet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
         "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral"}, getgenv().world, function(world)
             getgenv().world = world
             updatejson()
@@ -923,7 +925,7 @@ function sex()
         end)
 
       
-            getgenv().leveldrop = slectworld:Dropdown("Select Level", getgenv().levels, getgenv().level, function(level)
+            getgenv().leveldrop = selectWorldTab:Dropdown("Select Level", getgenv().levels, getgenv().level, function(level)
             getgenv().level = level
             updatejson()
             
@@ -960,11 +962,11 @@ function sex()
             updatejson()
         end)
 
-        autofarmtab:Toggle("Auto Start", getgenv().autostart, function(bool)
-            getgenv().autostart = bool
+        autofarmtab:Toggle("Auto Start", getgenv().autoStart, function(bool)
+            getgenv().autoStart = bool
             updatejson()
 
-            --[[if getgenv().autostart and getgenv().AutoFarm then
+            --[[if getgenv().autoStart and getgenv().AutoFarm then
 
                 for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
                     if v.Name == "Owner" and v.Value == nil then
@@ -1016,17 +1018,22 @@ function sex()
             updatejson()
         end)
 
-        autofarmtab:Toggle("Auto Upgrade Units", getgenv().autoupgrade, function(bool)
-            getgenv().autoupgrade = bool
+        autofarmtab:Toggle("Auto Upgrade Units", getgenv().autoUpgrade, function(bool)
+            getgenv().autoUpgrade = bool
             updatejson()
         end)
 
-        autofarmtab:Toggle("Auto Sell at Specific Wave", getgenv().autosell, function(x)
-            getgenv().autosell = x
+        autofarmtab:Toggle("Auto Sell at Specific Wave", getgenv().autoSell, function(x)
+            getgenv().autoSell = x
             updatejson()
-            if getgenv().autosell == false then
-                getgenv().disableatuofarm = false
+            if getgenv().autoSell == false then
+                getgenv().disableAutoFarm = false
             end
+        end)
+
+        autofarmtab:Toggle("Auto Quit at Specific Wave", getgenv().autoQuit, function(x)
+            getgenv().autoQuit = x
+            updatejson()
         end)
 
         ---- 
@@ -1036,7 +1043,7 @@ function sex()
         end)
         
         autofarmtab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().sellatwave), false, function(t)
-            getgenv().quitatwave = tonumber(t)
+            getgenv().quitAtWave = tonumber(t)
             updatejson()
         end)
 
@@ -1062,13 +1069,13 @@ function sex()
 		webhooktab:Label("Webhook sends notification in discord everytime\nGame is Finished!")
 		
 		local webhookPlaceholder
-		if getgenv().weburl == "" then
+		if getgenv().webUrl == "" then
 			webhookPlaceholder = "Insert url here!"
 		else
-			webhookPlaceholder = getgenv().weburl
+			webhookPlaceholder = getgenv().webUrl
 		end
 		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
-            getgenv().weburl = web_url
+            getgenv().webUrl = web_url
             updatejson()
         end)
 
@@ -1081,16 +1088,16 @@ function sex()
 -------------------- Auto Challenge --------------
 --------------------------------------------------
 --#region Auto Challenge
-        autoclngtab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
+        autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
             getgenv().AutoChallenge = bool
             updatejson()
         end)
-        local worlddrop = autoclngtab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
+        local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
             getgenv().selectedreward = reward
             updatejson()
         end)
 
-        autoclngtab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
+        autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
             getgenv().AutoChallengeAll = bool
             updatejson()
         end)
@@ -1194,9 +1201,9 @@ function sex()
 
 
     local autofarmtab = autofrmserver:Channel("🤖 Auto Farm")
-    local autoclngtab = autofrmserver:Channel("🎯 Auto Challenge")
+    local autoChallengeTab = autofrmserver:Channel("🎯 Auto Challenge")
     local autoloadtab = autofrmserver:Channel("⌛ Auto Load Script_")
-    local autoseltab = autofrmserver:Channel("💸 Auto Sell")
+    local autoSellTab = autofrmserver:Channel("💸 Auto Sell")
     local webhooktab = webhookserver:Channel("🌐 Webhook")
     
 		autoloadtab:Label("This Automatically executes script when you teleport to man.")
@@ -1246,13 +1253,13 @@ function sex()
             updatejson()
         end)
 
-        autofarmtab:Toggle("Auto Start", getgenv().autostart, function(bool)
-            getgenv().autostart = bool
+        autofarmtab:Toggle("Auto Start", getgenv().autoStart, function(bool)
+            getgenv().autoStart = bool
             updatejson()
         end)
 
-        autofarmtab:Toggle("Auto Upgrade Units", getgenv().autoupgrade, function(bool)
-            getgenv().autoupgrade = bool
+        autofarmtab:Toggle("Auto Upgrade Units", getgenv().autoUpgrade, function(bool)
+            getgenv().autoUpgrade = bool
             updatejson()
         end)
 
@@ -1408,11 +1415,11 @@ function sex()
         -- set unit position end--
         autofarmtab:Label("--- Saved Config (Doesn't Refresh) ---")
         autofarmtab:Label("Auto Sell at Wave: " .. tostring(getgenv().sellatwave))
-        autofarmtab:Label("Webhook: " .. tostring(getgenv().weburl))
+        autofarmtab:Label("Webhook: " .. tostring(getgenv().webUrl))
         autofarmtab:Label("Auto Farm: " .. tostring(getgenv().AutoFarm))
-        autofarmtab:Label("Auto Start: " .. tostring(getgenv().autostart))
-        autofarmtab:Label("Auto Sell: " .. tostring(getgenv().autosell))
-        autofarmtab:Label("Auto Upgrade: " .. tostring(getgenv().autoupgrade))
+        autofarmtab:Label("Auto Start: " .. tostring(getgenv().autoStart))
+        autofarmtab:Label("Auto Sell: " .. tostring(getgenv().autoSell))
+        autofarmtab:Label("Auto Upgrade: " .. tostring(getgenv().autoUpgrade))
         autofarmtab:Label("Difficulty: " .. tostring(getgenv().difficulty))
         autofarmtab:Label("Selected World: " .. tostring(getgenv().world))
         autofarmtab:Label("Selected Level: " .. tostring(getgenv().level))
@@ -1422,37 +1429,42 @@ function sex()
 --#endregion
 
 --#region Auto Challenge 
-autoclngtab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
+autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
     getgenv().AutoChallenge = bool
     updatejson()
 end)
-local worlddrop = autoclngtab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
+local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
     getgenv().selectedreward = reward
     updatejson()
 end)
 
-autoclngtab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
+autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
     getgenv().AutoChallengeAll = bool
     updatejson()
 end)
 --#endregion
 
 --#region Auto Sell Tab
-        autoseltab:Toggle("Auto Sell at Specfic Wave", getgenv().autosell, function(x)
-            getgenv().autosell = x
+        autoSellTab:Toggle("Auto Sell at Specfic Wave", getgenv().autoSell, function(x)
+            getgenv().autoSell = x
             updatejson()
-            if getgenv().autosell == false then
-                getgenv().disableatuofarm = false
+            if getgenv().autoSell == false then
+                getgenv().disableAutoFarm = false
             end
         end)
 
-        autoseltab:Textbox("Select Wave Number for Auto Sell {Press Enter}", getgenv().sellatwave, false, function(t)
+        autoSellTab:Toggle("Auto Quit at Specific Wave", getgenv().autoQuit, function(x)
+            getgenv().autoQuit = x
+            updatejson()
+        end)
+
+        autoSellTab:Textbox("Select Wave Number for Auto Sell {Press Enter}", getgenv().sellatwave, false, function(t)
             getgenv().sellatwave = tonumber(t)
             updatejson()
         end)
 
-        autofarmtab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().sellatwave), false, function(t)
-            getgenv().quitatwave = tonumber(t)
+        autoSellTab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().quitAtWave), false, function(t)
+            getgenv().quitAtWave = tonumber(t)
             updatejson()
         end)
 --#endregion
@@ -1463,13 +1475,13 @@ end)
 		--//Webhook Tab (in-game)\\--
 		webhooktab:Label("Webhook sends notification in discord everytime game Finishes.")
 		local webhookPlaceholder
-		if getgenv().weburl == "" then
+		if getgenv().webUrl == "" then
 			webhookPlaceholder = "Insert url here!"
 		else
-			webhookPlaceholder = getgenv().weburl
+			webhookPlaceholder = getgenv().webUrl
 		end
 		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
-            getgenv().weburl = web_url
+            getgenv().webUrl = web_url
             updatejson()
         end)
         webhooktab:Button("Test Webhook", function()
@@ -1540,12 +1552,12 @@ else
         autofarmtp = false,
         webhook = "",
         sellatwave = 0,
-        autosell = false,
+        autoSell = false,
         autofarm = false,
         autofarmic = false,
-        autostart = false,
+        autoStart = false,
         autoloadtp = true,
-        autoupgrade = false,
+        autoUpgrade = false,
         difficulty = "nil",
         world = "nil",
         level = "nil",
@@ -2041,7 +2053,7 @@ coroutine.resume(coroutine.create(function()
             pcall(function() babywebhook() end)
         end
         
-        if getgenv().AutoFarm and not getgenv().disableatuofarm then
+        if getgenv().AutoFarm and not getgenv().disableAutoFarm then
             if game.PlaceId ~= 8304191830 then
                 x = 1
                 y = 0.7
@@ -2921,9 +2933,9 @@ end))
 
 ------// Auto Upgrade \\------
 --#region Auto Upgrade Loop
-getgenv().autoupgradeerr = false
+getgenv().autoUpgradeerr = false
 
-function autoupgradefunc()
+function autoUpgradefunc()
     local success, err = pcall(function() --///
 
         repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
@@ -2940,23 +2952,23 @@ function autoupgradefunc()
     if err then
         warn("//////////////////////////////////////////////////")
         warn("//////////////////////////////////////////////////")
-        getgenv().autoupgradeerr = true
+        getgenv().autoUpgradeerr = true
         error(err)
     end
 end
 
 coroutine.resume(coroutine.create(function()
     while task.wait(2) do
-        if getgenv().autoupgrade then
+        if getgenv().autoUpgrade then
             if game.PlaceId ~= 8304191830 then
                 pcall(function()
-                    autoupgradefunc()
+                    autoUpgradefunc()
                 end)
             end
-            if  getgenv().autoupgradeerr == true then
+            if  getgenv().autoUpgradeerr == true then
                 task.wait()
-                autoupgradefunc()
-                getgenv().autoupgradeerr = false
+                autoUpgradefunc()
+                getgenv().autoUpgradeerr = false
             end
         end
     end
@@ -2969,8 +2981,8 @@ end))
 coroutine.resume(coroutine.create(function()
     while task.wait() do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
-        if getgenv().autosell and tonumber(getgenv().sellatwave) <= _wave.Value then
-            getgenv().disableatuofarm = true
+        if getgenv().autoSell and tonumber(getgenv().sellatwave) <= _wave.Value then
+            getgenv().disableAutoFarm = true
             if game.PlaceId ~= 8304191830 then
                 repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
                 for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
@@ -2993,7 +3005,7 @@ end))
 coroutine.resume(coroutine.create(function()
     while task.wait(1.5) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
-        if getgenv().autosell and tonumber(getgenv().quitatwave) <= _wave.Value then
+        if getgenv().autoSell and tonumber(getgenv().quitAtWave) <= _wave.Value then
             Teleport()
         end
     end
@@ -3079,7 +3091,7 @@ local function checkReward()
 end
 
 local function startfarming()
-    if getgenv().autostart and getgenv().AutoFarm and getgenv().teleporting 
+    if getgenv().autoStart and getgenv().AutoFarm and getgenv().teleporting 
                            and getgenv().AutoFarmTP == false and getgenv().AutoFarmIC == false then
         if game.PlaceId == 8304191830 then
             local cpos = plr.Character.HumanoidRootPart.CFrame
@@ -3147,7 +3159,7 @@ local function startChallenge()
     if game.PlaceId == 8304191830 then
         local cpos = plr.Character.HumanoidRootPart.CFrame
 
-        if getgenv().AutoChallenge and getgenv().autostart and getgenv().AutoFarm  and checkReward() == true then
+        if getgenv().AutoChallenge and getgenv().autoStart and getgenv().AutoFarm  and checkReward() == true then
 
             for i, v in pairs(game:GetService("Workspace")["_CHALLENGES"].Challenges:GetDescendants()) do
                 if v.Name == "Owner" and v.Value == nil then
