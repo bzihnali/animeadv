@@ -22,7 +22,7 @@ local UserInputService = game:GetService("UserInputService")
 getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
-local storylevels = {
+local storyLevels = {
     ["1"] = {
 		name = "Planet Namak", 
 		map = "namek_cartoon", 
