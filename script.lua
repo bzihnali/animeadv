@@ -1042,7 +1042,7 @@ function sex()
             updatejson()
         end)
         
-        autofarmtab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().sellatwave), false, function(t)
+        autofarmtab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().quitAtWave), false, function(t)
             getgenv().quitAtWave = tonumber(t)
             updatejson()
         end)
@@ -2976,11 +2976,14 @@ end))
 --#endregion
 
 
-------// Auto Sell \\------
---#region Auto Sell loop
+------// Auto Sell/Quit \\------
+--#region Auto Sell/Quit loop
 coroutine.resume(coroutine.create(function()
     while task.wait() do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
+        if getgenv().autoQuit and tonumber(getgenv().quitAtWave) <= _wave.Value then
+            Teleport()
+        end
         if getgenv().autoSell and tonumber(getgenv().sellatwave) <= _wave.Value then
             getgenv().disableAutoFarm = true
             if game.PlaceId ~= 8304191830 then
@@ -2998,15 +3001,6 @@ coroutine.resume(coroutine.create(function()
                     end
                 end
             end
-        end
-    end
-end))
-
-coroutine.resume(coroutine.create(function()
-    while task.wait(1.5) do
-        local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
-        if getgenv().autoSell and tonumber(getgenv().quitAtWave) <= _wave.Value then
-            Teleport()
         end
     end
 end))
