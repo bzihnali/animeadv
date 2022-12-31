@@ -504,7 +504,7 @@ local function babywebhook()
                         },
                         {
                             ["name"] = "Estimated Gems per Hour:",
-                            ["value"] = tostring(math.floor(gemsSinceStart / ((timeSinceStart + 82) / (60 * 60)))).." <:gem:997123585476927558>",
+                            ["value"] = tostring(math.floor(gemsSinceStart / ((timeSinceStart + 90) / (60 * 60)))).." <:gem:997123585476927558>",
                             ["inline"] = true
                         }
 					}
