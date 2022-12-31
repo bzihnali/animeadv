@@ -22,7 +22,7 @@ local UserInputService = game:GetService("UserInputService")
 getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
-local levels = {
+local storylevels = {
     ["1"] = {
 		name = "Planet Namak", 
 		map = "namek_cartoon", 
@@ -188,35 +188,10 @@ local levels = {
 			}, 
 			["6"] = {
 				id = "hueco_level_6"
-			},
-            ["7"] = {
-                name = "Ant Kingdom", 
-                map = "hxhant", 
-                levels = {
-                    ["1"] = {
-                        id = "hxhant_level_1"
-                    }, 
-                    ["2"] = {
-                        id = "hxhant_level_2"
-                    }, 
-                    ["3"] = {
-                        id = "hxhant_level_3"
-                    }, 
-                    ["4"] = {
-                        id = "hxhant_level_4"
-                    }, 
-                    ["5"] = {
-                        id = "hxhant_level_5"
-                    }, 
-                    ["6"] = {
-                        id = "hxhant_level_6"
-                    }
-                }
-            }
-            
+			}
 		}
 	},
-	["8"] = {
+	["7"] = {
 		name = "Ant Kingdom", 
 		map = "hxhant", 
 		levels = {
@@ -240,7 +215,7 @@ local levels = {
 			}
 		}
 	},
-    ["9"] = {
+    ["8"] = {
 		name = "Magic Town", 
 		map = "magnolia", 
 		levels = {
@@ -264,7 +239,7 @@ local levels = {
 			}
 		}
 	},
-    ["10"] = {
+    ["9"] = {
 		name = "Cursed Academy", 
 		map = "jjk", 
 		levels = {
@@ -288,7 +263,7 @@ local levels = {
 			}
 		}
 	},
-	["11"] = {
+	["10"] = {
 		name = "Clover Kingdom", 
 		map = "hage", 
 		levels = {
@@ -312,10 +287,9 @@ local levels = {
 			}
 		}
 	},
-	["12"] = {
+	["11"] = {
 		name = "Cape Canaveral", 
 		map = "space_center", 
-		recommended_level = 100, 
 		levels = {
 			["1"] = {
 				id = "jojo_level_1"
@@ -341,14 +315,14 @@ local levels = {
 
 
 local function getNextLevel(currentLevel)
-    for i, v in pairs(levels) do
+    for i, v in pairs(storyLevels) do
         for j, u in pairs(v.levels) do
             if currentLevel == u["id"] then
                 if j ~= "6" then
                     return v.levels[tostring(tonumber(j) + 1)]["id"]
                 else
                     if levels[tostring(i + 1)] then
-                        return levels[tostring(i + 1)]["levels"][tostring(1)]["id"]
+                        return storyLevels[tostring(i + 1)]["levels"][tostring(1)]["id"]
                     else
                         return currentLevel
                     end
@@ -368,10 +342,10 @@ end
 local function webhook()
 	pcall(function()
 		local url = tostring(getgenv().weburl) --webhook
-		print("webhook?")
+		print("Webhook Check")
 		if url == "" then
+            print("No Webhook URL")
 			return
-			print("bruh")
 		end 
 			
     	XP = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text)
@@ -444,10 +418,10 @@ end
 local function babywebhook()
 	pcall(function()
 		local url = tostring(getgenv().weburl) --webhook
-		print("baby webhookAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?")
+		print("Wave Webhook?")
 		if url == "" then
+            print("No Webhook Found!")
 			return
-			print("bruh")
 		end 
 		
         current_wave = tostring(game:GetService("Workspace")["_wave_num"].Value)
@@ -592,7 +566,7 @@ function sex()
     local win = DiscordLib:Window("[✨UPD 8] Anime Adventures "..versionx.." - "..exec)
        
     if exec == "Synapse X" or exec == "ScriptWare" or exec == "Trigon" then
-        print("Good boi")
+        print("Level 7 executor found")
     else
         local gettrigonserver = win:Server("Get Trigon Evo!", "http://www.roblox.com/asset/?id=7628278821")
         local gettrigon = gettrigonserver:Channel("📐 Get Trigon Evo!")
@@ -778,6 +752,7 @@ function sex()
         "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral"}, getgenv().world, function(world)
             getgenv().world = world
             updatejson()
+
             if world == "Plannet Namak" then
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
@@ -1996,11 +1971,8 @@ coroutine.resume(coroutine.create(function()
 
     while task.wait(1.5) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
-        print(wave)
-        print(_wave)
         if wave ~= _wave then
             wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
-            print("AAAAAAAAAAAAAAAAAA");
             pcall(function() babywebhook() end)
         end
         
@@ -2828,8 +2800,8 @@ coroutine.resume(coroutine.create(function()
             repeat task.wait() until  game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
             task.wait()
             pcall(function() webhook() end)
-            print("next")
-            task.wait(2.1)
+            print("next button pressed")
+            task.wait(2.5)
 
             if getgenv().AutoContinue then
                 if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
