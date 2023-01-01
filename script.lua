@@ -2047,6 +2047,10 @@ coroutine.resume(coroutine.create(function()
     local wave = 0
 
     PlaceUnits = function(mapName)
+        x = 1
+        y = 0.7
+        z = 1
+
         local unitinfo = getgenv().SelectedUnits["U" .. i]
 
         if unitinfo ~= nil then
@@ -2074,9 +2078,6 @@ coroutine.resume(coroutine.create(function()
         
         if getgenv().AutoFarm and not getgenv().disableAutoFarm then
             if game.PlaceId ~= 8304191830 then
-                x = 1
-                y = 0.7
-                z = 1
                 --print("AutoFarming")
 
                 if game.Workspace._map:FindFirstChild("namek mushroom model") then
