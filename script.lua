@@ -2241,6 +2241,8 @@ coroutine.resume(coroutine.create(function()
                     updatejson()
                     for i = 1, 5 do
                         Teleport()
+                        Teleport()
+                        Teleport()
                         task.wait(5)
                     end
                     
@@ -2248,6 +2250,8 @@ coroutine.resume(coroutine.create(function()
                     getgenv().level = getCurrentLevel()
                     updatejson()
                     for i = 1, 5 do
+                        local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
+                        local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
                         local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
                         task.wait(5)
                     end
