@@ -2239,7 +2239,11 @@ coroutine.resume(coroutine.create(function()
                 if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
                     getgenv().level = getNextLevel(getCurrentLevel())
                     updatejson()
-                    Teleport()
+                    for i = 1, 5 do
+                        Teleport()
+                        task.wait(5)
+                    end
+                    
                 else
                     getgenv().level = getCurrentLevel()
                     updatejson()
