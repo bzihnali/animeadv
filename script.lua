@@ -2047,23 +2047,25 @@ coroutine.resume(coroutine.create(function()
     local wave = 0
 
     PlaceUnits = function(mapName)
-        x = 1
-        y = 0.7
-        z = 1
+        local x = 1
+        local y = 0.7
+        local z = 1
 
-        local unitinfo = getgenv().SelectedUnits["U" .. i]
+        for i = 1, 6 do
+            local unitinfo = getgenv().SelectedUnits["U" .. i]
 
-        if unitinfo ~= nil then
-            local unitinfo_ = unitinfo:split(" #")
-            local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
-            
-            for i = 1, 6 do
-                --place units 0
-                local args = {
-                    [1] = unitinfo_[2],
-                    [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                }
-                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+            if unitinfo ~= nil then
+                local unitinfo_ = unitinfo:split(" #")
+                local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
+                
+                for i = 1, 6 do
+                    --place units 0
+                    local args = {
+                        [1] = unitinfo_[2],
+                        [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
+                    }
+                    game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+                end
             end
         end
     end
