@@ -2046,7 +2046,7 @@ end
 coroutine.resume(coroutine.create(function()
     local wave = 0
 
-    PlaceUnits = function(mapName)
+    PlaceUnits = function(mapName, waveNum)
         local x = 1
         local y = 0.7
         local z = 1
@@ -2059,12 +2059,14 @@ coroutine.resume(coroutine.create(function()
                 local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
                 
                 for i = 1, 6 do
-                    --place units 0
-                    local args = {
-                        [1] = unitinfo_[2],
-                        [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                    }
-                    game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+                    if not (unitinfo_[2] == "bulma" and waveNum < 3) then
+                    --place units
+                        local args = {
+                            [1] = unitinfo_[2],
+                            [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
+                        }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+                    end
                 end
             end
         end
