@@ -2059,13 +2059,14 @@ coroutine.resume(coroutine.create(function()
                 local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
                 
                 for i = 1, 6 do
+                    if not (unitinfo_[1] == "Bulmy" and waveNum < 3) then
                     --place units
-                    local args = {
-                        [1] = unitinfo_[2],
-                        [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                    }
-                    game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                    
+                        local args = {
+                            [1] = unitinfo_[2],
+                            [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
+                        }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+                    end
                 end
             end
         end
@@ -2085,46 +2086,46 @@ coroutine.resume(coroutine.create(function()
 
                 if game.Workspace._map:FindFirstChild("namek mushroom model") then
                     print("Namak")
-                    PlaceUnits("Namak")
+                    PlaceUnits("Namak", _wave)
                 elseif game.Workspace._map:FindFirstChild("houses_new") then
                     print("Aot")
-                    PlaceUnits("Aot")
+                    PlaceUnits("Aot", _wave)
                 elseif game.Workspace._map:FindFirstChild("Snow Particles") then
                     print("Snowy")
-                    PlaceUnits("Snowy")
+                    PlaceUnits("Snowy", _wave)
                 elseif game.Workspace._map:FindFirstChild("sand_gate") then
                     print("Sand")
-                    PlaceUnits("Sand")
+                    PlaceUnits("Sand", _wave)
                 elseif game.Workspace._map:FindFirstChild("icebergs") then
                     print("Marine")
-                    PlaceUnits("Marine")
+                    PlaceUnits("Marine", _wave)
                 elseif game.Workspace._map:FindFirstChild("Helicopter Pad") then
                     print("Ghoul")
-                    PlaceUnits("Ghoul")
+                    PlaceUnits("Ghoul", _wave)
                 elseif game.Workspace._map:FindFirstChild("Bones/dust") then
                     print("Hollow")
-                    PlaceUnits("Hollow")
+                    PlaceUnits("Hollow", _wave)
                 elseif game.Workspace._map:FindFirstChild("Ant Nest") then
                     print("Ant")
-                    PlaceUnits("Ant")
+                    PlaceUnits("Ant", _wave)
                 elseif game.Workspace._map:FindFirstChild("light poles") then
                     print("Magic")
-                    PlaceUnits("Magic")
+                    PlaceUnits("Magic", _wave)
                 elseif game.Workspace._map:FindFirstChild("LanternsGround") then
                     print("Cursed")    
-                    PlaceUnits("Cursed")
+                    PlaceUnits("Cursed", _wave)
                 elseif game.Workspace._map:FindFirstChild("pumpkins") then
-                    print("thriller_park")    
-                    PlaceUnits("thriller_park")
+                    print("thriller_park", _wave)    
+                    PlaceUnits("thriller_park", _wave)
                 elseif game.Workspace._map:FindFirstChild("skeleton") then
-                    print("black_clover")    
-                    PlaceUnits("black_clover")
+                    print("black_clover", _wave)    
+                    PlaceUnits("black_clover", _wave)
                 elseif game.Workspace._map:FindFirstChild("graves") then
-                    print("Hollow Legend")
-                    PlaceUnits("hollow_legend")
+                    print("Hollow Legend", _wave)
+                    PlaceUnits("hollow_legend", _wave)
                 elseif game.Workspace._map:FindFirstChild("SpaceCenter") then
                     print("Cape Canaveral")
-                    PlaceUnits("jojo")
+                    PlaceUnits("jojo", _wave)
                 else
                     print("Something bad happened")
                 end
