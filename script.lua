@@ -504,7 +504,7 @@ local function babywebhook()
                         },
                         {
                             ["name"] = "Estimated Gems per Hour:",
-                            ["value"] = tostring(math.floor(gemsSinceStart / ((timeSinceStart + 90) / (60 * 60)))).." <:gem:997123585476927558>",
+                            ["value"] = tostring(math.floor(gemsSinceStart / ((timeSinceStart + 82) / (60 * 60)))).." <:gem:997123585476927558>",
                             ["inline"] = true
                         }
 					}
@@ -2046,6 +2046,25 @@ end
 coroutine.resume(coroutine.create(function()
     local wave = 0
 
+    PlaceUnits = function(mapName)
+        local unitinfo = getgenv().SelectedUnits["U" .. i]
+
+        if unitinfo ~= nil then
+            local unitinfo_ = unitinfo:split(" #")
+            local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
+            
+            for i = 1, 6 do
+                --place units 0
+                local args = {
+                    [1] = unitinfo_[2],
+                    [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
+                }
+                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+            end
+        end
+    end
+
+
     while task.wait(1.5) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
         if wave ~= _wave then
@@ -2059,720 +2078,51 @@ coroutine.resume(coroutine.create(function()
                 y = 0.7
                 z = 1
                 --print("AutoFarming")
+
                 if game.Workspace._map:FindFirstChild("namek mushroom model") then
                     print("Namak")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Namak"]["UP" .. i]
-    
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Namak")
                 elseif game.Workspace._map:FindFirstChild("houses_new") then
                     print("Aot")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Aot"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y , pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Aot")
                 elseif game.Workspace._map:FindFirstChild("Snow Particles") then
                     print("Snowy")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Snowy"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Snowy")
                 elseif game.Workspace._map:FindFirstChild("sand_gate") then
                     print("Sand")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Sand"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Sand")
                 elseif game.Workspace._map:FindFirstChild("icebergs") then
                     print("Marine")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Marine"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Marine")
                 elseif game.Workspace._map:FindFirstChild("Helicopter Pad") then
                     print("Ghoul")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Ghoul"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Ghoul")
                 elseif game.Workspace._map:FindFirstChild("Bones/dust") then
                     print("Hollow")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Hollow"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Hollow")
                 elseif game.Workspace._map:FindFirstChild("Ant Nest") then
                     print("Ant")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Ant"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Ant")
                 elseif game.Workspace._map:FindFirstChild("light poles") then
                     print("Magic")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Magic"]["UP" .. i]
-
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Magic")
                 elseif game.Workspace._map:FindFirstChild("LanternsGround") then
                     print("Cursed")    
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["Cursed"]["UP" .. i]
-    
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("Cursed")
                 elseif game.Workspace._map:FindFirstChild("pumpkins") then
-                        print("thriller_park")    
-                        for i = 1, 6 do
-                            local unitinfo = getgenv().SelectedUnits["U" .. i]
-                            if unitinfo ~= nil then
-                                local unitinfo_ = unitinfo:split(" #")
-                                local pos = getgenv().SpawnUnitPos["thriller_park"]["UP" .. i]
-        
-                                --place units 0
-                                local args = {
-                                    [1] = unitinfo_[2],
-                                    [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                                }
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-        
-                                --place units 1
-                                local args = {
-                                    [1] = unitinfo_[2],
-                                    [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                                }
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-        
-                                --place units 2 
-                                local args = {
-                                    [1] = unitinfo_[2],
-                                    [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                                }
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-        
-                                --place units 3 
-                                local args = {
-                                    [1] = unitinfo_[2],
-                                    [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                                }
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-        
-                                --place units 4
-                                local args = {
-                                    [1] = unitinfo_[2],
-                                    [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                                }
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-        
-                                --place units 5
-                                local args = {
-                                    [1] = unitinfo_[2],
-                                    [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                                }
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                            end
-                        end
+                    print("thriller_park")    
+                    PlaceUnits("thriller_park")
                 elseif game.Workspace._map:FindFirstChild("skeleton") then
                     print("black_clover")    
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["black_clover"]["UP" .. i]
-    
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("black_clover")
                 elseif game.Workspace._map:FindFirstChild("graves") then
                     print("Hollow Legend")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["hollow_leg"]["UP" .. i]
-    
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("hollow_legend")
                 elseif game.Workspace._map:FindFirstChild("SpaceCenter") then
                     print("Cape Canaveral")
-                    for i = 1, 6 do
-                        local unitinfo = getgenv().SelectedUnits["U" .. i]
-                        if unitinfo ~= nil then
-                            local unitinfo_ = unitinfo:split(" #")
-                            local pos = getgenv().SpawnUnitPos["jojo"]["UP" .. i]
-    
-                            --place units 0
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 1
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 2 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 3 
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 4
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"]+ x, pos["y"] - y, pos["z"] + z), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-    
-                            --place units 5
-                            local args = {
-                                [1] = unitinfo_[2],
-                                [2] = CFrame.new(Vector3.new(pos["x"] + x, pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                        end
-                    end
+                    PlaceUnits("jojo")
+                else
+                    print("Something bad happened")
                 end
             end
         end
@@ -2874,11 +2224,11 @@ coroutine.resume(coroutine.create(function()
     GameFinished:GetPropertyChangedSignal("Value"):Connect(function()
         print("Changed", GameFinished.Value == true)
         if GameFinished.Value == true then
-            repeat task.wait() until  game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
+            repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
             task.wait()
             pcall(function() webhook() end)
             print("next button pressed")
-            task.wait(2.5)
+            task.wait(2.1)
 
             if getgenv().AutoContinue then
                 if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
@@ -2887,15 +2237,20 @@ coroutine.resume(coroutine.create(function()
                     Teleport()
                 else
                     getgenv().level = getCurrentLevel()
-                    local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
-                    local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
+                    updatejson()
+                    for i = 1, 5 do
+                        local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
+                        task.wait(5)
+                    end
                 end
                 updatejson()
             end
 
             if getgenv().AutoReplay then
-                local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
-                local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
+                for i = 1, 5 do
+                    local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
+                    task.wait(5)
+                end
             elseif getgenv().AutoLeave then
                 --
                 Teleport()
@@ -2933,26 +2288,48 @@ end))
 
 ------// Auto Upgrade \\------
 --#region Auto Upgrade Loop
-getgenv().autoUpgradeerr = false
+getgenv().autoUpgrader = false
 
 function autoUpgradefunc()
     local success, err = pcall(function() --///
 
         repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
+
+        unitList = {}
+
         for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
-           if v:FindFirstChild("_stats") then
+            if v:FindFirstChild("_stats") then
                 if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
-                    game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(v)
+                    table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["upgrade"].Value, v})
                 end
             end
         end
+        
+        -- Sort By Upgrade (prioritize Bulma)
+        table.sort(unitList, function (a, b)
+            if a[1] == "bulma" and b[1] == "bulma" then
+                return a[2] > b[2]
+            end
+            if a[1] == "bulma" then
+                return true
+            end
+            if b[1] == "bulma" then
+                return false
+            end
+            return a[2] > b[2]
+        end)
+
+        for i, v in ipairs(unitList) do
+            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(v[3])
+        end
+ 
 
     end)
 
     if err then
         warn("//////////////////////////////////////////////////")
         warn("//////////////////////////////////////////////////")
-        getgenv().autoUpgradeerr = true
+        getgenv().autoUpgrader = true
         error(err)
     end
 end
@@ -2965,10 +2342,10 @@ coroutine.resume(coroutine.create(function()
                     autoUpgradefunc()
                 end)
             end
-            if  getgenv().autoUpgradeerr == true then
+            if  getgenv().autoUpgrader == true then
                 task.wait()
                 autoUpgradefunc()
-                getgenv().autoUpgradeerr = false
+                getgenv().autoUpgrader = false
             end
         end
     end
