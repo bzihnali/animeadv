@@ -2046,7 +2046,7 @@ end
 coroutine.resume(coroutine.create(function()
     local wave = 0
 
-    PlaceUnits = function(mapName, waveNum, y)
+    PlaceUnits = function(mapName, waveNum, x, y, z)
         
 
         for i = 1, 6 do
@@ -2056,14 +2056,13 @@ coroutine.resume(coroutine.create(function()
                 local unitinfo_ = unitinfo:split(" #")
                 local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
                 
-                for j = 1, 6 do
+                for j = 1, 9 do
                     if not (unitinfo_[1] == "Bulmy" and waveNum < 3) then
                     --place units
                         local args = {
                             [1] = unitinfo_[2],
-                            [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] - y, pos["z"]), Vector3.new(0, 0, -1))
+                            [2] = CFrame.new(Vector3.new(pos["x"] + (x * (((j - 1) % 3) - 1)), pos["y"] - y, pos["z"] + (z * (math.ceil(j / 3) - 2))), Vector3.new(0, 0, -1))
                         }
-                        print("args are good")
                         game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
                     end
                 end
@@ -2079,54 +2078,55 @@ coroutine.resume(coroutine.create(function()
             pcall(function() babywebhook() end)
         end
 
-        yOffset = 0.7
-        
         if getgenv().AutoFarm and not getgenv().disableAutoFarm then
             if game.PlaceId ~= 8304191830 then
                 --print("AutoFarming")
+                xOffset = 1
+                yOffset = 0.7
+                zOffset = 1
 
                 if game.Workspace._map:FindFirstChild("namek mushroom model") then
                     print("Namak")
-                    PlaceUnits("Namak", _wave, yOffset)
+                    PlaceUnits("Namak", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("houses_new") then
                     print("Aot")
-                    PlaceUnits("Aot", _wave, yOffset)
+                    PlaceUnits("Aot", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("Snow Particles") then
                     print("Snowy")
-                    PlaceUnits("Snowy", _wave, yOffset)
+                    PlaceUnits("Snowy", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("sand_gate") then
                     print("Sand")
-                    PlaceUnits("Sand", _wave, yOffset)
+                    PlaceUnits("Sand", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("icebergs") then
                     print("Marine")
-                    PlaceUnits("Marine", _wave, yOffset)
+                    PlaceUnits("Marine", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("Helicopter Pad") then
                     print("Ghoul")
-                    PlaceUnits("Ghoul", _wave, yOffset)
+                    PlaceUnits("Ghoul", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("Bones/dust") then
                     print("Hollow")
-                    PlaceUnits("Hollow", _wave, yOffset)
+                    PlaceUnits("Hollow", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("Ant Nest") then
                     print("Ant")
-                    PlaceUnits("Ant", _wave, yOffset)
+                    PlaceUnits("Ant", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("light poles") then
                     print("Magic")
-                    PlaceUnits("Magic", _wave, yOffset)
+                    PlaceUnits("Magic", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("LanternsGround") then
                     print("Cursed")    
-                    PlaceUnits("Cursed", _wave, yOffset)
+                    PlaceUnits("Cursed", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("pumpkins") then
                     print("thriller_park")    
-                    PlaceUnits("thriller_park", _wave, yOffset)
+                    PlaceUnits("thriller_park", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("skeleton") then
                     print("black_clover")    
-                    PlaceUnits("black_clover", _wave, yOffset)
+                    PlaceUnits("black_clover", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("graves") then
                     print("Hollow Legend")
-                    PlaceUnits("hollow_legend", _wave, yOffset)
+                    PlaceUnits("hollow_legend", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("SpaceCenter") then
                     print("Cape Canaveral")
-                    PlaceUnits("jojo", _wave, yOffset)
+                    PlaceUnits("jojo", _wave, xOffset, yOffset, zOffset)
                 else
                     print("Something bad happened")
                 end
