@@ -2058,7 +2058,7 @@ coroutine.resume(coroutine.create(function()
                 local unitinfo_ = unitinfo:split(" #")
                 local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
                 
-                for i = 1, 6 do
+                for j = 1, 6 do
                     if not (unitinfo_[1] == "Bulmy" and waveNum < 3) then
                     --place units
                         local args = {
