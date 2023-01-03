@@ -2080,7 +2080,7 @@ coroutine.resume(coroutine.create(function()
             if game.PlaceId ~= 8304191830 then
                 --print("AutoFarming")
                 xOffset = 1
-                yOffset = 0.7
+                yOffset = 1.4
                 zOffset = 1
 
                 if game.Workspace._map:FindFirstChild("namek mushroom model") then
