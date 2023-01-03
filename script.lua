@@ -2247,34 +2247,40 @@ coroutine.resume(coroutine.create(function()
             print("next button pressed")
             task.wait(2.1)
 
+            if getgenv().AutoFarmIC then
+                for i = 1, 25 do
+                    game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_infinite_tower_from_game:InvokeServer()
+                    task.wait(1)
+                end
+            end
+
             if getgenv().AutoContinue then
                 if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
                     getgenv().level = getNextLevel(getCurrentLevel())
                     updatejson()
-                    for i = 1, 5 do
+                    for i = 1, 25 do
                         Teleport()
                         Teleport()
                         Teleport()
-                        task.wait(5)
+                        task.wait(1)
                     end
-                    
                 else
                     getgenv().level = getCurrentLevel()
                     updatejson()
-                    for i = 1, 5 do
+                    for i = 1, 25 do
                         local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
                         local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
                         local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
-                        task.wait(5)
+                        task.wait(1)
                     end
                 end
                 updatejson()
             end
 
             if getgenv().AutoReplay then
-                for i = 1, 5 do
+                for i = 1, 25 do
                     local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
-                    task.wait(5)
+                    task.wait(1)
                 end
             elseif getgenv().AutoLeave then
                 --
