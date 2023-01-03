@@ -2047,8 +2047,6 @@ coroutine.resume(coroutine.create(function()
     local wave = 0
 
     PlaceUnits = function(mapName, waveNum, x, y, z)
-        
-
         for i = 1, 6 do
             local unitinfo = getgenv().SelectedUnits["U" .. i]
 
@@ -2057,7 +2055,7 @@ coroutine.resume(coroutine.create(function()
                 local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
                 
                 for j = 1, 9 do
-                    if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 3) then
+                    if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
                     --place units
                         local args = {
                             [1] = unitinfo_[2],
@@ -2319,7 +2317,7 @@ function autoUpgradefunc()
             end
         end
         
-        -- Sort By Upgrade (prioritize Bulma)
+        -- Sort By Upgrade (prioritize Bulma/Speedwagon)
         table.sort(unitList, function (a, b)
             if ((a[1] == "bulma" and b[1] == "speedwagon") or (b[1] == "bulma" and a[1] == "speedwagon") or (a[1] == "bulma" and b[1] == "bulma") or (a[1] == "speedwagon" and b[1] == "speedwagon")) then
                 return a[2] > b[2]
