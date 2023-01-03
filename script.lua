@@ -2130,6 +2130,19 @@ coroutine.resume(coroutine.create(function()
                 end
             end
         end
+
+        if getgenv().autoUpgrade then
+            if game.PlaceId ~= 8304191830 then
+                pcall(function()
+                    autoUpgradefunc()
+                end)
+            end
+            if  getgenv().autoUpgrader == true then
+                task.wait()
+                autoUpgradefunc()
+                getgenv().autoUpgrader = false
+            end
+        end
     end
 end))
 --#endregion
@@ -2322,10 +2335,10 @@ function autoUpgradefunc()
             if (a[1] == "bulma" and b[1] == "speedwagon") or (b[1] == "bulma" and a[1] == "speedwagon") or (a[1] == "bulma" and b[1] == "bulma") or (a[1] == "speedwagon" and b[1] == "speedwagon") then
                 return a[2] > b[2]
             end
-            if a[1] == "bulma" or b[1] == "speedwagon" then
+            if a[1] == "bulma" or a[1] == "speedwagon" then
                 return true
             end
-            if b[1] == "bulma" or a[1] == "speedwagon" then
+            if b[1] == "bulma" or b[1] == "speedwagon" then
                 return false
             end
             return a[2] > b[2]
@@ -2346,22 +2359,6 @@ function autoUpgradefunc()
     end
 end
 
-coroutine.resume(coroutine.create(function()
-    while task.wait(2) do
-        if getgenv().autoUpgrade then
-            if game.PlaceId ~= 8304191830 then
-                pcall(function()
-                    autoUpgradefunc()
-                end)
-            end
-            if  getgenv().autoUpgrader == true then
-                task.wait()
-                autoUpgradefunc()
-                getgenv().autoUpgrader = false
-            end
-        end
-    end
-end))
 --#endregion
 
 
