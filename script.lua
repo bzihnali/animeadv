@@ -2278,7 +2278,12 @@ coroutine.resume(coroutine.create(function()
                 end
             elseif getgenv().AutoLeave then
                 --
-                Teleport()
+                for i = 1, 5 do
+                    Teleport()
+                    Teleport()
+                    Teleport()
+                    task.wait(5)
+                end
                 -- game:GetService("TeleportService"):Teleport(8304191830, game.Players.LocalPlayer)
             end
         end
