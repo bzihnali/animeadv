@@ -593,15 +593,13 @@ local function shopsniperwebhook(test)
         print(dump(data["embeds"][1]["fields"]))
 
         if not game:GetService("Workspace")["travelling_merchant"]["is_open"].Value then
-            data["embeds"][1]["fields"] = 
-                            {
-                                ["name"] = "SHOP IS CLOSED",
-                                ["value"] = "",
-                                ["inline"] = true
-                            }
-                        
+            table.insert(data["embeds"][1]["fields"], {
+                    ["name"] = "SHOP CLOSED",
+                    ["value"] = "SHOP CLOSED",
+                    ["inline"] = true
+                })
         end
-
+        print("exec1")
 		local porn = game:GetService("HttpService"):JSONEncode(data)
 
 		local headers = {["content-type"] = "application/json"}
@@ -650,7 +648,7 @@ local function specialsummonsniperwebhook(test)
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Current 2x Banner",
+						["name"] = "Current Special Banner",
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0xFF00FF,
@@ -730,7 +728,7 @@ local function standardsummonsniperwebhook(test)
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Current 2x Banner",
+						["name"] = "Current Standard Banner",
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0xFF00FF,
@@ -897,9 +895,6 @@ function sex()
 
 
     if game.PlaceId == 8304191830 then
-        sniperwebhook(true)
-        specialsummonsniperwebhook(true)
-        standardsummonsniperwebhook(true)
 
         local unitSelectTab = autofrmserver:Channel("👷 Select Units")
         local selectWorldTab = autofrmserver:Channel("🌎 Select World")
@@ -2986,6 +2981,15 @@ pcall(function()
 
     game:GetService("ReplicatedStorage").endpoints.client_to_server.claim_daily_reward:InvokeServer()
 end)
+
+if game.PlaceId == 8304191830 then
+    
+    pcall(function() shopsniperwebhook(true) end)
+    pcall(function() specialsummonsniperwebhook(true) end)
+    pcall(function() standardsummonsniperwebhook(true) end)
+    
+    
+end
 
 print("Successfully Loaded!!")
 ---------------------------------------------------------------------
