@@ -1,8 +1,11 @@
+print("got here 1")
 local versionx = "1.6.4"
 
 ---// Loading Section \\---
+print("got here 1")
 task.wait(2)
-repeat  task.wait() until game:IsLoaded()
+repeat task.wait() until game:IsLoaded()
+print("got here 2")
 if game.PlaceId == 8304191830 then
     repeat task.wait() until game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
     repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
@@ -424,7 +427,7 @@ local function webhook()
 							["inline"] = true
 						}, {
 							["name"] = "Recieved Gems:",
-							["value"] = gems .. " <:gem:997123585476927558>",
+							["value"] = gems .. " 💎",
 							["inline"] = true
 						}, {
                             ["name"] = "Recieved XP:",
@@ -436,7 +439,7 @@ local function webhook()
                             ["inline"] = true
                         }, {
                             ["name"] = "Current Gems:",
-                            ["value"] = tostring(game.Players.LocalPlayer._stats.gem_amount.Value).." <:gem:997123585476927558>",
+                            ["value"] = tostring(game.Players.LocalPlayer._stats.gem_amount.Value).." 💎",
                             ["inline"] = true
                         }, {
                             ["name"] = "Current Level:",
@@ -495,7 +498,7 @@ local function babywebhook()
 					["fields"] = {
 						{
                             ["name"] = "Current Gems:",
-                            ["value"] = tostring(game.Players.LocalPlayer._stats.gem_amount.Value).." <:gem:997123585476927558>",
+                            ["value"] = tostring(game.Players.LocalPlayer._stats.gem_amount.Value).." 💎",
                             ["inline"] = true
                         }, {
                             ["name"] = "Current Level:",
@@ -504,7 +507,7 @@ local function babywebhook()
                         },
                         {
                             ["name"] = "Estimated Gems per Hour:",
-                            ["value"] = tostring(math.floor(gemsSinceStart / ((timeSinceStart + 82) / (60 * 60)))).." <:gem:997123585476927558>",
+                            ["value"] = tostring(math.floor(gemsSinceStart / ((timeSinceStart + 82) / (60 * 60)))).." 💎",
                             ["inline"] = true
                         }
 					}
@@ -522,6 +525,214 @@ local function babywebhook()
 	end)
 end
 --#endregion
+
+--#region SHOP SNIPER Webhook Sender
+local function shopsniperwebhook()
+	pcall(function()
+		local url = tostring(getgenv().sniperUrl) --webhook
+		print("Shop Sniper Webhook?")
+		if url == "" then
+            print("No Webhook Found!")
+			return
+		end
+
+        local shop_items = game:GetService("ReplicatedStorage").src.client.Services.TravellingMerchantServiceClient["SELLING_ITEMS"]
+        local formatted_fields = {["fields"] = {}}
+
+        for i, item in pairs(shop_items) do
+            if item["gem_cost"] then
+                table.insert(formatted_fields["fields"], {
+                    ["name"] = item["id"],
+                    ["value"] = item["gem_cost"] .. " 💎",
+                    ["inline"] = true
+                })
+            else
+                table.insert(formatted_fields["fields"], {
+                    ["name"] = item["id"],
+                    ["value"] = item["gold_cost"] .. " 🪙",
+                    ["inline"] = true
+                })
+            end
+        end
+
+		local data = {
+			["content"] = "",
+			["username"] = "Professional Gamer",
+			["avatar_url"] = "https://i.pinimg.com/originals/1c/6c/55/1c6c55a47126ddf97931d9463876594c.jpg",
+			["embeds"] = {
+				{
+					["author"] = {
+						["name"] = "Current Level: " .. getCurrentLevelName() .. " | " .. "Current Wave: " .. current_wave,
+						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
+					},
+					["color"] = 0x00FFFF,
+
+					["thumbnail"] = {
+						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
+					}
+				}
+			}
+		}
+
+        table.insert(data, formatted_fields)
+
+		local porn = game:GetService("HttpService"):JSONEncode(data)
+
+		local headers = {["content-type"] = "application/json"}
+		request = http_request or request or HttpPost or syn.request or http.request
+		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+        if(getgenv().currentMerchantItems ~= shop_items) then
+            getgenv().currentMerchantItems = shop_items
+            updatejson()
+            warn("Sending sniper webhook notification...")
+            request(sex)
+        end
+
+	end)
+end
+--#endregion
+
+--#region SPECIAL SUMMON SNIPER Webhook Sender
+local function specialsummonsniperwebhook()
+	pcall(function()
+		local url = tostring(getgenv().sniperUrl) --webhook
+		print("Special Summon Sniper Webhook?")
+		if url == "" then
+            print("No Webhook Found!")
+			return
+		end
+
+        local units = {
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.EventClover.Main["Featured_One"],
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.EventClover.Main["Featured_Two"],
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.EventClover.Main["Featured_Three"]
+        }
+
+		local data = {
+			["content"] = "",
+			["username"] = "Professional Gamer",
+			["avatar_url"] = "https://i.pinimg.com/originals/1c/6c/55/1c6c55a47126ddf97931d9463876594c.jpg",
+			["embeds"] = {
+				{
+					["author"] = {
+						["name"] = "Current 2x Banner",
+						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
+					},
+					["color"] = 0xFF00FF,
+
+					["thumbnail"] = {
+						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
+					}, 
+                    ["fields"] = {
+                        {
+                            ["name"] = units[1].name.Text .. "(" .. units[1].Rarity.Text .. ") [Featured]"
+                            ["inline"] = false
+                        },
+                        {
+                            ["name"] = units[2].name.Text .. "(" .. units[2].Rarity.Text .. ")"
+                            ["inline"] = false
+                        },
+                        {
+                            ["name"] = units[3].name.Text .. "(" .. units[3].Rarity.Text .. ")"
+                            ["inline"] = false
+                        }
+                    }
+				}
+			}
+		}
+
+		local porn = game:GetService("HttpService"):JSONEncode(data)
+
+		local headers = {["content-type"] = "application/json"}
+		request = http_request or request or HttpPost or syn.request or http.request
+		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+        if(getgenv().currentSpecialBannerUnits ~= units) then
+            getgenv().currentSpecialBannerUnits = units
+            updatejson()
+            warn("Sending special sniper webhook notification...")
+            request(sex)
+        end
+	end)
+end
+--#endregion
+
+--#region STANDARD SUMMON SNIPER Webhook Sender
+local function standardsummonsniperwebhook()
+	pcall(function()
+		local url = tostring(getgenv().sniperUrl) --webhook
+		print("Standard Summon Sniper Webhook?")
+		if url == "" then
+            print("No Webhook Found!")
+			return
+		end
+
+        local units = {
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.Standard.Main.Scroll["1"].Main,
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.Standard.Main.Scroll["2"].Main,
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.Standard.Main.Scroll["3"].Main,
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.Standard.Main.Scroll["4"].Main,
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.Standard.Main.Scroll["5"].Main,
+            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.Standard.Main.Scroll["6"].Main
+        }
+
+        local formatted_units = {["fields"] = {}}
+
+		local data = {
+			["content"] = "",
+			["username"] = "Professional Gamer",
+			["avatar_url"] = "https://i.pinimg.com/originals/1c/6c/55/1c6c55a47126ddf97931d9463876594c.jpg",
+			["embeds"] = {
+				{
+					["author"] = {
+						["name"] = "Current 2x Banner",
+						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
+					},
+					["color"] = 0xFF00FF,
+
+					["thumbnail"] = {
+						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
+					}, 
+                    ["fields"] = {
+                        {
+                            ["name"] = units[1].name.Text .. "(" .. units[1].Rarity.Text .. ") [Featured]"
+                            ["inline"] = false
+                        },
+                        {
+                            ["name"] = units[2].name.Text .. "(" .. units[2].Rarity.Text .. ")"
+                            ["inline"] = false
+                        },
+                        {
+                            ["name"] = units[3].name.Text .. "(" .. units[3].Rarity.Text .. ")"
+                            ["inline"] = false
+                        }
+                    }
+				}
+			}
+		}
+
+        for unit in units do
+            table.insert(formatted_fields["fields"], {
+                ["name"] = unit.petimage.WorldModel:GetChildren()[1].Name,
+                ["value"] = unit.Rarity.Text,
+                ["inline"] = true
+            })
+        end
+
+		local porn = game:GetService("HttpService"):JSONEncode(data)
+
+		local headers = {["content-type"] = "application/json"}
+		request = http_request or request or HttpPost or syn.request or http.request
+		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+        if(getgenv().currentStandardBannerUnits ~= units) then
+            getgenv().currentStandardBannerUnits = units
+            updatejson()
+            warn("Sending standard sniper webhook notification...")
+            request(sex)
+        end
+	end)
+end
+--#endregion
+
 
 getgenv().UnitCache = {}
 
@@ -558,6 +769,7 @@ function sex()
     getgenv().AutoFarmTP = data.autofarmtp
     getgenv().AutoLoadTP = data.autoloadtp
     getgenv().webUrl = data.webhook
+    getgenv().sniperUrl = data.sniperwebhook
     getgenv().autoStart = data.autoStart
     getgenv().autoUpgrade = data.autoUpgrade
     getgenv().difficulty = data.difficulty
@@ -565,6 +777,9 @@ function sex()
     getgenv().level = data.level
     getgenv().AutoContinue = data.autocontinue
     getgenv().nextLevel = data.nextlevel
+    getgenv().currentMerchantItems = data.currentmerchantitems
+    getgenv().currentSpecialBannerUnits = data.currentspecialbannerunits
+    getgenv().currentStandardBannerUnits = data.currentstandardbannerunits
     --getgenv().door = data.door
 
     getgenv().SpawnUnitPos = data.xspawnUnitPos
@@ -590,6 +805,7 @@ function sex()
             autoSell = getgenv().autoSell,
             autoQuit = getgenv().autoQuit,
             webhook = getgenv().webUrl,
+            sniperwebhook = getgenv().sniperUrl,
             autofarm = getgenv().AutoFarm,
             autofarmic = getgenv().AutoFarmIC,
             autofarmtp = getgenv().AutoFarmTP,
@@ -600,6 +816,9 @@ function sex()
             level = getgenv().level,
             autocontinue = getgenv().AutoContinue,
             nextlevel = getgenv().nextLevel,
+            currentmerchantitems = getgenv().currentMerchantItems
+            currentspecialbannerunits = getgenv().currentSpecialBannerUnits
+            currentstandardbannerunits = getgenv().currentStandardBannerUnits
             --door = getgenv().door,
 
             xspawnUnitPos = getgenv().SpawnUnitPos,
@@ -647,7 +866,6 @@ function sex()
 
 
     if game.PlaceId == 8304191830 then
-
         local unitSelectTab = autofrmserver:Channel("👷 Select Units")
         local selectWorldTab = autofrmserver:Channel("🌎 Select World")
         local autofarmtab = autofrmserver:Channel("🤖 Auto Farm")
@@ -1426,25 +1644,25 @@ function sex()
         autofarmtab:Label(" ")
         autofarmtab:Label(" ")
 
---#endregion
+        --#endregion
 
---#region Auto Challenge 
-autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
-    getgenv().AutoChallenge = bool
-    updatejson()
-end)
-local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
-    getgenv().selectedreward = reward
-    updatejson()
-end)
+        --#region Auto Challenge 
+        autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
+            getgenv().AutoChallenge = bool
+            updatejson()
+        end)
+        local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
+            getgenv().selectedreward = reward
+            updatejson()
+        end)
 
-autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
-    getgenv().AutoChallengeAll = bool
-    updatejson()
-end)
---#endregion
+        autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
+            getgenv().AutoChallengeAll = bool
+            updatejson()
+        end)
+        --#endregion
 
---#region Auto Sell Tab
+        --#region Auto Sell Tab
         autoSellTab:Toggle("Auto Sell at Specfic Wave", getgenv().autoSell, function(x)
             getgenv().autoSell = x
             updatejson()
@@ -1467,11 +1685,11 @@ end)
             getgenv().quitAtWave = tonumber(t)
             updatejson()
         end)
---#endregion
+        --#endregion
 
 
 
---#region Webhook
+        --#region Webhook
 		--//Webhook Tab (in-game)\\--
 		webhooktab:Label("Webhook sends notification in discord everytime game Finishes.")
 		local webhookPlaceholder
@@ -1480,18 +1698,39 @@ end)
 		else
 			webhookPlaceholder = getgenv().webUrl
 		end
+
+        local sniperWebhookPlaceholder
+		if getgenv().sniperUrl == "" then
+			sniperWebhookPlaceholder = "Insert url here!"
+		else
+			sniperWebhookPlaceholder = getgenv().sniperUrl
+		end
+
+
 		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
             getgenv().webUrl = web_url
             updatejson()
         end)
+
+        webhooktab:Textbox("Sniper Webhook URL {Press Enter}" , sniperWebhookPlaceholder, false, function(sniper_url)
+            getgenv().sniperUrl = sniper_url
+            updatejson()
+        end)
+
         webhooktab:Button("Test Webhook", function()
             webhook()
         end)
---#endregion
 
+        webhooktab:Button("Test Sniper Webhooks", function()
+            shopsniperwebhook()
+            specialsummonsniperwebhook()
+            standardsummonsniperwebhook()
+        end)
+        --#endregion
 
+        
     end
---#endregion
+        --#endregion
 
 --#region changelog
     local changelog = cngelogserver:Channel("💬 Changelog")
@@ -2185,7 +2424,7 @@ function TPReturner()
    local num = 0;
    local extranum = 0
    for i,v in pairs(Site.data) do
-       extranum += 1
+       extranum = extranum + 1
        local Possible = true
        ID = tostring(v.id)
        if tonumber(v.maxPlayers) > tonumber(v.playing) then
