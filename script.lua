@@ -1,11 +1,8 @@
-print("got here 1")
 local versionx = "1.6.4"
 
 ---// Loading Section \\---
-print("got here 1")
 task.wait(2)
-repeat task.wait() until game:IsLoaded()
-print("got here 2")
+repeat  task.wait() until game:IsLoaded()
 if game.PlaceId == 8304191830 then
     repeat task.wait() until game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
     repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
@@ -525,9 +522,9 @@ local function babywebhook()
 	end)
 end
 --#endregion
-
 --#region SHOP SNIPER Webhook Sender
-local function shopsniperwebhook()
+local function shopsniperwebhook(test)
+    test = test or false
 	pcall(function()
 		local url = tostring(getgenv().sniperUrl) --webhook
 		print("Shop Sniper Webhook?")
@@ -535,25 +532,24 @@ local function shopsniperwebhook()
             print("No Webhook Found!")
 			return
 		end
-
-        local shop_items = game:GetService("ReplicatedStorage").src.client.Services.TravellingMerchantServiceClient["SELLING_ITEMS"]
-        local formatted_fields = {["fields"] = {}}
-
-        for i, item in pairs(shop_items) do
-            if item["gem_cost"] then
-                table.insert(formatted_fields["fields"], {
-                    ["name"] = item["id"],
-                    ["value"] = item["gem_cost"] .. " 💎",
-                    ["inline"] = true
-                })
-            else
-                table.insert(formatted_fields["fields"], {
-                    ["name"] = item["id"],
-                    ["value"] = item["gold_cost"] .. " 🪙",
-                    ["inline"] = true
-                })
-            end
+		function dump(o)
+           if type(o) == 'table' then
+              local s = '{ '
+              for k, v in pairs(o) do
+                 if type(k) ~= 'number' then k = '"'..k..'"' end
+                 s = s .. '['..k..'] = ' .. dump(v) .. ','
+              end
+              return s .. '} '
+           else
+              return tostring(o)
+           end
         end
+		print(game:GetService("ReplicatedStorage").src.client.Services.TravellingMerchantServiceClient)
+
+        shop_items = require(game:GetService("ReplicatedStorage").src.client.Services["TravellingMerchantServiceClient"]).SELLING_ITEMS
+        local shop_item_ids = {}
+        
+        print("exechere9")
 
 		local data = {
 			["content"] = "",
@@ -562,38 +558,72 @@ local function shopsniperwebhook()
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Current Level: " .. getCurrentLevelName() .. " | " .. "Current Wave: " .. current_wave,
+						["name"] = "Bulma's Shop",
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0x00FFFF,
 
 					["thumbnail"] = {
 						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
-					}
+					},
+					["fields"] = {}
 				}
 			}
 		}
+		
+		print("exechere4")
+		
+		for i, item in pairs(shop_items) do
+            table.insert(shop_item_ids, item["id"])
+            if item["gem_cost"] then
+                table.insert(data["embeds"][1]["fields"], {
+                    ["name"] = item["id"],
+                    ["value"] = item["gem_cost"] .. " 💎",
+                    ["inline"] = true
+                })
+            else
+                table.insert(data["embeds"][1]["fields"], {
+                    ["name"] = item["id"],
+                    ["value"] = item["gold_cost"] .. " 🪙",
+                    ["inline"] = true
+                })
+            end
+		end
+    
+        print(dump(data["embeds"][1]["fields"]))
 
-        table.insert(data, formatted_fields)
+        if not game:GetService("Workspace")["travelling_merchant"]["is_open"].Value then
+            data["embeds"][1]["fields"] = 
+                            {
+                                {
+                                    ["name"] = "SHOP IS CLOSED",
+                                    ["value"] = "",
+                                    ["inline"] = true
+                                }
+                            }
+                        
+        end
 
 		local porn = game:GetService("HttpService"):JSONEncode(data)
 
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
 		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
-        if(getgenv().currentMerchantItems ~= shop_items) then
-            getgenv().currentMerchantItems = shop_items
+        if getgenv().currentMerchantItems ~= shop_item_ids or test then
+            getgenv().currentMerchantItems = shop_item_ids
             updatejson()
             warn("Sending sniper webhook notification...")
             request(sex)
         end
+        
 
 	end)
 end
 --#endregion
 
 --#region SPECIAL SUMMON SNIPER Webhook Sender
-local function specialsummonsniperwebhook()
+local function specialsummonsniperwebhook(test)
+    test = test or false
 	pcall(function()
 		local url = tostring(getgenv().sniperUrl) --webhook
 		print("Special Summon Sniper Webhook?")
@@ -601,11 +631,18 @@ local function specialsummonsniperwebhook()
             print("No Webhook Found!")
 			return
 		end
-
+		
+		local special_banner = game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.EventClover.Main
         local units = {
-            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.EventClover.Main["Featured_One"],
-            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.EventClover.Main["Featured_Two"],
-            game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.EventClover.Main["Featured_Three"]
+            special_banner["Featured_One"],
+            special_banner["Featured_Two"],
+            special_banner["Featured_Three"]
+        }
+
+        local unitNamesForJson = {
+            special_banner["Featured_One"].name.Text,
+            special_banner["Featured_Two"].name.Text,
+            special_banner["Featured_Three"].name.Text
         }
 
 		local data = {
@@ -625,29 +662,32 @@ local function specialsummonsniperwebhook()
 					}, 
                     ["fields"] = {
                         {
-                            ["name"] = units[1].name.Text .. "(" .. units[1].Rarity.Text .. ") [Featured]"
+                            ["name"] = units[1].name.Text,
+                            ["value"] = "(" .. units[1].Rarity.Text .. ") [Featured]",
                             ["inline"] = false
                         },
                         {
-                            ["name"] = units[2].name.Text .. "(" .. units[2].Rarity.Text .. ")"
+                            ["name"] = units[2].name.Text,
+                            ["value"] = "(" .. units[2].Rarity.Text .. ")",
                             ["inline"] = false
                         },
                         {
-                            ["name"] = units[3].name.Text .. "(" .. units[3].Rarity.Text .. ")"
+                            ["name"] = units[3].name.Text,
+                            ["value"] = "(" .. units[3].Rarity.Text .. ")",
                             ["inline"] = false
                         }
                     }
 				}
 			}
 		}
-
+		
 		local porn = game:GetService("HttpService"):JSONEncode(data)
 
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
 		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
-        if(getgenv().currentSpecialBannerUnits ~= units) then
-            getgenv().currentSpecialBannerUnits = units
+        if getgenv().currentSpecialBannerUnits ~= unitNamesForJson or test then
+            getgenv().currentSpecialBannerUnits = unitNamesForJson
             updatejson()
             warn("Sending special sniper webhook notification...")
             request(sex)
@@ -657,7 +697,8 @@ end
 --#endregion
 
 --#region STANDARD SUMMON SNIPER Webhook Sender
-local function standardsummonsniperwebhook()
+local function standardsummonsniperwebhook(test)
+    test = test or false
 	pcall(function()
 		local url = tostring(getgenv().sniperUrl) --webhook
 		print("Standard Summon Sniper Webhook?")
@@ -675,8 +716,15 @@ local function standardsummonsniperwebhook()
             game:GetService("Players").LocalPlayer.PlayerGui.HatchGuiNew.BannerFrames.Standard.Main.Scroll["6"].Main
         }
 
-        local formatted_units = {["fields"] = {}}
-
+        local unitIdsForJson = {
+            units[1].petimage.WorldModel:GetChildren()[1].Name,
+            units[2].petimage.WorldModel:GetChildren()[1].Name,
+            units[3].petimage.WorldModel:GetChildren()[1].Name,
+            units[4].petimage.WorldModel:GetChildren()[1].Name,
+            units[5].petimage.WorldModel:GetChildren()[1].Name,
+            units[6].petimage.WorldModel:GetChildren()[1].Name
+        }
+        
 		local data = {
 			["content"] = "",
 			["username"] = "Professional Gamer",
@@ -688,43 +736,30 @@ local function standardsummonsniperwebhook()
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0xFF00FF,
-
 					["thumbnail"] = {
 						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
 					}, 
-                    ["fields"] = {
-                        {
-                            ["name"] = units[1].name.Text .. "(" .. units[1].Rarity.Text .. ") [Featured]"
-                            ["inline"] = false
-                        },
-                        {
-                            ["name"] = units[2].name.Text .. "(" .. units[2].Rarity.Text .. ")"
-                            ["inline"] = false
-                        },
-                        {
-                            ["name"] = units[3].name.Text .. "(" .. units[3].Rarity.Text .. ")"
-                            ["inline"] = false
-                        }
-                    }
+                    ["fields"] = {}
 				}
 			}
 		}
 
-        for unit in units do
-            table.insert(formatted_fields["fields"], {
+
+        for i, unit in pairs(units) do
+            unit_stats = {
                 ["name"] = unit.petimage.WorldModel:GetChildren()[1].Name,
                 ["value"] = unit.Rarity.Text,
                 ["inline"] = true
-            })
+            }
+            table.insert(data["embeds"][1]["fields"], unit_stats)
         end
-
+        
 		local porn = game:GetService("HttpService"):JSONEncode(data)
-
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
 		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
-        if(getgenv().currentStandardBannerUnits ~= units) then
-            getgenv().currentStandardBannerUnits = units
+        if getgenv().currentStandardBannerUnits ~= unitIdsForJson or test then
+            getgenv().currentStandardBannerUnits = unitIdsForJson
             updatejson()
             warn("Sending standard sniper webhook notification...")
             request(sex)
@@ -732,7 +767,6 @@ local function standardsummonsniperwebhook()
 	end)
 end
 --#endregion
-
 
 getgenv().UnitCache = {}
 
@@ -790,7 +824,6 @@ function sex()
 ---// updates the json file
 --#region update json
     function updatejson()
-
         local xdata = {
             -- unitname = getgenv().unitname,
             -- unitid = getgenv().unitid,
@@ -816,9 +849,9 @@ function sex()
             level = getgenv().level,
             autocontinue = getgenv().AutoContinue,
             nextlevel = getgenv().nextLevel,
-            currentmerchantitems = getgenv().currentMerchantItems
-            currentspecialbannerunits = getgenv().currentSpecialBannerUnits
-            currentstandardbannerunits = getgenv().currentStandardBannerUnits
+            currentmerchantitems = getgenv().currentMerchantItems,
+            currentspecialbannerunits = getgenv().currentSpecialBannerUnits,
+            currentstandardbannerunits = getgenv().currentStandardBannerUnits,
             --door = getgenv().door,
 
             xspawnUnitPos = getgenv().SpawnUnitPos,
@@ -866,6 +899,10 @@ function sex()
 
 
     if game.PlaceId == 8304191830 then
+        shopsniperwebhook()
+        specialsummonsniperwebhook()
+        standardsummonsniperwebhook()
+
         local unitSelectTab = autofrmserver:Channel("👷 Select Units")
         local selectWorldTab = autofrmserver:Channel("🌎 Select World")
         local autofarmtab = autofrmserver:Channel("🤖 Auto Farm")
@@ -1295,6 +1332,24 @@ function sex()
 		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
             getgenv().webUrl = web_url
             updatejson()
+		end)
+    
+        local sniperWebhookPlaceholder
+		if getgenv().sniperUrl == "" then
+			sniperWebhookPlaceholder = "Insert url here!"
+		else
+			sniperWebhookPlaceholder = getgenv().sniperUrl
+		end
+		
+		webhooktab:Textbox("Sniper Webhook URL {Press Enter}" , sniperWebhookPlaceholder, false, function(sniper_url)
+            getgenv().sniperUrl = sniper_url
+            updatejson()
+		end)
+    
+        webhooktab:Button("Test Sniper Webhooks", function()
+            shopsniperwebhook(true)
+            specialsummonsniperwebhook(true)
+            standardsummonsniperwebhook(true)
         end)
 
         autofarmtab:Label(" ")
@@ -1644,25 +1699,25 @@ function sex()
         autofarmtab:Label(" ")
         autofarmtab:Label(" ")
 
-        --#endregion
+--#endregion
 
-        --#region Auto Challenge 
-        autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
-            getgenv().AutoChallenge = bool
-            updatejson()
-        end)
-        local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
-            getgenv().selectedreward = reward
-            updatejson()
-        end)
+--#region Auto Challenge 
+autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
+    getgenv().AutoChallenge = bool
+    updatejson()
+end)
+local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
+    getgenv().selectedreward = reward
+    updatejson()
+end)
 
-        autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
-            getgenv().AutoChallengeAll = bool
-            updatejson()
-        end)
-        --#endregion
+autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
+    getgenv().AutoChallengeAll = bool
+    updatejson()
+end)
+--#endregion
 
-        --#region Auto Sell Tab
+--#region Auto Sell Tab
         autoSellTab:Toggle("Auto Sell at Specfic Wave", getgenv().autoSell, function(x)
             getgenv().autoSell = x
             updatejson()
@@ -1685,11 +1740,11 @@ function sex()
             getgenv().quitAtWave = tonumber(t)
             updatejson()
         end)
-        --#endregion
+--#endregion
 
 
 
-        --#region Webhook
+--#region Webhook
 		--//Webhook Tab (in-game)\\--
 		webhooktab:Label("Webhook sends notification in discord everytime game Finishes.")
 		local webhookPlaceholder
@@ -1698,39 +1753,30 @@ function sex()
 		else
 			webhookPlaceholder = getgenv().webUrl
 		end
-
-        local sniperWebhookPlaceholder
+		
+		local sniperWebhookPlaceholder
 		if getgenv().sniperUrl == "" then
 			sniperWebhookPlaceholder = "Insert url here!"
 		else
 			sniperWebhookPlaceholder = getgenv().sniperUrl
 		end
-
-
+		
 		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
             getgenv().webUrl = web_url
             updatejson()
-        end)
-
+		end)
         webhooktab:Textbox("Sniper Webhook URL {Press Enter}" , sniperWebhookPlaceholder, false, function(sniper_url)
             getgenv().sniperUrl = sniper_url
             updatejson()
         end)
-
         webhooktab:Button("Test Webhook", function()
             webhook()
         end)
+--#endregion
 
-        webhooktab:Button("Test Sniper Webhooks", function()
-            shopsniperwebhook()
-            specialsummonsniperwebhook()
-            standardsummonsniperwebhook()
-        end)
-        --#endregion
 
-        
     end
-        --#endregion
+--#endregion
 
 --#region changelog
     local changelog = cngelogserver:Channel("💬 Changelog")
@@ -1783,24 +1829,30 @@ else
         -- unitname = "name",
         -- unitid = "id",
         AutoReplay = false,
-        AutoLeave = true,
+        AutoLeave = false,
         AutoChallenge = false,
         selectedreward = "star_fruit_random",
         AutoChallengeAll = false,
         autoabilities = false,
         autofarmtp = false,
         webhook = "",
+        sniperwebhook = "",
         sellatwave = 0,
+        quitAtWave = 0,
         autoSell = false,
         autofarm = false,
         autofarmic = false,
         autoStart = false,
         autoloadtp = true,
         autoUpgrade = false,
+        autocontinue = false,
         difficulty = "nil",
         world = "nil",
         level = "nil",
         door = "nil",
+        currentmerchantitems = {},
+        currentspecialbannerunits = {},
+        currentstandardbannerunits = {},
     
         xspawnUnitPos  = {
             black_clover  = {
@@ -2424,7 +2476,7 @@ function TPReturner()
    local num = 0;
    local extranum = 0
    for i,v in pairs(Site.data) do
-       extranum = extranum + 1
+       extranum += 1
        local Possible = true
        ID = tostring(v.id)
        if tonumber(v.maxPlayers) > tonumber(v.playing) then
