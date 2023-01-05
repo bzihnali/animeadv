@@ -595,11 +595,9 @@ local function shopsniperwebhook(test)
         if not game:GetService("Workspace")["travelling_merchant"]["is_open"].Value then
             data["embeds"][1]["fields"] = 
                             {
-                                {
-                                    ["name"] = "SHOP IS CLOSED",
-                                    ["value"] = "",
-                                    ["inline"] = true
-                                }
+                                ["name"] = "SHOP IS CLOSED",
+                                ["value"] = "",
+                                ["inline"] = true
                             }
                         
         end
@@ -899,9 +897,9 @@ function sex()
 
 
     if game.PlaceId == 8304191830 then
-        shopsniperwebhook()
-        specialsummonsniperwebhook()
-        standardsummonsniperwebhook()
+        sniperwebhook(true)
+        specialsummonsniperwebhook(true)
+        standardsummonsniperwebhook(true)
 
         local unitSelectTab = autofrmserver:Channel("👷 Select Units")
         local selectWorldTab = autofrmserver:Channel("🌎 Select World")
