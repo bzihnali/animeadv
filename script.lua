@@ -3666,7 +3666,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Continue", 
-            Value = getgenv().AutoContinue, 
+            CurrentValue = getgenv().AutoContinue, 
             Callback = function(bool)
                 getgenv().AutoContinue = bool
                 updatejson()
@@ -3674,7 +3674,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Replay", 
-            Value = getgenv().AutoReplay, 
+            CurrentValue = getgenv().AutoReplay, 
             Callback = function(bool)
                 getgenv().AutoReplay = bool
                 updatejson()
@@ -3682,7 +3682,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Leave", 
-            Value = getgenv().AutoLeave, 
+            CurrentValue = getgenv().AutoLeave, 
             Callback = function(bool)
                 getgenv().AutoLeave = bool
                 updatejson()
@@ -3690,7 +3690,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Farm Event", 
-            Value = getgenv().AutoFarmTP, 
+            CurrentValue = getgenv().AutoFarmTP, 
             Callback = function(bool)
                 getgenv().AutoFarmTP = bool
                 updatejson()
@@ -3698,7 +3698,7 @@ function MainModule()
         
         autoFarmTab:CreateToggle({
             Name = "Auto Start Infinity Castle", 
-            Value = getgenv().AutoFarmIC, 
+            CurrentValue = getgenv().AutoFarmIC, 
             Callback = function(bool)
                 getgenv().AutoFarmIC = bool
                 updatejson()
@@ -3706,7 +3706,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Farm", 
-            Value = getgenv().AutoFarm, 
+            CurrentValue = getgenv().AutoFarm, 
             Callback = function(bool)
                 getgenv().AutoFarm = bool
                 updatejson()
@@ -3714,7 +3714,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Start", 
-            Value = getgenv().autoStart, 
+            CurrentValue = getgenv().autoStart, 
             Callback = function(bool)
                 getgenv().autoStart = bool
                 updatejson()
@@ -3722,7 +3722,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Abilities", 
-            Value = getgenv().autoabilities, 
+            CurrentValue = getgenv().autoabilities, 
             Callback = function(bool)
                 getgenv().autoabilities = bool
                 updatejson()
@@ -3730,7 +3730,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Upgrade Units", 
-            Value = getgenv().autoUpgrade, 
+            CurrentValue = getgenv().autoUpgrade, 
             Callback = function(bool)
                 getgenv().autoUpgrade = bool
                 updatejson()
@@ -3738,7 +3738,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Sell at Specific Wave", 
-            Value = getgenv().autoabilities, 
+            CurrentValue = getgenv().autoabilities, 
             Callback = function(bool)
                 getgenv().autoSell = bool
                 updatejson()
@@ -3749,7 +3749,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Quit at Specific Wave", 
-            Value = getgenv().autoQuit, 
+            CurrentValue = getgenv().autoQuit, 
             Callback = function(bool)
                 getgenv().autoQuit = bool
                 updatejson()
@@ -3778,7 +3778,7 @@ function MainModule()
         autoFarmTab:CreateLabel("You don't need to put the script in your autoexec folder!")
         autoFarmTab:CreateToggle({
             Name = "Auto Load Script",
-            Value = getgenv().AutoLoadTP,
+            CurrentValue = getgenv().AutoLoadTP,
             Callback =  function(bool)
                 getgenv().AutoLoadTP = bool
                 updatejson()
@@ -3801,7 +3801,7 @@ function MainModule()
         
         autoFarmTab:CreateToggle({
             Name = "Auto Challenge", 
-            Value = getgenv().AutoChallenge, 
+            CurrentValue = getgenv().AutoChallenge, 
             Callback = function(bool)
                 getgenv().AutoChallenge = bool
                 updatejson()
@@ -3818,7 +3818,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Farm All Rewards", 
-            Value = getgenv().AutoChallengeAll, 
+            CurrentValue = getgenv().AutoChallengeAll, 
             Callback = function(bool)
                 getgenv().AutoChallengeAll = bool
                 updatejson()
@@ -3850,7 +3850,7 @@ function MainModule()
         autoFarmTab:CreateLabel("Special Banner - 2x Mythic")
         autoFarmTab:CreateToggle({
             Name = "Auto Summon {Use Ticket}",
-            Value =  getgenv().autosummonticketse, 
+            CurrentValue =  getgenv().autosummonticketse, 
             Callback = function(bool)
                 getgenv().autosummonticketse = bool
                 while getgenv().autosummonticketse do
@@ -3861,7 +3861,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Summon {Buy 1}", 
-            Value = getgenv().autosummongeme,
+            CurrentValue = getgenv().autosummongeme,
             Callback = function(bool)
             getgenv().autosummongeme = bool
             while getgenv().autosummongeme do
@@ -3872,7 +3872,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Summon {Buy 10}", 
-            Value = getgenv().autosummongem10e,
+            CurrentValue = getgenv().autosummongem10e,
             Callback = function(bool)
                 getgenv().autosummongem10e = bool
                 while getgenv().autosummongem10e do
@@ -3885,7 +3885,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Summon {Use Ticket}",
-            Value =  getgenv().autosummontickets, 
+            CurrentValue = getgenv().autosummontickets, 
             Callback = function(bool)
                 getgenv().autosummontickets = bool
                 while getgenv().autosummontickets do
@@ -3896,7 +3896,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Summon {Buy 1}", 
-            Value = getgenv().autosummongem,
+            CurrentValue = getgenv().autosummongem,
             Callback = function(bool)
             getgenv().autosummongem = bool
             while getgenv().autosummongem do
@@ -3907,7 +3907,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Summon {Buy 10}", 
-            Value = getgenv().autosummongem10,
+            CurrentValue = getgenv().autosummongem10,
             Callback = function(bool)
                 getgenv().autosummongem10 = bool
                 while getgenv().autosummongem10 do
@@ -3927,7 +3927,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Sell Units", 
-            Value = getgenv().UnitSellTog, 
+            CurrentValue = getgenv().UnitSellTog, 
             Callback = function(bool)
                 getgenv().UnitSellTog = bool
             end}) 
@@ -3941,7 +3941,7 @@ function MainModule()
         autoFarmTab:CreateLabel("You don't need to put the script in your autoexec folder!")
         autoFarmTab:CreateToggle({
             Name = "Auto Load Script", 
-            Value = getgenv().AutoLoadTP, 
+            CurrentValue = getgenv().AutoLoadTP, 
             Callback = function(bool)
                 getgenv().AutoLoadTP = bool
                 updatejson()
@@ -3959,7 +3959,7 @@ function MainModule()
         --#region Auto Farm Tab
         autoFarmTab:CreateToggle({
             Name = "Auto Continue", 
-            Value = getgenv().AutoContinue, 
+            CurrentValue = getgenv().AutoContinue, 
             Callback = function(bool)
                 getgenv().AutoContinue = bool
                 updatejson()
@@ -3967,7 +3967,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Replay", 
-            Value = getgenv().AutoReplay, 
+            CurrentValue = getgenv().AutoReplay, 
             Callback = function(bool)
                 getgenv().AutoReplay = bool
                 updatejson()
@@ -3975,7 +3975,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Leave", 
-            Value = getgenv().AutoLeave, 
+            CurrentValue = getgenv().AutoLeave, 
             Callback = function(bool)
                 getgenv().AutoLeave = bool
                 updatejson()
@@ -3983,7 +3983,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Farm Event", 
-            Value = getgenv().AutoFarmTP, 
+            CurrentValue = getgenv().AutoFarmTP, 
             Callback = function(bool)
                 getgenv().AutoFarmTP = bool
                 updatejson()
@@ -3991,7 +3991,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Start Infinity Castle", 
-            Value = getgenv().AutoFarmIC, 
+            CurrentValue = getgenv().AutoFarmIC, 
             Callback = function(bool)
                 getgenv().AutoFarmIC = bool
                 updatejson()
@@ -3999,7 +3999,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Farm", 
-            Value = getgenv().AutoFarm, 
+            CurrentValue = getgenv().AutoFarm, 
             Callback = function(bool)
                 getgenv().AutoFarm = bool
                 updatejson()
@@ -4007,7 +4007,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Start", 
-            Value = getgenv().autoStart, 
+            CurrentValue = getgenv().autoStart, 
             Callback = function(bool)
                 getgenv().autoStart = bool
                 updatejson()
@@ -4015,7 +4015,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Abilities", 
-            Value = getgenv().autoabilities, 
+            CurrentValue = getgenv().autoabilities, 
             Callback = function(bool)
                 getgenv().autoabilities = bool
                 updatejson()
@@ -4023,7 +4023,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Upgrade Units", 
-            Value = getgenv().autoUpgrade, 
+            CurrentValue = getgenv().autoUpgrade, 
             Callback = function(bool)
                 getgenv().autoUpgrade = bool
                 updatejson()
@@ -4156,7 +4156,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Sell at Specific Wave", 
-            Value = getgenv().autoabilities, 
+            CurrentValue = getgenv().autoabilities, 
             Callback = function(bool)
                 getgenv().autoSell = bool
                 updatejson()
@@ -4167,7 +4167,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Quit at Specific Wave", 
-            Value = getgenv().autoQuit, 
+            CurrentValue = getgenv().autoQuit, 
             Callback = function(bool)
                 getgenv().autoQuit = bool
                 updatejson()
@@ -4321,7 +4321,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Challenge", 
-            Value = getgenv().AutoChallenge, 
+            CurrentValue = getgenv().AutoChallenge, 
             Callback = function(bool)
                 getgenv().AutoChallenge = bool
                 updatejson()
@@ -4338,7 +4338,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Farm All Rewards", 
-            Value = getgenv().AutoChallengeAll, 
+            CurrentValue = getgenv().AutoChallengeAll, 
             Callback = function(bool)
                 getgenv().AutoChallengeAll = bool
                 updatejson()
@@ -4350,7 +4350,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Sell at Specific Wave", 
-            Value = getgenv().autoSell, 
+            CurrentValue = getgenv().autoSell, 
             Callback = function(bool)
                 getgenv().autoSell = bool
                 updatejson()
@@ -4358,7 +4358,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Quit at Specific Wave", 
-            Value = getgenv().autoQuit, 
+            CurrentValue = getgenv().autoQuit, 
             Callback = function(bool)
                 getgenv().autoQuit = bool
                 updatejson()
