@@ -2445,7 +2445,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "0.0.1a"
+local scriptVersion = "1.6.4b"
 
 ---### Loading Section ###---
 task.wait(2)
@@ -3748,7 +3748,7 @@ function MainModule()
             end})
 
         autoFarmTab:CreateToggle({
-            Name = "Auto Sell at Specific Wave", 
+            Name = "Auto Quit at Specific Wave", 
             Value = getgenv().autoQuit, 
             Callback = function(bool)
                 getgenv().autoQuit = bool
