@@ -1547,6 +1547,10 @@ function RayfieldLibrary:CreateWindow(Settings)
 				Section.Title.Text = NewSection
 			end
 
+            function SectionValue:Destroy()
+                Section:Destroy()
+            end
+
 			SDone = true
 
 			return SectionValue
@@ -3769,7 +3773,7 @@ function MainModule()
             PlaceholderText = tostring(getgenv().quitAtWave), 
             RemoveTextAfterFocusLost = false,
             Callback = function(t)
-                getgenv().sellatwave = tonumber(t)
+                getgenv().quitatwave = tonumber(t)
                 updatejson()
             end})
 
@@ -3932,6 +3936,8 @@ function MainModule()
                 getgenv().UnitSellTog = bool
             end}) 
     else -- When in a match
+        local UnitTrackerTab = mainWindow:CreateTab("Unit Tracker")
+
         game.Players.LocalPlayer.PlayerGui.MessageGui.Enabled = false
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error.Volume = 0
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error_old.Volume = 0
@@ -3955,6 +3961,7 @@ function MainModule()
         autoFarmTab:CreateLabel("If it doesn't work properly, then put the script in the autoexec folder!")
 
         local autoFarmSection = autoFarmTab:CreateSection("Auto Farm")
+
 
         --#region Auto Farm Tab
         autoFarmTab:CreateToggle({
@@ -4963,6 +4970,28 @@ end
 --#endregion
 --------------------------------------------------
 
+coroutine.resume(coroutine.create(function()
+    repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
+
+    while task.wait() do {
+        unitList = {}
+        sections = {}
+        toggles = {}
+
+        for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
+            if v:FindFirstChild("_stats") then
+                if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
+                    table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["upgrade"].Value, v})
+                end
+            end
+        end
+    
+        for id, upgrade in pairs(unitList) do 
+            table.insert(toggles, UnitTrackerTab:CreateSection(Name = id .. "(Upgrade [" .. upgrade .. "])"))
+    }
+
+    
+))
 
 
 ------// Auto Farm \\------
