@@ -1,8 +1,2455 @@
-local versionx = "1.6.4"
+--[[
 
----// Loading Section \\---
+Rayfield Interface Suite
+by Sirius
+
+shlex | Designing + Programming
+iRay  | Programming
+
+]]
+
+-- DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING - Defrag
+
+local Release = "Beta 7R"
+local NotificationDuration = 6.5
+local RayfieldFolder = "Rayfield"
+local ConfigurationFolder = RayfieldFolder.."/Configurations"
+local ConfigurationExtension = ".rfld"
+
+local RayfieldLibrary = {
+	Flags = {},
+	Theme = {
+		Default = {
+			TextFont = "Default", -- Default will use the various font faces used across Rayfield
+			TextColor = Color3.fromRGB(240, 240, 240),
+			
+			Background = Color3.fromRGB(25, 25, 25),
+			Topbar = Color3.fromRGB(34, 34, 34),
+			Shadow = Color3.fromRGB(20, 20, 20),
+			
+			NotificationBackground = Color3.fromRGB(20, 20, 20),
+			NotificationActionsBackground = Color3.fromRGB(230, 230, 230),
+			
+			TabBackground = Color3.fromRGB(80, 80, 80),
+			TabStroke = Color3.fromRGB(85, 85, 85),
+			TabBackgroundSelected = Color3.fromRGB(210, 210, 210),
+			TabTextColor = Color3.fromRGB(240, 240, 240),
+			SelectedTabTextColor = Color3.fromRGB(50, 50, 50),
+			
+			ElementBackground = Color3.fromRGB(35, 35, 35),
+			ElementBackgroundHover = Color3.fromRGB(40, 40, 40),
+			SecondaryElementBackground = Color3.fromRGB(25, 25, 25), -- For labels and paragraphs
+			ElementStroke = Color3.fromRGB(50, 50, 50),
+			SecondaryElementStroke = Color3.fromRGB(40, 40, 40), -- For labels and paragraphs
+			
+			SliderBackground = Color3.fromRGB(43, 105, 159),
+			SliderProgress = Color3.fromRGB(43, 105, 159),
+			SliderStroke = Color3.fromRGB(48, 119, 177),
+			
+			ToggleBackground = Color3.fromRGB(30, 30, 30),
+			ToggleEnabled = Color3.fromRGB(0, 146, 214),
+			ToggleDisabled = Color3.fromRGB(100, 100, 100),
+			ToggleEnabledStroke = Color3.fromRGB(0, 170, 255),
+			ToggleDisabledStroke = Color3.fromRGB(125, 125, 125),
+			ToggleEnabledOuterStroke = Color3.fromRGB(100, 100, 100),
+			ToggleDisabledOuterStroke = Color3.fromRGB(65, 65, 65),
+			
+			InputBackground = Color3.fromRGB(30, 30, 30),
+			InputStroke = Color3.fromRGB(65, 65, 65),
+			PlaceholderColor = Color3.fromRGB(178, 178, 178)
+		},
+		Light = {
+			TextFont = "Gotham", -- Default will use the various font faces used across Rayfield
+			TextColor = Color3.fromRGB(50, 50, 50), -- i need to make all text 240, 240, 240 and base gray on transparency not color to do this
+			
+			Background = Color3.fromRGB(255, 255, 255),
+			Topbar = Color3.fromRGB(217, 217, 217),
+			Shadow = Color3.fromRGB(223, 223, 223),
+
+			NotificationBackground = Color3.fromRGB(20, 20, 20),
+			NotificationActionsBackground = Color3.fromRGB(230, 230, 230),
+
+			TabBackground = Color3.fromRGB(220, 220, 220),
+			TabStroke = Color3.fromRGB(112, 112, 112),
+			TabBackgroundSelected = Color3.fromRGB(0, 142, 208),
+			TabTextColor = Color3.fromRGB(240, 240, 240),
+			SelectedTabTextColor = Color3.fromRGB(50, 50, 50),
+		
+			ElementBackground = Color3.fromRGB(198, 198, 198),
+			ElementBackgroundHover = Color3.fromRGB(230, 230, 230),
+			SecondaryElementBackground = Color3.fromRGB(136, 136, 136), -- For labels and paragraphs
+			ElementStroke = Color3.fromRGB(180, 199, 97),
+			SecondaryElementStroke = Color3.fromRGB(40, 40, 40), -- For labels and paragraphs
+
+			SliderBackground = Color3.fromRGB(31, 159, 71),
+			SliderProgress = Color3.fromRGB(31, 159, 71),
+			SliderStroke = Color3.fromRGB(42, 216, 94),
+
+			ToggleBackground = Color3.fromRGB(170, 203, 60),
+			ToggleEnabled = Color3.fromRGB(32, 214, 29),
+			ToggleDisabled = Color3.fromRGB(100, 22, 23),
+			ToggleEnabledStroke = Color3.fromRGB(17, 255, 0),
+			ToggleDisabledStroke = Color3.fromRGB(65, 8, 8),
+			ToggleEnabledOuterStroke = Color3.fromRGB(0, 170, 0),
+			ToggleDisabledOuterStroke = Color3.fromRGB(170, 0, 0),
+
+			InputBackground = Color3.fromRGB(31, 159, 71),
+			InputStroke = Color3.fromRGB(19, 65, 31),
+			PlaceholderColor = Color3.fromRGB(178, 178, 178)
+		}
+	}
+}
+
+-- Services
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+
+-- Interface Management
+local Rayfield = game:GetObjects("rbxassetid://10804731440")[1]
+
+if gethui then
+	Rayfield.Parent = gethui()
+elseif syn.protect_gui then 
+	syn.protect_gui(Rayfield)
+	Rayfield.Parent = CoreGui
+elseif CoreGui:FindFirstChild("RobloxGui") then
+	Rayfield.Parent = CoreGui:FindFirstChild("RobloxGui")
+else
+	Rayfield.Parent = CoreGui
+end
+
+if gethui then
+	for _, Interface in ipairs(gethui():GetChildren()) do
+		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+			Interface.Enabled = false
+			Interface.Name = "Rayfield-Old"
+		end
+	end
+else
+	for _, Interface in ipairs(CoreGui:GetChildren()) do
+		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+			Interface.Enabled = false
+			Interface.Name = "Rayfield-Old"
+		end
+	end
+end
+
+-- Object Variables
+
+local Camera = workspace.CurrentCamera
+local Main = Rayfield.Main
+local Topbar = Main.Topbar
+local Elements = Main.Elements
+local LoadingFrame = Main.LoadingFrame
+local TabList = Main.TabList
+
+Rayfield.DisplayOrder = 100
+LoadingFrame.Version.Text = Release
+
+
+-- Variables
+
+local request = (syn and syn.request) or (http and http.request) or http_request
+local CFileName = nil
+local CEnabled = false
+local Minimised = false
+local Hidden = false
+local Debounce = false
+local Notifications = Rayfield.Notifications
+
+local SelectedTheme = RayfieldLibrary.Theme.Default
+
+function ChangeTheme(ThemeName)
+	SelectedTheme = RayfieldLibrary.Theme[ThemeName]
+	for _, obj in ipairs(Rayfield:GetDescendants()) do
+		if obj.ClassName == "TextLabel" or obj.ClassName == "TextBox" or obj.ClassName == "TextButton" then
+			if SelectedTheme.TextFont ~= "Default" then 
+				obj.TextColor3 = SelectedTheme.TextColor
+				obj.Font = SelectedTheme.TextFont
+			end
+		end
+	end
+	
+	Rayfield.Main.BackgroundColor3 = SelectedTheme.Background
+	Rayfield.Main.Topbar.BackgroundColor3 = SelectedTheme.Topbar
+	Rayfield.Main.Topbar.CornerRepair.BackgroundColor3 = SelectedTheme.Topbar
+	Rayfield.Main.Shadow.Image.ImageColor3 = SelectedTheme.Shadow
+	
+	Rayfield.Main.Topbar.ChangeSize.ImageColor3 = SelectedTheme.TextColor
+	Rayfield.Main.Topbar.Hide.ImageColor3 = SelectedTheme.TextColor
+	Rayfield.Main.Topbar.Theme.ImageColor3 = SelectedTheme.TextColor
+	
+	for _, TabPage in ipairs(Elements:GetChildren()) do
+		for _, Element in ipairs(TabPage:GetChildren()) do
+			if Element.ClassName == "Frame" and Element.Name ~= "Placeholder" and Element.Name ~= "SectionSpacing" and Element.Name ~= "SectionTitle"  then
+				Element.BackgroundColor3 = SelectedTheme.ElementBackground
+				Element.UIStroke.Color = SelectedTheme.ElementStroke
+			end
+		end
+	end
+	
+end
+
+local function AddDraggingFunctionality(DragPoint, Main)
+	pcall(function()
+		local Dragging, DragInput, MousePos, FramePos = false
+		DragPoint.InputBegan:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+				Dragging = true
+				MousePos = Input.Position
+				FramePos = Main.Position
+
+				Input.Changed:Connect(function()
+					if Input.UserInputState == Enum.UserInputState.End then
+						Dragging = false
+					end
+				end)
+			end
+		end)
+		DragPoint.InputChanged:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseMovement then
+				DragInput = Input
+			end
+		end)
+		UserInputService.InputChanged:Connect(function(Input)
+			if Input == DragInput and Dragging then
+				local Delta = Input.Position - MousePos
+				TweenService:Create(Main, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)}):Play()
+			end
+		end)
+	end)
+end   
+
+local function PackColor(Color)
+	return {R = Color.R * 255, G = Color.G * 255, B = Color.B * 255}
+end    
+
+local function UnpackColor(Color)
+	return Color3.fromRGB(Color.R, Color.G, Color.B)
+end
+
+local function LoadConfiguration(Configuration)
+	local Data = HttpService:JSONDecode(Configuration)
+	table.foreach(Data, function(FlagName, FlagValue)
+		if RayfieldLibrary.Flags[FlagName] then
+			spawn(function() 
+				if RayfieldLibrary.Flags[FlagName].Type == "ColorPicker" then
+					RayfieldLibrary.Flags[FlagName]:Set(UnpackColor(FlagValue))
+				else
+					if RayfieldLibrary.Flags[FlagName].CurrentValue or RayfieldLibrary.Flags[FlagName].CurrentKeybind or RayfieldLibrary.Flags[FlagName].CurrentOption or RayfieldLibrary.Flags[FlagName].Color ~= FlagValue then RayfieldLibrary.Flags[FlagName]:Set(FlagValue) end
+				end    
+			end)
+		else
+			RayfieldLibrary:Notify({Title = "Flag Error", Content = "Rayfield was unable to find '"..FlagName.. "'' in the current script"})
+		end
+	end)
+end
+
+local function SaveConfiguration()
+	if not CEnabled then return end
+	local Data = {}
+	for i,v in pairs(RayfieldLibrary.Flags) do
+		if v.Type == "ColorPicker" then
+			Data[i] = PackColor(v.Color)
+		else
+			Data[i] = v.CurrentValue or v.CurrentKeybind or v.CurrentOption or v.Color
+		end
+	end	
+	writefile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
+end
+
+local neon = (function() -- Open sourced neon module
+	local module = {}
+
+	do
+		local function IsNotNaN(x)
+			return x == x
+		end
+		local continued = IsNotNaN(Camera:ScreenPointToRay(0,0).Origin.x)
+		while not continued do
+			RunService.RenderStepped:wait()
+			continued = IsNotNaN(Camera:ScreenPointToRay(0,0).Origin.x)
+		end
+	end
+	local RootParent = Camera
+	if getgenv().SecureMode == nil then
+		RootParent = Camera
+	else
+		if not getgenv().SecureMode then
+			RootParent = Camera
+		else 
+			RootParent = nil
+		end
+	end
+
+
+	local binds = {}
+	local root = Instance.new('Folder', RootParent)
+	root.Name = 'neon'
+
+
+	local GenUid; do
+		local id = 0
+		function GenUid()
+			id = id + 1
+			return 'neon::'..tostring(id)
+		end
+	end
+
+	local DrawQuad; do
+		local acos, max, pi, sqrt = math.acos, math.max, math.pi, math.sqrt
+		local sz = 0.2
+
+		function DrawTriangle(v1, v2, v3, p0, p1)
+			local s1 = (v1 - v2).magnitude
+			local s2 = (v2 - v3).magnitude
+			local s3 = (v3 - v1).magnitude
+			local smax = max(s1, s2, s3)
+			local A, B, C
+			if s1 == smax then
+				A, B, C = v1, v2, v3
+			elseif s2 == smax then
+				A, B, C = v2, v3, v1
+			elseif s3 == smax then
+				A, B, C = v3, v1, v2
+			end
+
+			local para = ( (B-A).x*(C-A).x + (B-A).y*(C-A).y + (B-A).z*(C-A).z ) / (A-B).magnitude
+			local perp = sqrt((C-A).magnitude^2 - para*para)
+			local dif_para = (A - B).magnitude - para
+
+			local st = CFrame.new(B, A)
+			local za = CFrame.Angles(pi/2,0,0)
+
+			local cf0 = st
+
+			local Top_Look = (cf0 * za).lookVector
+			local Mid_Point = A + CFrame.new(A, B).LookVector * para
+			local Needed_Look = CFrame.new(Mid_Point, C).LookVector
+			local dot = Top_Look.x*Needed_Look.x + Top_Look.y*Needed_Look.y + Top_Look.z*Needed_Look.z
+
+			local ac = CFrame.Angles(0, 0, acos(dot))
+
+			cf0 = cf0 * ac
+			if ((cf0 * za).lookVector - Needed_Look).magnitude > 0.01 then
+				cf0 = cf0 * CFrame.Angles(0, 0, -2*acos(dot))
+			end
+			cf0 = cf0 * CFrame.new(0, perp/2, -(dif_para + para/2))
+
+			local cf1 = st * ac * CFrame.Angles(0, pi, 0)
+			if ((cf1 * za).lookVector - Needed_Look).magnitude > 0.01 then
+				cf1 = cf1 * CFrame.Angles(0, 0, 2*acos(dot))
+			end
+			cf1 = cf1 * CFrame.new(0, perp/2, dif_para/2)
+
+			if not p0 then
+				p0 = Instance.new('Part')
+				p0.FormFactor = 'Custom'
+				p0.TopSurface = 0
+				p0.BottomSurface = 0
+				p0.Anchored = true
+				p0.CanCollide = false
+				p0.Material = 'Glass'
+				p0.Size = Vector3.new(sz, sz, sz)
+				local mesh = Instance.new('SpecialMesh', p0)
+				mesh.MeshType = 2
+				mesh.Name = 'WedgeMesh'
+			end
+			p0.WedgeMesh.Scale = Vector3.new(0, perp/sz, para/sz)
+			p0.CFrame = cf0
+
+			if not p1 then
+				p1 = p0:clone()
+			end
+			p1.WedgeMesh.Scale = Vector3.new(0, perp/sz, dif_para/sz)
+			p1.CFrame = cf1
+
+			return p0, p1
+		end
+
+		function DrawQuad(v1, v2, v3, v4, parts)
+			parts[1], parts[2] = DrawTriangle(v1, v2, v3, parts[1], parts[2])
+			parts[3], parts[4] = DrawTriangle(v3, v2, v4, parts[3], parts[4])
+		end
+	end
+
+	function module:BindFrame(frame, properties)
+		if RootParent == nil then return end
+		if binds[frame] then
+			return binds[frame].parts
+		end
+
+		local uid = GenUid()
+		local parts = {}
+		local f = Instance.new('Folder', root)
+		f.Name = frame.Name
+
+		local parents = {}
+		do
+			local function add(child)
+				if child:IsA'GuiObject' then
+					parents[#parents + 1] = child
+					add(child.Parent)
+				end
+			end
+			add(frame)
+		end
+
+		local function UpdateOrientation(fetchProps)
+			local zIndex = 1 - 0.05*frame.ZIndex
+			local tl, br = frame.AbsolutePosition, frame.AbsolutePosition + frame.AbsoluteSize
+			local tr, bl = Vector2.new(br.x, tl.y), Vector2.new(tl.x, br.y)
+			do
+				local rot = 0;
+				for _, v in ipairs(parents) do
+					rot = rot + v.Rotation
+				end
+				if rot ~= 0 and rot%180 ~= 0 then
+					local mid = tl:lerp(br, 0.5)
+					local s, c = math.sin(math.rad(rot)), math.cos(math.rad(rot))
+					local vec = tl
+					tl = Vector2.new(c*(tl.x - mid.x) - s*(tl.y - mid.y), s*(tl.x - mid.x) + c*(tl.y - mid.y)) + mid
+					tr = Vector2.new(c*(tr.x - mid.x) - s*(tr.y - mid.y), s*(tr.x - mid.x) + c*(tr.y - mid.y)) + mid
+					bl = Vector2.new(c*(bl.x - mid.x) - s*(bl.y - mid.y), s*(bl.x - mid.x) + c*(bl.y - mid.y)) + mid
+					br = Vector2.new(c*(br.x - mid.x) - s*(br.y - mid.y), s*(br.x - mid.x) + c*(br.y - mid.y)) + mid
+				end
+			end
+			DrawQuad(
+				Camera:ScreenPointToRay(tl.x, tl.y, zIndex).Origin, 
+				Camera:ScreenPointToRay(tr.x, tr.y, zIndex).Origin, 
+				Camera:ScreenPointToRay(bl.x, bl.y, zIndex).Origin, 
+				Camera:ScreenPointToRay(br.x, br.y, zIndex).Origin, 
+				parts
+			)
+			if fetchProps then
+				for _, pt in pairs(parts) do
+					pt.Parent = f
+				end
+				for propName, propValue in pairs(properties) do
+					for _, pt in pairs(parts) do
+						pt[propName] = propValue
+					end
+				end
+			end
+		end
+
+		UpdateOrientation(true)
+		RunService:BindToRenderStep(uid, 2000, UpdateOrientation)
+
+		binds[frame] = {
+			uid = uid;
+			parts = parts;
+		}
+		return binds[frame].parts
+	end
+
+	function module:Modify(frame, properties)
+		local parts = module:GetBoundParts(frame)
+		if parts then
+			for propName, propValue in pairs(properties) do
+				for _, pt in pairs(parts) do
+					pt[propName] = propValue
+				end
+			end
+		end
+	end
+
+	function module:UnbindFrame(frame)
+		if RootParent == nil then return end
+		local cb = binds[frame]
+		if cb then
+			RunService:UnbindFromRenderStep(cb.uid)
+			for _, v in pairs(cb.parts) do
+				v:Destroy()
+			end
+			binds[frame] = nil
+		end
+	end
+
+	function module:HasBinding(frame)
+		return binds[frame] ~= nil
+	end
+
+	function module:GetBoundParts(frame)
+		return binds[frame] and binds[frame].parts
+	end
+
+
+	return module
+
+end)()
+
+function RayfieldLibrary:Notify(NotificationSettings)
+	spawn(function()
+		local ActionCompleted = true
+		local Notification = Notifications.Template:Clone()
+		Notification.Parent = Notifications
+		Notification.Name = NotificationSettings.Title or "Unknown Title"
+		Notification.Visible = true
+
+		local blurlight = nil
+		if not getgenv().SecureMode then
+			blurlight = Instance.new("DepthOfFieldEffect",game:GetService("Lighting"))
+			blurlight.Enabled = true
+			blurlight.FarIntensity = 0
+			blurlight.FocusDistance = 51.6
+			blurlight.InFocusRadius = 50
+			blurlight.NearIntensity = 1
+			game:GetService("Debris"):AddItem(script,0)
+		end
+		
+		Notification.Actions.Template.Visible = false
+		
+		if NotificationSettings.Actions then
+			for _, Action in pairs(NotificationSettings.Actions) do
+				ActionCompleted = false
+				local NewAction = Notification.Actions.Template:Clone()
+				NewAction.BackgroundColor3 = SelectedTheme.NotificationActionsBackground
+				if SelectedTheme ~= RayfieldLibrary.Theme.Default then
+					NewAction.TextColor3 = SelectedTheme.TextColor
+				end
+				NewAction.Name = Action.Name
+				NewAction.Visible = true
+				NewAction.Parent = Notification.Actions
+				NewAction.Text = Action.Name
+				NewAction.BackgroundTransparency = 1
+				NewAction.TextTransparency = 1
+				NewAction.Size = UDim2.new(0, NewAction.TextBounds.X + 27, 0, 36)
+				
+				NewAction.MouseButton1Click:Connect(function()
+					local Success, Response = pcall(Action.Callback)
+					if not Success then
+						print("Rayfield | Action: "..Action.Name.." Callback Error " ..tostring(Response))
+					end
+					ActionCompleted = true
+				end)
+			end
+		end
+		Notification.BackgroundColor3 = SelectedTheme.Background
+		Notification.Title.Text = NotificationSettings.Title or "Unknown"
+		Notification.Title.TextTransparency = 1
+		Notification.Title.TextColor3 = SelectedTheme.TextColor
+		Notification.Description.Text = NotificationSettings.Content or "Unknown"
+		Notification.Description.TextTransparency = 1
+		Notification.Description.TextColor3 = SelectedTheme.TextColor
+		Notification.Icon.ImageColor3 = SelectedTheme.TextColor
+		if NotificationSettings.Image then
+			Notification.Icon.Image = "rbxassetid://"..tostring(NotificationSettings.Image) 
+		else
+			Notification.Icon.Image = "rbxassetid://3944680095"
+		end
+
+		Notification.Icon.ImageTransparency = 1
+
+		Notification.Parent = Notifications
+		Notification.Size = UDim2.new(0, 260, 0, 80)
+		Notification.BackgroundTransparency = 1
+		
+		TweenService:Create(Notification, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 295, 0, 91)}):Play()
+		TweenService:Create(Notification, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.1}):Play()
+		Notification:TweenPosition(UDim2.new(0.5,0,0.915,0),'Out','Quint',0.8,true)
+
+		wait(0.3)
+		TweenService:Create(Notification.Icon, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {ImageTransparency = 0}):Play()
+		TweenService:Create(Notification.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+		TweenService:Create(Notification.Description, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.2}):Play()
+		wait(0.2)
+
+
+
+		-- Requires Graphics Level 8-10
+		if getgenv().SecureMode == nil then
+			TweenService:Create(Notification, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.4}):Play()
+		else
+			if not getgenv().SecureMode then
+				TweenService:Create(Notification, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.4}):Play()
+			else 
+				TweenService:Create(Notification, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			end
+		end
+
+		if Rayfield.Name == "Rayfield" then
+			neon:BindFrame(Notification.BlurModule, {
+				Transparency = 0.98;
+				BrickColor = BrickColor.new("Institutional white");
+			})
+		end
+		
+		if not NotificationSettings.Actions then
+			wait(NotificationSettings.Duration or NotificationDuration - 0.5)
+		else
+			wait(0.8)
+			TweenService:Create(Notification, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 295, 0, 132)}):Play()
+			wait(0.3)
+			for _, Action in ipairs(Notification.Actions:GetChildren()) do
+				if Action.ClassName == "TextButton" and Action.Name ~= "Template" then
+					TweenService:Create(Action, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.2}):Play()
+					TweenService:Create(Action, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+					wait(0.05)
+				end
+			end
+		end
+		
+		repeat wait(0.001) until ActionCompleted
+
+		for _, Action in ipairs(Notification.Actions:GetChildren()) do
+			if Action.ClassName == "TextButton" and Action.Name ~= "Template" then
+				TweenService:Create(Action, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+				TweenService:Create(Action, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+			end
+		end
+
+		TweenService:Create(Notification.Title, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Position = UDim2.new(0.47, 0,0.234, 0)}):Play()
+		TweenService:Create(Notification.Description, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {Position = UDim2.new(0.528, 0,0.637, 0)}):Play()
+		TweenService:Create(Notification, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 280, 0, 83)}):Play()
+		TweenService:Create(Notification.Icon, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+		TweenService:Create(Notification, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.6}):Play()
+
+		wait(0.3)
+		TweenService:Create(Notification.Title, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.4}):Play()
+		TweenService:Create(Notification.Description, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.5}):Play()
+		wait(0.4)
+		TweenService:Create(Notification, TweenInfo.new(0.9, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 260, 0, 0)}):Play()
+		TweenService:Create(Notification, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+		TweenService:Create(Notification.Title, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+		TweenService:Create(Notification.Description, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+		wait(0.2)
+		if not getgenv().SecureMode then
+			neon:UnbindFrame(Notification.BlurModule)
+			blurlight:Destroy()
+		end
+		wait(0.9)
+		Notification:Destroy()
+	end)
+end
+
+function Hide()
+	Debounce = true
+	RayfieldLibrary:Notify({Title = "Interface Hidden", Content = "The interface has been hidden, you can unhide the interface by tapping RightShift", Duration = 7})
+	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 470, 0, 400)}):Play()
+	TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 470, 0, 45)}):Play()
+	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(Main.Topbar.Divider, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(Main.Topbar.CornerRepair, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(Main.Topbar.Title, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+	TweenService:Create(Topbar.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+	for _, TopbarButton in ipairs(Topbar:GetChildren()) do
+		if TopbarButton.ClassName == "ImageButton" then
+			TweenService:Create(TopbarButton, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+		end
+	end
+	for _, tabbtn in ipairs(TabList:GetChildren()) do
+		if tabbtn.ClassName == "Frame" and tabbtn.Name ~= "Placeholder" then
+			TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+			TweenService:Create(tabbtn.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+			TweenService:Create(tabbtn.Image, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+			TweenService:Create(tabbtn.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+			TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+		end
+	end
+	for _, tab in ipairs(Elements:GetChildren()) do
+		if tab.Name ~= "Template" and tab.ClassName == "ScrollingFrame" and tab.Name ~= "Placeholder" then
+			for _, element in ipairs(tab:GetChildren()) do
+				if element.ClassName == "Frame" then
+					if element.Name ~= "SectionSpacing" and element.Name ~= "Placeholder" then
+						if element.Name == "SectionTitle" then
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						else
+							TweenService:Create(element, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+							TweenService:Create(element.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						end
+						for _, child in ipairs(element:GetChildren()) do
+							if child.ClassName == "Frame" or child.ClassName == "TextLabel" or child.ClassName == "TextBox" or child.ClassName == "ImageButton" or child.ClassName == "ImageLabel" then
+								child.Visible = false
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	wait(0.5)
+	Main.Visible = false
+	Debounce = false
+end
+
+function Unhide()
+	Debounce = true
+	Main.Position = UDim2.new(0.5, 0, 0.5, 0)
+	Main.Visible = true
+	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 475)}):Play()
+	TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 45)}):Play()
+	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.4}):Play()
+	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Main.Topbar.Divider, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Main.Topbar.CornerRepair, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Main.Topbar.Title, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+	if Minimised then
+		spawn(Maximise)
+	end
+	for _, TopbarButton in ipairs(Topbar:GetChildren()) do
+		if TopbarButton.ClassName == "ImageButton" then
+			TweenService:Create(TopbarButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
+		end
+	end
+	for _, tabbtn in ipairs(TabList:GetChildren()) do
+		if tabbtn.ClassName == "Frame" and tabbtn.Name ~= "Placeholder" then
+			if tostring(Elements.UIPageLayout.CurrentPage) == tabbtn.Title.Text then
+				TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+				TweenService:Create(tabbtn.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+				TweenService:Create(tabbtn.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.9}):Play()
+				TweenService:Create(tabbtn.Image, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0}):Play()
+				TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+			else
+				TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.7}):Play()
+				TweenService:Create(tabbtn.Image, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.2}):Play()
+				TweenService:Create(tabbtn.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.7}):Play()
+				TweenService:Create(tabbtn.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0.2}):Play()
+				TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			end
+			
+		end
+	end
+	for _, tab in ipairs(Elements:GetChildren()) do
+		if tab.Name ~= "Template" and tab.ClassName == "ScrollingFrame" and tab.Name ~= "Placeholder" then
+			for _, element in ipairs(tab:GetChildren()) do
+				if element.ClassName == "Frame" then
+					if element.Name ~= "SectionSpacing" and element.Name ~= "Placeholder" then
+						if element.Name == "SectionTitle" then
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+						else
+							TweenService:Create(element, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(element.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+						end
+						for _, child in ipairs(element:GetChildren()) do
+							if child.ClassName == "Frame" or child.ClassName == "TextLabel" or child.ClassName == "TextBox" or child.ClassName == "ImageButton" or child.ClassName == "ImageLabel" then
+								child.Visible = true
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	wait(0.5)
+	Minimised = false
+	Debounce = false
+end
+
+function Maximise()
+	Debounce = true
+	Topbar.ChangeSize.Image = "rbxassetid://"..10137941941
+
+
+	TweenService:Create(Topbar.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 0.4}):Play()
+	TweenService:Create(Topbar.CornerRepair, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Topbar.Divider, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 475)}):Play()
+	TweenService:Create(Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 45)}):Play()
+	TabList.Visible = true
+	wait(0.2)
+
+	Elements.Visible = true
+
+	for _, tab in ipairs(Elements:GetChildren()) do
+		if tab.Name ~= "Template" and tab.ClassName == "ScrollingFrame" and tab.Name ~= "Placeholder" then
+			for _, element in ipairs(tab:GetChildren()) do
+				if element.ClassName == "Frame" then
+					if element.Name ~= "SectionSpacing" and element.Name ~= "Placeholder" then
+						if element.Name == "SectionTitle" then
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+						else
+							TweenService:Create(element, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(element.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+						end
+						for _, child in ipairs(element:GetChildren()) do
+							if child.ClassName == "Frame" or child.ClassName == "TextLabel" or child.ClassName == "TextBox" or child.ClassName == "ImageButton" or child.ClassName == "ImageLabel" then
+								child.Visible = true
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+
+	wait(0.1)
+
+	for _, tabbtn in ipairs(TabList:GetChildren()) do
+		if tabbtn.ClassName == "Frame" and tabbtn.Name ~= "Placeholder" then
+			if tostring(Elements.UIPageLayout.CurrentPage) == tabbtn.Title.Text then
+				TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+				TweenService:Create(tabbtn.Image, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0}):Play()
+				TweenService:Create(tabbtn.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+				TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+				TweenService:Create(tabbtn.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.9}):Play()
+			else
+				TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.7}):Play()
+				TweenService:Create(tabbtn.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.7}):Play()
+				TweenService:Create(tabbtn.Image, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.2}):Play()
+				TweenService:Create(tabbtn.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0.2}):Play()
+				TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			end
+			
+		end
+	end
+
+
+	wait(0.5)
+	Debounce = false
+end
+
+function Minimise()
+	Debounce = true
+	Topbar.ChangeSize.Image = "rbxassetid://"..11036884234
+
+	for _, tabbtn in ipairs(TabList:GetChildren()) do
+		if tabbtn.ClassName == "Frame" and tabbtn.Name ~= "Placeholder" then
+			TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+			TweenService:Create(tabbtn.Image, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+			TweenService:Create(tabbtn.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+			TweenService:Create(tabbtn.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+			TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+		end
+	end
+
+	for _, tab in ipairs(Elements:GetChildren()) do
+		if tab.Name ~= "Template" and tab.ClassName == "ScrollingFrame" and tab.Name ~= "Placeholder" then
+			for _, element in ipairs(tab:GetChildren()) do
+				if element.ClassName == "Frame" then
+					if element.Name ~= "SectionSpacing" and element.Name ~= "Placeholder" then
+						if element.Name == "SectionTitle" then
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						else
+							TweenService:Create(element, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+							TweenService:Create(element.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+							TweenService:Create(element.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						end
+						for _, child in ipairs(element:GetChildren()) do
+							if child.ClassName == "Frame" or child.ClassName == "TextLabel" or child.ClassName == "TextBox" or child.ClassName == "ImageButton" or child.ClassName == "ImageLabel" then
+								child.Visible = false
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	TweenService:Create(Topbar.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+	TweenService:Create(Topbar.CornerRepair, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(Topbar.Divider, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 495, 0, 45)}):Play()
+	TweenService:Create(Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 495, 0, 45)}):Play()
+
+	wait(0.3)
+
+	Elements.Visible = false
+	TabList.Visible = false
+
+	wait(0.2)
+	Debounce = false
+end
+
+function RayfieldLibrary:CreateWindow(Settings)
+	local Passthrough = false
+	Topbar.Title.Text = Settings.Name
+	Main.Size = UDim2.new(0, 450, 0, 260)
+	Main.Visible = true
+	Main.BackgroundTransparency = 1
+	LoadingFrame.Title.TextTransparency = 1
+	LoadingFrame.Subtitle.TextTransparency = 1
+	Main.Shadow.Image.ImageTransparency = 1
+	LoadingFrame.Version.TextTransparency = 1
+	LoadingFrame.Title.Text = Settings.LoadingTitle or "Rayfield Interface Suite"
+	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "by Sirius"
+	if Settings.LoadingTitle ~= "Rayfield Interface Suite" then
+		LoadingFrame.Version.Text = "Rayfield UI"
+	end
+	Topbar.Visible = false
+	Elements.Visible = false
+	LoadingFrame.Visible = true
+	
+	
+	pcall(function()
+		if not Settings.ConfigurationSaving.FileName then
+			Settings.ConfigurationSaving.FileName = tostring(game.PlaceId)
+		end
+		if not isfolder(RayfieldFolder.."/".."Configuration Folders") then
+			
+		end
+		if Settings.ConfigurationSaving.Enabled == nil then
+			Settings.ConfigurationSaving.Enabled = false
+		end
+		CFileName = Settings.ConfigurationSaving.FileName
+		ConfigurationFolder = Settings.ConfigurationSaving.FolderName or ConfigurationFolder
+		CEnabled = Settings.ConfigurationSaving.Enabled
+
+		if Settings.ConfigurationSaving.Enabled then
+			if not isfolder(ConfigurationFolder) then
+				makefolder(ConfigurationFolder)
+			end	
+		end
+	end)
+
+	AddDraggingFunctionality(Topbar,Main)
+
+	for _, TabButton in ipairs(TabList:GetChildren()) do
+		if TabButton.ClassName == "Frame" and TabButton.Name ~= "Placeholder" then
+			TabButton.BackgroundTransparency = 1
+			TabButton.Title.TextTransparency = 1
+			TabButton.Shadow.ImageTransparency = 1
+			TabButton.Image.ImageTransparency = 1
+			TabButton.UIStroke.Transparency = 1
+		end
+	end
+	
+	if Settings.Discord then
+		if not isfolder(RayfieldFolder.."/Discord Invites") then
+			makefolder(RayfieldFolder.."/Discord Invites")
+		end
+		if not isfile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
+			if request then
+				request({
+					Url = 'http://127.0.0.1:6463/rpc?v=1',
+					Method = 'POST',
+					Headers = {
+						['Content-Type'] = 'application/json',
+						Origin = 'https://discord.com'
+					},
+					Body = HttpService:JSONEncode({
+						cmd = 'INVITE_BROWSER',
+						nonce = HttpService:GenerateGUID(false),
+						args = {code = Settings.Discord.Invite}
+					})
+				})
+			end
+			
+			if Settings.Discord.RememberJoins then -- We do logic this way so if the developer changes this setting, the user still won't be prompted, only new users
+				writefile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Rayfield RememberJoins is true for this invite, this invite will not ask you to join again")
+			end
+		else
+			
+		end
+	end
+
+	if Settings.KeySystem then
+		if not Settings.KeySettings then
+			Passthrough = true
+			return
+		end
+		
+		if not isfolder(RayfieldFolder.."/Key System") then
+			makefolder(RayfieldFolder.."/Key System")
+		end
+		
+		if Settings.KeySettings.GrabKeyFromSite then
+			local Success, Response = pcall(function()
+				Settings.KeySettings.Key = game:HttpGet(Settings.KeySettings.Key)
+			end)
+			if not Success then
+				print("Rayfield | "..Settings.KeySettings.Key.." Error " ..tostring(Response))
+			end
+		end
+		
+		if not Settings.KeySettings.FileName then
+			Settings.KeySettings.FileName = "No file name specified"
+		end
+
+		if isfile(RayfieldFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension) then
+			if readfile(RayfieldFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension) == Settings.KeySettings.Key then
+				Passthrough = true
+			end
+		end
+		
+		if not Passthrough then
+			local AttemptsRemaining = math.random(2,6)
+			Rayfield.Enabled = false
+			local KeyUI = game:GetObjects("rbxassetid://11380036235")[1]
+
+			if gethui then
+				KeyUI.Parent = gethui()
+			elseif syn.protect_gui then
+				syn.protect_gui(Rayfield)
+				KeyUI.Parent = CoreGui
+			else
+				KeyUI.Parent = CoreGui
+			end
+
+			if gethui then
+				for _, Interface in ipairs(gethui():GetChildren()) do
+					if Interface.Name == KeyUI.Name and Interface ~= KeyUI then
+						Interface.Enabled = false
+						Interface.Name = "KeyUI-Old"
+					end
+				end
+			else
+				for _, Interface in ipairs(CoreGui:GetChildren()) do
+					if Interface.Name == KeyUI.Name and Interface ~= KeyUI then
+						Interface.Enabled = false
+						Interface.Name = "KeyUI-Old"
+					end
+				end
+			end
+
+			local KeyMain = KeyUI.Main
+			KeyMain.Title.Text = Settings.KeySettings.Title or Settings.Name
+			KeyMain.Subtitle.Text = Settings.KeySettings.Subtitle or "Key System"
+			KeyMain.NoteMessage.Text = Settings.KeySettings.Note or "No instructions"
+
+			KeyMain.Size = UDim2.new(0, 467, 0, 175)
+			KeyMain.BackgroundTransparency = 1
+			KeyMain.Shadow.Image.ImageTransparency = 1
+			KeyMain.Title.TextTransparency = 1
+			KeyMain.Subtitle.TextTransparency = 1
+			KeyMain.KeyNote.TextTransparency = 1
+			KeyMain.Input.BackgroundTransparency = 1
+			KeyMain.Input.UIStroke.Transparency = 1
+			KeyMain.Input.InputBox.TextTransparency = 1
+			KeyMain.NoteTitle.TextTransparency = 1
+			KeyMain.NoteMessage.TextTransparency = 1
+			KeyMain.Hide.ImageTransparency = 1
+
+			TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 187)}):Play()
+			TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 0.5}):Play()
+			wait(0.05)
+			TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+			TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+			wait(0.05)
+			TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+			TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+			wait(0.05)
+			TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+			TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+			wait(0.15)
+			TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 0.3}):Play()
+
+
+			KeyUI.Main.Input.InputBox.FocusLost:Connect(function()
+				if KeyMain.Input.InputBox.Text == Settings.KeySettings.Key then
+					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+					TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+					TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+					TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+					wait(0.51)
+					Passthrough = true
+					if Settings.KeySettings.SaveKey then
+						if writefile then
+							writefile(RayfieldFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, Settings.KeySettings.Key)
+						end
+						RayfieldLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully"})
+					end
+				else
+					if AttemptsRemaining == 0 then
+						TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+						TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+						TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+						TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+						TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+						TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+						wait(0.45)
+						game.Players.LocalPlayer:Kick("No Attempts Remaining")
+						game:Shutdown()
+					end
+					KeyMain.Input.InputBox.Text = ""
+					AttemptsRemaining = AttemptsRemaining - 1
+					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+					TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.495,0,0.5,0)}):Play()
+					wait(0.1)
+					TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.505,0,0.5,0)}):Play()
+					wait(0.1)
+					TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5,0,0.5,0)}):Play()
+					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 187)}):Play()
+				end
+			end)
+
+			KeyMain.Hide.MouseButton1Click:Connect(function()
+				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+				TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+				TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+				TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+				TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+				TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+				TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+				TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+				TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+				TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+				TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+				wait(0.51)
+				RayfieldLibrary:Destroy()
+				KeyUI:Destroy()
+			end)
+		else
+			Passthrough = true
+		end
+	end
+	if Settings.KeySystem then
+		repeat wait() until Passthrough
+	end
+	
+	Notifications.Template.Visible = false
+	Notifications.Visible = true
+	Rayfield.Enabled = true
+	wait(0.5)
+	TweenService:Create(Main, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.55}):Play()
+	wait(0.1)
+	TweenService:Create(LoadingFrame.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+	wait(0.05)
+	TweenService:Create(LoadingFrame.Subtitle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+	wait(0.05)
+	TweenService:Create(LoadingFrame.Version, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+
+	Elements.Template.LayoutOrder = 100000
+	Elements.Template.Visible = false
+
+	Elements.UIPageLayout.FillDirection = Enum.FillDirection.Horizontal
+	TabList.Template.Visible = false
+
+	-- Tab
+	local FirstTab = false
+	local Window = {}
+	function Window:CreateTab(Name,Image)
+		local SDone = false
+		local TabButton = TabList.Template:Clone()
+		TabButton.Name = Name
+		TabButton.Title.Text = Name
+		TabButton.Parent = TabList
+		TabButton.Title.TextWrapped = false
+		TabButton.Size = UDim2.new(0, TabButton.Title.TextBounds.X + 30, 0, 30)
+		
+		if Image then
+			TabButton.Title.AnchorPoint = Vector2.new(0, 0.5)
+			TabButton.Title.Position = UDim2.new(0, 37, 0.5, 0)
+			TabButton.Image.Image = "rbxassetid://"..Image
+			TabButton.Image.Visible = true
+			TabButton.Title.TextXAlignment = Enum.TextXAlignment.Left
+			TabButton.Size = UDim2.new(0, TabButton.Title.TextBounds.X + 46, 0, 30)
+		end
+
+		TabButton.BackgroundTransparency = 1
+		TabButton.Title.TextTransparency = 1
+		TabButton.Shadow.ImageTransparency = 1
+		TabButton.Image.ImageTransparency = 1
+		TabButton.UIStroke.Transparency = 1
+
+		TabButton.Visible = true
+
+		-- Create Elements Page
+		local TabPage = Elements.Template:Clone()
+		TabPage.Name = Name
+		TabPage.Visible = true
+
+		TabPage.LayoutOrder = #Elements:GetChildren()
+
+		for _, TemplateElement in ipairs(TabPage:GetChildren()) do
+			if TemplateElement.ClassName == "Frame" and TemplateElement.Name ~= "Placeholder" then
+				TemplateElement:Destroy()
+			end
+		end
+
+		TabPage.Parent = Elements
+		if not FirstTab then
+			Elements.UIPageLayout.Animated = false
+			Elements.UIPageLayout:JumpTo(TabPage)
+			Elements.UIPageLayout.Animated = true
+		end
+		
+		if SelectedTheme ~= RayfieldLibrary.Theme.Default then
+			TabButton.Shadow.Visible = false
+		end
+		TabButton.UIStroke.Color = SelectedTheme.TabStroke
+		-- Animate
+		wait(0.1)
+		if FirstTab then
+			TabButton.BackgroundColor3 = SelectedTheme.TabBackground
+			TabButton.Image.ImageColor3 = SelectedTheme.TabTextColor
+			TabButton.Title.TextColor3 = SelectedTheme.TabTextColor
+			TweenService:Create(TabButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.7}):Play()
+			TweenService:Create(TabButton.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0.2}):Play()
+			TweenService:Create(TabButton.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.2}):Play()
+			TweenService:Create(TabButton.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			
+			TweenService:Create(TabButton.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.7}):Play()
+		else
+			FirstTab = Name
+			TabButton.BackgroundColor3 = SelectedTheme.TabBackgroundSelected
+			TabButton.Image.ImageColor3 = SelectedTheme.SelectedTabTextColor
+			TabButton.Title.TextColor3 = SelectedTheme.SelectedTabTextColor
+			TweenService:Create(TabButton.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.9}):Play()
+			TweenService:Create(TabButton.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0}):Play()
+			TweenService:Create(TabButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(TabButton.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+		end
+		
+
+		TabButton.Interact.MouseButton1Click:Connect(function()
+			if Minimised then return end
+			TweenService:Create(TabButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(TabButton.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+			TweenService:Create(TabButton.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+			TweenService:Create(TabButton.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0}):Play()
+			TweenService:Create(TabButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.TabBackgroundSelected}):Play()
+			TweenService:Create(TabButton.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextColor3 = SelectedTheme.SelectedTabTextColor}):Play()
+			TweenService:Create(TabButton.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageColor3 = SelectedTheme.SelectedTabTextColor}):Play()
+			TweenService:Create(TabButton.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.9}):Play()
+
+			for _, OtherTabButton in ipairs(TabList:GetChildren()) do
+				if OtherTabButton.Name ~= "Template" and OtherTabButton.ClassName == "Frame" and OtherTabButton ~= TabButton and OtherTabButton.Name ~= "Placeholder" then
+					TweenService:Create(OtherTabButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.TabBackground}):Play()
+					TweenService:Create(OtherTabButton.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextColor3 = SelectedTheme.TabTextColor}):Play()
+					TweenService:Create(OtherTabButton.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageColor3 = SelectedTheme.TabTextColor}):Play()
+					TweenService:Create(OtherTabButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.7}):Play()
+					TweenService:Create(OtherTabButton.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0.2}):Play()
+					TweenService:Create(OtherTabButton.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.2}):Play()
+					TweenService:Create(OtherTabButton.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ImageTransparency = 0.7}):Play()
+					TweenService:Create(OtherTabButton.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				end
+			end
+			if Elements.UIPageLayout.CurrentPage ~= TabPage then
+				TweenService:Create(Elements, TweenInfo.new(1, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 460,0, 330)}):Play()
+				Elements.UIPageLayout:JumpTo(TabPage)
+				wait(0.2)
+				TweenService:Create(Elements, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 475,0, 366)}):Play()
+			end
+
+		end)
+
+		local Tab = {}
+		
+		-- Self-Destruct
+		function Tab:SelfDestruct()
+		    TabButton:Destroy()
+		    TabPage:Destroy()
+		    Tab:Destroy()
+		end
+
+		-- Button
+		function Tab:CreateButton(ButtonSettings)
+			local ButtonValue = {}
+
+			local Button = Elements.Template.Button:Clone()
+			Button.Name = ButtonSettings.Name
+			Button.Title.Text = ButtonSettings.Name
+			Button.Visible = true
+			Button.Parent = TabPage
+
+			Button.BackgroundTransparency = 1
+			Button.UIStroke.Transparency = 1
+			Button.Title.TextTransparency = 1
+
+			TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+
+			Button.Interact.MouseButton1Click:Connect(function()
+				local Success, Response = pcall(ButtonSettings.Callback)
+				if not Success then
+					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					Button.Title.Text = "Callback Error"
+					print("Rayfield | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Button.Title.Text = ButtonSettings.Name
+					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.9}):Play()
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				else
+					SaveConfiguration()
+					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+					TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					wait(0.2)
+					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.9}):Play()
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				end
+			end)
+
+			Button.MouseEnter:Connect(function()
+				TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+				TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.7}):Play()
+			end)
+
+			Button.MouseLeave:Connect(function()
+				TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+				TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.9}):Play()
+			end)
+
+			function ButtonValue:Set(NewButton)
+				Button.Title.Text = NewButton
+				Button.Name = NewButton
+			end
+
+			return ButtonValue
+		end
+		
+		-- ColorPicker
+		function Tab:CreateColorPicker(ColorPickerSettings) -- by Throit
+			ColorPickerSettings.Type = "ColorPicker"
+			local ColorPicker = Elements.Template.ColorPicker:Clone()
+			local Background = ColorPicker.CPBackground
+			local Display = Background.Display
+			local Main = Background.MainCP
+			local Slider = ColorPicker.ColorSlider
+			ColorPicker.ClipsDescendants = true
+			ColorPicker.Name = ColorPickerSettings.Name
+			ColorPicker.Title.Text = ColorPickerSettings.Name
+			ColorPicker.Visible = true
+			ColorPicker.Parent = TabPage
+			ColorPicker.Size = UDim2.new(1, -10, 0.028, 35)
+			Background.Size = UDim2.new(0, 39, 0, 22)
+			Display.BackgroundTransparency = 0
+			Main.MainPoint.ImageTransparency = 1
+			ColorPicker.Interact.Size = UDim2.new(1, 0, 1, 0)
+			ColorPicker.Interact.Position = UDim2.new(0.5, 0, 0.5, 0)
+			ColorPicker.RGB.Position = UDim2.new(0, 17, 0, 70)
+			ColorPicker.HexInput.Position = UDim2.new(0, 17, 0, 90)
+			Main.ImageTransparency = 1
+			Background.BackgroundTransparency = 1
+			
+			
+			
+			local opened = false 
+			local mouse = game.Players.LocalPlayer:GetMouse()
+			Main.Image = "http://www.roblox.com/asset/?id=11415645739"
+			local mainDragging = false 
+			local sliderDragging = false 
+			ColorPicker.Interact.MouseButton1Down:Connect(function()
+				if not opened then
+					opened = true 
+					TweenService:Create(ColorPicker, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0.224, 40)}):Play()
+					TweenService:Create(Background, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 173, 0, 86)}):Play()
+					TweenService:Create(Display, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+					TweenService:Create(ColorPicker.Interact, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Position = UDim2.new(0.289, 0, 0.5, 0)}):Play()
+					TweenService:Create(ColorPicker.RGB, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {Position = UDim2.new(0, 17, 0, 40)}):Play()
+					TweenService:Create(ColorPicker.HexInput, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0, 17, 0, 73)}):Play()
+					TweenService:Create(ColorPicker.Interact, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0.574, 0, 1, 0)}):Play()
+					TweenService:Create(Main.MainPoint, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {ImageTransparency = 0}):Play()
+					TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {ImageTransparency = 0.1}):Play()
+					TweenService:Create(Background, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+				else
+					opened = false
+					TweenService:Create(ColorPicker, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0.028, 35)}):Play()
+					TweenService:Create(Background, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 39, 0, 22)}):Play()
+					TweenService:Create(ColorPicker.Interact, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Size = UDim2.new(1, 0, 1, 0)}):Play()
+					TweenService:Create(ColorPicker.Interact, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+					TweenService:Create(ColorPicker.RGB, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Position = UDim2.new(0, 17, 0, 70)}):Play()
+					TweenService:Create(ColorPicker.HexInput, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0, 17, 0, 90)}):Play()
+					TweenService:Create(Display, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(Main.MainPoint, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+					TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+					TweenService:Create(Background, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+				end
+			end)
+			
+			game:GetService("UserInputService").InputEnded:Connect(function(input, gameProcessed) if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					mainDragging = false
+					sliderDragging = false
+			end end)
+			Main.MouseButton1Down:Connect(function()
+				if opened then
+					mainDragging = true 
+				end
+			end)
+			Main.MainPoint.MouseButton1Down:Connect(function()
+				if opened then
+					mainDragging = true 
+				end
+			end)
+			Slider.MouseButton1Down:Connect(function()
+				sliderDragging = true 
+			end)
+			Slider.SliderPoint.MouseButton1Down:Connect(function()
+				sliderDragging = true 
+			end)
+			local h,s,v = ColorPickerSettings.Color:ToHSV()
+			local color = Color3.fromHSV(h,s,v) 
+			local hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+			ColorPicker.HexInput.InputBox.Text = hex
+			local function setDisplay()
+				--Main
+				Main.MainPoint.Position = UDim2.new(s,-Main.MainPoint.AbsoluteSize.X/2,1-v,-Main.MainPoint.AbsoluteSize.Y/2)
+				Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
+				Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
+				Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
+				--Slider 
+				local x = h * Slider.AbsoluteSize.X
+				Slider.SliderPoint.Position = UDim2.new(0,x-Slider.SliderPoint.AbsoluteSize.X/2,0.5,0)
+				Slider.SliderPoint.ImageColor3 = Color3.fromHSV(h,1,1)
+				local color = Color3.fromHSV(h,s,v) 
+				local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+				ColorPicker.RGB.RInput.InputBox.Text = tostring(r)
+				ColorPicker.RGB.GInput.InputBox.Text = tostring(g)
+				ColorPicker.RGB.BInput.InputBox.Text = tostring(b)
+				hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+				ColorPicker.HexInput.InputBox.Text = hex
+			end
+			setDisplay()
+			ColorPicker.HexInput.InputBox.FocusLost:Connect(function()
+				if not pcall(function()
+						local r, g, b = string.match(ColorPicker.HexInput.InputBox.Text, "^#?(%w%w)(%w%w)(%w%w)$")
+						local rgbColor = Color3.fromRGB(tonumber(r, 16),tonumber(g, 16), tonumber(b, 16))
+						h,s,v = rgbColor:ToHSV()
+						hex = ColorPicker.HexInput.InputBox.Text
+						setDisplay()
+						ColorPickerSettings.Color = rgbColor
+					end) 
+				then 
+					ColorPicker.HexInput.InputBox.Text = hex 
+				end
+				pcall(function()ColorPickerSettings.Callback(Color3.fromHSV(h,s,v))end)
+				local r,g,b = math.floor((h*255)+0.5),math.floor((s*255)+0.5),math.floor((v*255)+0.5)
+				ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+				SaveConfiguration()
+			end)
+			--RGB
+			local function rgbBoxes(box,toChange)
+				local value = tonumber(box.Text) 
+				local color = Color3.fromHSV(h,s,v) 
+				local oldR,oldG,oldB = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+				local save 
+				if toChange == "R" then save = oldR;oldR = value elseif toChange == "G" then save = oldG;oldG = value else save = oldB;oldB = value end
+				if value then 
+					value = math.clamp(value,0,255)
+					h,s,v = Color3.fromRGB(oldR,oldG,oldB):ToHSV()
+					
+					setDisplay()
+				else 
+					box.Text = tostring(save)
+				end
+				local r,g,b = math.floor((h*255)+0.5),math.floor((s*255)+0.5),math.floor((v*255)+0.5)
+				ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+				SaveConfiguration()
+			end
+			ColorPicker.RGB.RInput.InputBox.FocusLost:connect(function()
+				rgbBoxes(ColorPicker.RGB.RInput.InputBox,"R")
+				pcall(function()ColorPickerSettings.Callback(Color3.fromHSV(h,s,v))end)
+			end)
+			ColorPicker.RGB.GInput.InputBox.FocusLost:connect(function()
+				rgbBoxes(ColorPicker.RGB.GInput.InputBox,"G")
+				pcall(function()ColorPickerSettings.Callback(Color3.fromHSV(h,s,v))end)
+			end)
+			ColorPicker.RGB.BInput.InputBox.FocusLost:connect(function()
+				rgbBoxes(ColorPicker.RGB.BInput.InputBox,"B")
+				pcall(function()ColorPickerSettings.Callback(Color3.fromHSV(h,s,v))end)
+			end)
+
+			game:GetService("RunService").RenderStepped:connect(function()
+				if mainDragging then 
+					local localX = math.clamp(mouse.X-Main.AbsolutePosition.X,0,Main.AbsoluteSize.X)
+					local localY = math.clamp(mouse.Y-Main.AbsolutePosition.Y,0,Main.AbsoluteSize.Y)
+					Main.MainPoint.Position = UDim2.new(0,localX-Main.MainPoint.AbsoluteSize.X/2,0,localY-Main.MainPoint.AbsoluteSize.Y/2)
+					s = localX / Main.AbsoluteSize.X
+					v = 1 - (localY / Main.AbsoluteSize.Y)
+					Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
+					Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
+					Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
+					local color = Color3.fromHSV(h,s,v) 
+					local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					ColorPicker.RGB.RInput.InputBox.Text = tostring(r)
+					ColorPicker.RGB.GInput.InputBox.Text = tostring(g)
+					ColorPicker.RGB.BInput.InputBox.Text = tostring(b)
+					ColorPicker.HexInput.InputBox.Text = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+					pcall(function()ColorPickerSettings.Callback(Color3.fromHSV(h,s,v))end)
+					ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+					SaveConfiguration()
+				end
+				if sliderDragging then 
+					local localX = math.clamp(mouse.X-Slider.AbsolutePosition.X,0,Slider.AbsoluteSize.X)
+					h = localX / Slider.AbsoluteSize.X
+					Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
+					Slider.SliderPoint.Position = UDim2.new(0,localX-Slider.SliderPoint.AbsoluteSize.X/2,0.5,0)
+					Slider.SliderPoint.ImageColor3 = Color3.fromHSV(h,1,1)
+					Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
+					Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
+					local color = Color3.fromHSV(h,s,v) 
+					local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					ColorPicker.RGB.RInput.InputBox.Text = tostring(r)
+					ColorPicker.RGB.GInput.InputBox.Text = tostring(g)
+					ColorPicker.RGB.BInput.InputBox.Text = tostring(b)
+					ColorPicker.HexInput.InputBox.Text = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+					pcall(function()ColorPickerSettings.Callback(Color3.fromHSV(h,s,v))end)
+					ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+					SaveConfiguration()
+				end
+			end)
+			
+			if Settings.ConfigurationSaving then
+				if Settings.ConfigurationSaving.Enabled and ColorPickerSettings.Flag then
+					RayfieldLibrary.Flags[ColorPickerSettings.Flag] = ColorPickerSettings
+				end
+			end
+			
+			function ColorPickerSettings:Set(RGBColor)
+				ColorPickerSettings.Color = RGBColor
+				h,s,v = ColorPickerSettings.Color:ToHSV()
+				color = Color3.fromHSV(h,s,v)
+				setDisplay()
+			end
+			
+			return ColorPickerSettings
+		end
+		
+		-- Section
+		function Tab:CreateSection(SectionName)
+
+			local SectionValue = {}
+
+			if SDone then
+				local SectionSpace = Elements.Template.SectionSpacing:Clone()
+				SectionSpace.Visible = true
+				SectionSpace.Parent = TabPage
+			end
+
+			local Section = Elements.Template.SectionTitle:Clone()
+			Section.Title.Text = SectionName
+			Section.Visible = true
+			Section.Parent = TabPage
+
+			Section.Title.TextTransparency = 1
+			TweenService:Create(Section.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+
+			function SectionValue:Set(NewSection)
+				Section.Title.Text = NewSection
+			end
+
+			SDone = true
+
+			return SectionValue
+		end
+
+		-- Label
+		function Tab:CreateLabel(LabelText)
+			local LabelValue = {}
+
+			local Label = Elements.Template.Label:Clone()
+			Label.Title.Text = LabelText
+			Label.Visible = true
+			Label.Parent = TabPage
+
+			Label.BackgroundTransparency = 1
+			Label.UIStroke.Transparency = 1
+			Label.Title.TextTransparency = 1
+			
+			Label.BackgroundColor3 = SelectedTheme.SecondaryElementBackground
+			Label.UIStroke.Color = SelectedTheme.SecondaryElementStroke
+
+			TweenService:Create(Label, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Label.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Label.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+			function LabelValue:Set(NewLabel)
+				Label.Title.Text = NewLabel
+			end
+
+			return LabelValue
+		end
+
+		-- Paragraph
+		function Tab:CreateParagraph(ParagraphSettings)
+			local ParagraphValue = {}
+
+			local Paragraph = Elements.Template.Paragraph:Clone()
+			Paragraph.Title.Text = ParagraphSettings.Title
+			Paragraph.Content.Text = ParagraphSettings.Content
+			Paragraph.Visible = true
+			Paragraph.Parent = TabPage
+
+			Paragraph.Content.Size = UDim2.new(0, 438, 0, Paragraph.Content.TextBounds.Y)
+			Paragraph.Content.Position = UDim2.new(1, -10, 0.575,0 )
+			Paragraph.Size = UDim2.new(1, -10, 0, Paragraph.Content.TextBounds.Y + 40)
+
+			Paragraph.BackgroundTransparency = 1
+			Paragraph.UIStroke.Transparency = 1
+			Paragraph.Title.TextTransparency = 1
+			Paragraph.Content.TextTransparency = 1
+			
+			Paragraph.BackgroundColor3 = SelectedTheme.SecondaryElementBackground
+			Paragraph.UIStroke.Color = SelectedTheme.SecondaryElementStroke
+			
+			TweenService:Create(Paragraph, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Paragraph.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Paragraph.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+			TweenService:Create(Paragraph.Content, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+			function ParagraphValue:Set(NewParagraphSettings)
+				Paragraph.Title.Text = NewParagraphSettings.Title
+				Paragraph.Content.Text = NewParagraphSettings.Content
+			end
+
+			return ParagraphValue
+		end
+
+		-- Input
+		function Tab:CreateInput(InputSettings)
+			local Input = Elements.Template.Input:Clone()
+			Input.Name = InputSettings.Name
+			Input.Title.Text = InputSettings.Name
+			Input.Visible = true
+			Input.Parent = TabPage
+
+			Input.BackgroundTransparency = 1
+			Input.UIStroke.Transparency = 1
+			Input.Title.TextTransparency = 1
+			
+			Input.InputFrame.BackgroundColor3 = SelectedTheme.InputBackground
+			Input.InputFrame.UIStroke.Color = SelectedTheme.InputStroke
+
+			TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Input.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+			Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
+			Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 24, 0, 30)
+
+			Input.InputFrame.InputBox.FocusLost:Connect(function()
+				
+				
+				local Success, Response = pcall(function()
+					InputSettings.Callback(Input.InputFrame.InputBox.Text)
+				end)
+				if not Success then
+					TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Input.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					Input.Title.Text = "Callback Error"
+					print("Rayfield | "..InputSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Input.Title.Text = InputSettings.Name
+					TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Input.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				end
+				
+				if InputSettings.RemoveTextAfterFocusLost then
+					Input.InputFrame.InputBox.Text = ""
+				end
+				SaveConfiguration()
+			end)
+
+			Input.MouseEnter:Connect(function()
+				TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+			end)
+
+			Input.MouseLeave:Connect(function()
+				TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+			end)
+
+			Input.InputFrame.InputBox:GetPropertyChangedSignal("Text"):Connect(function()
+				TweenService:Create(Input.InputFrame, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 24, 0, 30)}):Play()
+			end)
+		end
+
+		-- Dropdown
+		function Tab:CreateDropdown(DropdownSettings)
+			local Dropdown = Elements.Template.Dropdown:Clone()
+			if string.find(DropdownSettings.Name,"closed") then
+				Dropdown.Name = "Dropdown"
+			else
+				Dropdown.Name = DropdownSettings.Name
+			end
+			Dropdown.Title.Text = DropdownSettings.Name
+			Dropdown.Visible = true
+			Dropdown.Parent = TabPage
+
+			Dropdown.List.Visible = false
+
+			Dropdown.Selected.Text = DropdownSettings.CurrentOption
+
+			Dropdown.BackgroundTransparency = 1
+			Dropdown.UIStroke.Transparency = 1
+			Dropdown.Title.TextTransparency = 1
+
+			Dropdown.Size = UDim2.new(1, -10, 0, 45)
+
+			TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Dropdown.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+			for _, ununusedoption in ipairs(Dropdown.List:GetChildren()) do
+				if ununusedoption.ClassName == "Frame" and ununusedoption.Name ~= "Placeholder" then
+					ununusedoption:Destroy()
+				end
+			end
+
+			Dropdown.Toggle.Rotation = 180
+
+			Dropdown.Interact.MouseButton1Click:Connect(function()
+				TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+				TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+				wait(0.1)
+				TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+				TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				if Debounce then return end
+				if Dropdown.List.Visible then
+					Debounce = true
+					TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 45)}):Play()
+					for _, DropdownOpt in ipairs(Dropdown.List:GetChildren()) do
+						if DropdownOpt.ClassName == "Frame" and DropdownOpt.Name ~= "Placeholder" then
+							TweenService:Create(DropdownOpt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+							TweenService:Create(DropdownOpt.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+							TweenService:Create(DropdownOpt.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+						end
+					end
+					TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 1}):Play()
+					TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 180}):Play()	
+					wait(0.35)
+					Dropdown.List.Visible = false
+					Debounce = false
+				else
+					TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 180)}):Play()
+					Dropdown.List.Visible = true
+					TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 0.7}):Play()
+					TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 0}):Play()	
+					for _, DropdownOpt in ipairs(Dropdown.List:GetChildren()) do
+						if DropdownOpt.ClassName == "Frame" and DropdownOpt.Name ~= "Placeholder" then
+							TweenService:Create(DropdownOpt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(DropdownOpt.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+							TweenService:Create(DropdownOpt.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+						end
+					end
+				end
+			end)
+
+			Dropdown.MouseEnter:Connect(function()
+				if not Dropdown.List.Visible then
+					TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+				end
+			end)
+
+			Dropdown.MouseLeave:Connect(function()
+				TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+			end)
+
+			for _, Option in ipairs(DropdownSettings.Options) do
+				local DropdownOption = Elements.Template.Dropdown.List.Template:Clone()
+				DropdownOption.Name = Option
+				DropdownOption.Title.Text = Option
+				DropdownOption.Parent = Dropdown.List
+				DropdownOption.Visible = true
+
+				if DropdownSettings.CurrentOption == Option then
+					DropdownOption.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				end
+
+				DropdownOption.BackgroundTransparency = 1
+				DropdownOption.UIStroke.Transparency = 1
+				DropdownOption.Title.TextTransparency = 1
+
+				DropdownOption.Interact.ZIndex = 50
+				DropdownOption.Interact.MouseButton1Click:Connect(function()
+					if Dropdown.Selected.Text ~= Option then
+						Dropdown.Selected.Text = Option
+						
+						local Success, Response = pcall(function()
+							DropdownSettings.Callback(Option)
+						end)
+						if not Success then
+							TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+							Dropdown.Title.Text = "Callback Error"
+							print("Rayfield | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Dropdown.Title.Text = DropdownSettings.Name
+							TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+							TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+						end
+						DropdownSettings.CurrentOption = Option
+						for _, droption in ipairs(Dropdown.List:GetChildren()) do
+							if droption.ClassName == "Frame" and droption.Name ~= "Placeholder" and droption.Name ~= DropdownSettings.CurrentOption then
+								TweenService:Create(droption, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+							end
+						end
+						TweenService:Create(DropdownOption.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+						TweenService:Create(DropdownOption, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+						Debounce = true
+						wait(0.2)
+						TweenService:Create(DropdownOption.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+						wait(0.1)
+						TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 45)}):Play()
+						for _, DropdownOpt in ipairs(Dropdown.List:GetChildren()) do
+							if DropdownOpt.ClassName == "Frame" and DropdownOpt.Name ~= "Placeholder" then
+								TweenService:Create(DropdownOpt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+								TweenService:Create(DropdownOpt.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+								TweenService:Create(DropdownOpt.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+							end
+						end
+						TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 1}):Play()
+						TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 180}):Play()	
+						wait(0.35)
+						Dropdown.List.Visible = false
+						Debounce = false	
+						SaveConfiguration()
+					end
+				end)
+			end
+
+
+			function DropdownSettings:Set(NewOption)
+				Dropdown.Selected.Text = NewOption
+				DropdownSettings.CurrentOption = NewOption
+				local Success, Response = pcall(function()
+					DropdownSettings.Callback(NewOption)
+				end)
+				if not Success then
+					TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					Dropdown.Title.Text = "Callback Error"
+					print("Rayfield | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Dropdown.Title.Text = DropdownSettings.Name
+					TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				end
+
+				for _, droption in ipairs(Dropdown.List:GetChildren()) do
+					if droption.Name ~= NewOption then
+						if droption.ClassName == "Frame" and droption.Name ~= "Placeholder" then
+							droption.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+						end
+					else
+						droption.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+					end
+
+				end
+			end
+
+			if Settings.ConfigurationSaving then
+				if Settings.ConfigurationSaving.Enabled and DropdownSettings.Flag then
+					RayfieldLibrary.Flags[DropdownSettings.Flag] = DropdownSettings
+				end
+			end
+
+            
+			function DropdownSettings:Clear() 
+				for _, ununusedoption in ipairs(Dropdown.List:GetChildren()) do
+					if ununusedoption.ClassName == "Frame" then
+						ununusedoption:Destroy()
+					end
+				end
+			end
+
+			function DropdownSettings:Add(Option)
+				local DropdownOption = Elements.Template.Dropdown.List.Template:Clone()
+				DropdownOption.Name = Option
+				DropdownOption.Title.Text = Option
+				DropdownOption.Parent = Dropdown.List
+				DropdownOption.Visible = true
+
+				if DropdownSettings.CurrentOption == Option then
+					DropdownOption.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				end
+
+				DropdownOption.BackgroundTransparency = 1
+				DropdownOption.UIStroke.Transparency = 1
+				DropdownOption.Title.TextTransparency = 1
+
+				DropdownOption.Interact.ZIndex = 50
+				DropdownOption.Interact.MouseButton1Click:Connect(function()
+					if Dropdown.Selected.Text ~= Option then
+						Dropdown.Selected.Text = Option
+						
+						local Success, Response = pcall(function()
+							DropdownSettings.Callback(Option)
+						end)
+
+						if not Success then
+							TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+							Dropdown.Title.Text = "Callback Error"
+							print("Rayfield | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Dropdown.Title.Text = DropdownSettings.Name
+							TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+							TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+						end
+
+						for _, droption in ipairs(Dropdown.List:GetChildren()) do
+							if droption.ClassName == "Frame" and droption.Name ~= "Placeholder" and droption.Name ~= DropdownSettings.CurrentOption then
+								TweenService:Create(droption, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+							end
+						end
+
+						TweenService:Create(DropdownOption.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+						TweenService:Create(DropdownOption, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+						Debounce = true
+
+						wait(0.2)
+
+						TweenService:Create(DropdownOption.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+						wait(0.1)
+
+						TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 45)}):Play()
+
+						for _, DropdownOpt in ipairs(Dropdown.List:GetChildren()) do
+							if DropdownOpt.ClassName == "Frame" and DropdownOpt.Name ~= "Placeholder" then
+								TweenService:Create(DropdownOpt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+								TweenService:Create(DropdownOpt.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+								TweenService:Create(DropdownOpt.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+							end
+						end
+
+						TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 1}):Play()
+						TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 180}):Play()	
+
+						wait(0.35)
+
+						Dropdown.List.Visible = false
+						Debounce = false	
+						SaveConfiguration()
+					end
+				end)
+			end
+
+			return DropdownSettings
+		end
+
+		-- Keybind
+		function Tab:CreateKeybind(KeybindSettings)
+			local CheckingForKey = false
+			local Keybind = Elements.Template.Keybind:Clone()
+			Keybind.Name = KeybindSettings.Name
+			Keybind.Title.Text = KeybindSettings.Name
+			Keybind.Visible = true
+			Keybind.Parent = TabPage
+
+			Keybind.BackgroundTransparency = 1
+			Keybind.UIStroke.Transparency = 1
+			Keybind.Title.TextTransparency = 1
+			
+			Keybind.KeybindFrame.BackgroundColor3 = SelectedTheme.InputBackground
+			Keybind.KeybindFrame.UIStroke.Color = SelectedTheme.InputStroke
+
+			TweenService:Create(Keybind, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Keybind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Keybind.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+			Keybind.KeybindFrame.KeybindBox.Text = KeybindSettings.CurrentKeybind
+			Keybind.KeybindFrame.Size = UDim2.new(0, Keybind.KeybindFrame.KeybindBox.TextBounds.X + 24, 0, 30)
+
+			Keybind.KeybindFrame.KeybindBox.Focused:Connect(function()
+				CheckingForKey = true
+				Keybind.KeybindFrame.KeybindBox.Text = ""
+			end)
+			Keybind.KeybindFrame.KeybindBox.FocusLost:Connect(function()
+				CheckingForKey = false
+				if Keybind.KeybindFrame.KeybindBox.Text == nil or "" then
+					Keybind.KeybindFrame.KeybindBox.Text = KeybindSettings.CurrentKeybind
+					SaveConfiguration()
+				end
+			end)
+
+			Keybind.MouseEnter:Connect(function()
+				TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+			end)
+
+			Keybind.MouseLeave:Connect(function()
+				TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+			end)
+
+			UserInputService.InputBegan:Connect(function(input, processed)
+
+				if CheckingForKey then
+					if input.KeyCode ~= Enum.KeyCode.Unknown and input.KeyCode ~= Enum.KeyCode.RightShift then
+						local SplitMessage = string.split(tostring(input.KeyCode), ".")
+						local NewKeyNoEnum = SplitMessage[3]
+						Keybind.KeybindFrame.KeybindBox.Text = tostring(NewKeyNoEnum)
+						KeybindSettings.CurrentKeybind = tostring(NewKeyNoEnum)
+						Keybind.KeybindFrame.KeybindBox:ReleaseFocus()
+						SaveConfiguration()
+					end
+				elseif KeybindSettings.CurrentKeybind ~= nil and (input.KeyCode == Enum.KeyCode[KeybindSettings.CurrentKeybind] and not processed) then -- Test
+					local Held = true
+					local Connection
+					Connection = input.Changed:Connect(function(prop)
+						if prop == "UserInputState" then
+							Connection:Disconnect()
+							Held = false
+						end
+					end)
+
+					if not KeybindSettings.HoldToInteract then
+						local Success, Response = pcall(KeybindSettings.Callback)
+						if not Success then
+							TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Keybind.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+							Keybind.Title.Text = "Callback Error"
+							print("Rayfield | "..KeybindSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Keybind.Title.Text = KeybindSettings.Name
+							TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+							TweenService:Create(Keybind.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+						end
+					else
+						wait(0.25)
+						if Held then
+							local Loop; Loop = RunService.Stepped:Connect(function()
+								if not Held then
+									KeybindSettings.Callback(false) -- maybe pcall this
+									Loop:Disconnect()
+								else
+									KeybindSettings.Callback(true) -- maybe pcall this
+								end
+							end)	
+						end
+					end
+				end
+			end)
+
+			Keybind.KeybindFrame.KeybindBox:GetPropertyChangedSignal("Text"):Connect(function()
+				TweenService:Create(Keybind.KeybindFrame, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, Keybind.KeybindFrame.KeybindBox.TextBounds.X + 24, 0, 30)}):Play()
+			end)
+
+			function KeybindSettings:Set(NewKeybind)
+				Keybind.KeybindFrame.KeybindBox.Text = tostring(NewKeybind)
+				KeybindSettings.CurrentKeybind = tostring(NewKeybind)
+				Keybind.KeybindFrame.KeybindBox:ReleaseFocus()
+				SaveConfiguration()
+			end
+			if Settings.ConfigurationSaving then
+				if Settings.ConfigurationSaving.Enabled and KeybindSettings.Flag then
+					RayfieldLibrary.Flags[KeybindSettings.Flag] = KeybindSettings
+				end
+			end
+			return KeybindSettings
+		end
+
+		-- Toggle
+		function Tab:CreateToggle(ToggleSettings)
+			local ToggleValue = {}
+
+			local Toggle = Elements.Template.Toggle:Clone()
+			Toggle.Name = ToggleSettings.Name
+			Toggle.Title.Text = ToggleSettings.Name
+			Toggle.Visible = true
+			Toggle.Parent = TabPage
+
+			Toggle.BackgroundTransparency = 1
+			Toggle.UIStroke.Transparency = 1
+			Toggle.Title.TextTransparency = 1
+			Toggle.Switch.BackgroundColor3 = SelectedTheme.ToggleBackground
+			
+			if SelectedTheme ~= RayfieldLibrary.Theme.Default then
+				Toggle.Switch.Shadow.Visible = false
+			end
+
+			TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Toggle.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+			if not ToggleSettings.CurrentValue then
+				Toggle.Switch.Indicator.Position = UDim2.new(1, -40, 0.5, 0)
+				Toggle.Switch.Indicator.UIStroke.Color = SelectedTheme.ToggleDisabledStroke
+				Toggle.Switch.Indicator.BackgroundColor3 = SelectedTheme.ToggleDisabled
+				Toggle.Switch.UIStroke.Color = SelectedTheme.ToggleDisabledOuterStroke
+			else
+				Toggle.Switch.Indicator.Position = UDim2.new(1, -20, 0.5, 0)
+				Toggle.Switch.Indicator.UIStroke.Color = SelectedTheme.ToggleEnabledStroke
+				Toggle.Switch.Indicator.BackgroundColor3 = SelectedTheme.ToggleEnabled
+				Toggle.Switch.UIStroke.Color = SelectedTheme.ToggleEnabledOuterStroke
+			end
+
+			Toggle.MouseEnter:Connect(function()
+				TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+			end)
+
+			Toggle.MouseLeave:Connect(function()
+				TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+			end)
+
+			Toggle.Interact.MouseButton1Click:Connect(function()
+				if ToggleSettings.CurrentValue then
+					ToggleSettings.CurrentValue = false
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -40, 0.5, 0)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,12,0,12)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = SelectedTheme.ToggleDisabledStroke}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.8, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = SelectedTheme.ToggleDisabled}):Play()
+					TweenService:Create(Toggle.Switch.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = SelectedTheme.ToggleDisabledOuterStroke}):Play()
+					wait(0.05)
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,17,0,17)}):Play()
+					wait(0.15)
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()	
+				else
+					ToggleSettings.CurrentValue = true
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -20, 0.5, 0)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,12,0,12)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = SelectedTheme.ToggleEnabledStroke}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.8, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = SelectedTheme.ToggleEnabled}):Play()
+					TweenService:Create(Toggle.Switch.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = SelectedTheme.ToggleEnabledOuterStroke}):Play()
+					wait(0.05)
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,17,0,17)}):Play()	
+					wait(0.15)
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()		
+				end
+				
+				local Success, Response = pcall(function()
+					ToggleSettings.Callback(ToggleSettings.CurrentValue)
+				end)
+				if not Success then
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					Toggle.Title.Text = "Callback Error"
+					print("Rayfield | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Toggle.Title.Text = ToggleSettings.Name
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				end
+				
+				SaveConfiguration()
+			end)
+
+			function ToggleSettings:Set(NewToggleValue)
+				if NewToggleValue then
+					ToggleSettings.CurrentValue = true
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -20, 0.5, 0)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,12,0,12)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = SelectedTheme.ToggleEnabledStroke}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.8, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = SelectedTheme.ToggleEnabled}):Play()
+					TweenService:Create(Toggle.Switch.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Color3.fromRGB(100,100,100)}):Play()
+					wait(0.05)
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,17,0,17)}):Play()	
+					wait(0.15)
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()	
+				else
+					ToggleSettings.CurrentValue = false
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -40, 0.5, 0)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,12,0,12)}):Play()
+					TweenService:Create(Toggle.Switch.Indicator.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = SelectedTheme.ToggleDisabledStroke}):Play()
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.8, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = SelectedTheme.ToggleDisabled}):Play()
+					TweenService:Create(Toggle.Switch.UIStroke, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Color3.fromRGB(65,65,65)}):Play()
+					wait(0.05)
+					TweenService:Create(Toggle.Switch.Indicator, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0,17,0,17)}):Play()
+					wait(0.15)
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()	
+				end
+				local Success, Response = pcall(function()
+					ToggleSettings.Callback(ToggleSettings.CurrentValue)
+				end)
+				if not Success then
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					Toggle.Title.Text = "Callback Error"
+					print("Rayfield | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Toggle.Title.Text = ToggleSettings.Name
+					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				end
+				SaveConfiguration()
+			end
+
+			if Settings.ConfigurationSaving then
+				if Settings.ConfigurationSaving.Enabled and ToggleSettings.Flag then
+					RayfieldLibrary.Flags[ToggleSettings.Flag] = ToggleSettings
+				end
+			end
+
+			return ToggleSettings
+		end
+
+		-- Slider
+		function Tab:CreateSlider(SliderSettings)
+			local Dragging = false
+			local Slider = Elements.Template.Slider:Clone()
+			Slider.Name = SliderSettings.Name
+			Slider.Title.Text = SliderSettings.Name
+			Slider.Visible = true
+			Slider.Parent = TabPage
+
+			Slider.BackgroundTransparency = 1
+			Slider.UIStroke.Transparency = 1
+			Slider.Title.TextTransparency = 1
+			
+			if SelectedTheme ~= RayfieldLibrary.Theme.Default then
+				Slider.Main.Shadow.Visible = false
+			end
+			
+			Slider.Main.BackgroundColor3 = SelectedTheme.SliderBackground
+			Slider.Main.UIStroke.Color = SelectedTheme.SliderStroke
+			Slider.Main.Progress.BackgroundColor3 = SelectedTheme.SliderProgress
+
+			TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+			TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+			TweenService:Create(Slider.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()	
+
+			Slider.Main.Progress.Size =	UDim2.new(0, Slider.Main.AbsoluteSize.X * ((SliderSettings.CurrentValue + SliderSettings.Range[1]) / (SliderSettings.Range[2] - SliderSettings.Range[1])) > 5 and Slider.Main.AbsoluteSize.X * (SliderSettings.CurrentValue / (SliderSettings.Range[2] - SliderSettings.Range[1])) or 5, 1, 0)
+
+			if not SliderSettings.Suffix then
+				Slider.Main.Information.Text = tostring(SliderSettings.CurrentValue)
+			else
+				Slider.Main.Information.Text = tostring(SliderSettings.CurrentValue) .. " " .. SliderSettings.Suffix
+			end
+
+
+			Slider.MouseEnter:Connect(function()
+				TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+			end)
+
+			Slider.MouseLeave:Connect(function()
+				TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+			end)
+			
+			Slider.Main.Interact.InputBegan:Connect(function(Input)
+				if Input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					Dragging = true 
+				end 
+			end)
+			Slider.Main.Interact.InputEnded:Connect(function(Input) 
+				if Input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					Dragging = false 
+				end 
+			end)
+
+			Slider.Main.Interact.MouseButton1Down:Connect(function(X)
+				local Current = Slider.Main.Progress.AbsolutePosition.X + Slider.Main.Progress.AbsoluteSize.X
+				local Start = Current
+				local Location = X
+				local Loop; Loop = RunService.Stepped:Connect(function()
+					if Dragging then
+						Location = UserInputService:GetMouseLocation().X
+						Current = Current + 0.025 * (Location - Start)
+
+						if Location < Slider.Main.AbsolutePosition.X then
+							Location = Slider.Main.AbsolutePosition.X
+						elseif Location > Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X then
+							Location = Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X
+						end
+
+						if Current < Slider.Main.AbsolutePosition.X + 5 then
+							Current = Slider.Main.AbsolutePosition.X + 5
+						elseif Current > Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X then
+							Current = Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X
+						end
+
+						if Current <= Location and (Location - Start) < 0 then
+							Start = Location
+						elseif Current >= Location and (Location - Start) > 0 then
+							Start = Location
+						end
+						TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, Current - Slider.Main.AbsolutePosition.X, 1, 0)}):Play()
+						local NewValue = SliderSettings.Range[1] + (Location - Slider.Main.AbsolutePosition.X) / Slider.Main.AbsoluteSize.X * (SliderSettings.Range[2] - SliderSettings.Range[1])
+
+						NewValue = math.floor(NewValue / SliderSettings.Increment + 0.5) * (SliderSettings.Increment * 10000000) / 10000000
+						if not SliderSettings.Suffix then
+							Slider.Main.Information.Text = tostring(NewValue)
+						else
+							Slider.Main.Information.Text = tostring(NewValue) .. " " .. SliderSettings.Suffix
+						end
+
+						if SliderSettings.CurrentValue ~= NewValue then
+							local Success, Response = pcall(function()
+								SliderSettings.Callback(NewValue)
+							end)
+							if not Success then
+								TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+								TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+								Slider.Title.Text = "Callback Error"
+								print("Rayfield | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+								wait(0.5)
+								Slider.Title.Text = SliderSettings.Name
+								TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+								TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+							end
+							
+							SliderSettings.CurrentValue = NewValue
+							SaveConfiguration()
+						end
+					else
+						TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, Location - Slider.Main.AbsolutePosition.X > 5 and Location - Slider.Main.AbsolutePosition.X or 5, 1, 0)}):Play()
+						Loop:Disconnect()
+					end
+				end)
+			end)
+
+			function SliderSettings:Set(NewVal)
+				TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, Slider.Main.AbsoluteSize.X * ((NewVal + SliderSettings.Range[1]) / (SliderSettings.Range[2] - SliderSettings.Range[1])) > 5 and Slider.Main.AbsoluteSize.X * (NewVal / (SliderSettings.Range[2] - SliderSettings.Range[1])) or 5, 1, 0)}):Play()
+				Slider.Main.Information.Text = tostring(NewVal) .. " " .. SliderSettings.Suffix
+				local Success, Response = pcall(function()
+					SliderSettings.Callback(NewVal)
+				end)
+				if not Success then
+					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+					Slider.Title.Text = "Callback Error"
+					print("Rayfield | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Slider.Title.Text = SliderSettings.Name
+					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+				end
+				SliderSettings.CurrentValue = NewVal
+				SaveConfiguration()
+			end
+			if Settings.ConfigurationSaving then
+				if Settings.ConfigurationSaving.Enabled and SliderSettings.Flag then
+					RayfieldLibrary.Flags[SliderSettings.Flag] = SliderSettings
+				end
+			end
+			return SliderSettings
+		end
+
+
+		return Tab
+	end
+
+	Elements.Visible = true
+
+	wait(1.2)
+	TweenService:Create(LoadingFrame.Title, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+	TweenService:Create(LoadingFrame.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+	TweenService:Create(LoadingFrame.Version, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+	wait(0.2)
+	TweenService:Create(Main, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 475)}):Play()
+	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.4}):Play()
+
+	Topbar.BackgroundTransparency = 1
+	Topbar.Divider.Size = UDim2.new(0, 0, 0, 1)
+	Topbar.CornerRepair.BackgroundTransparency = 1
+	Topbar.Title.TextTransparency = 1
+	Topbar.Theme.ImageTransparency = 1
+	Topbar.ChangeSize.ImageTransparency = 1
+	Topbar.Hide.ImageTransparency = 1
+
+	wait(0.8)
+	Topbar.Visible = true
+	TweenService:Create(Topbar, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	TweenService:Create(Topbar.CornerRepair, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+	wait(0.1)
+	TweenService:Create(Topbar.Divider, TweenInfo.new(1, Enum.EasingStyle.Quint), {Size = UDim2.new(1, 0, 0, 1)}):Play()
+	wait(0.1)
+	TweenService:Create(Topbar.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+	wait(0.1)
+	TweenService:Create(Topbar.Theme, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
+	wait(0.1)
+	TweenService:Create(Topbar.ChangeSize, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
+	wait(0.1)
+	TweenService:Create(Topbar.Hide, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
+	wait(0.3)
+	
+	return Window
+end
+
+function RayfieldLibrary:Destroy()
+	Rayfield:Destroy()
+end
+
+Topbar.ChangeSize.MouseButton1Click:Connect(function()
+	if Debounce then return end
+	if Minimised then
+		Minimised = false
+		Maximise()
+	else
+		Minimised = true
+		Minimise()
+	end
+end)
+
+Topbar.Hide.MouseButton1Click:Connect(function()
+	if Debounce then return end
+	if Hidden then
+		Hidden = false
+		Minimised = false
+		Unhide()
+	else
+		Hidden = true
+		Hide()
+	end
+end)
+
+UserInputService.InputBegan:Connect(function(input, processed)
+	if (input.KeyCode == Enum.KeyCode.RightShift and not processed) then
+		if Debounce then return end
+		if Hidden then
+			Hidden = false
+			Unhide()
+		else
+			Hidden = true
+			Hide()
+		end
+	end
+end)
+
+for _, TopbarButton in ipairs(Topbar:GetChildren()) do
+	if TopbarButton.ClassName == "ImageButton" then
+		TopbarButton.MouseEnter:Connect(function()
+			TweenService:Create(TopbarButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0}):Play()
+		end)
+
+		TopbarButton.MouseLeave:Connect(function()
+			TweenService:Create(TopbarButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
+		end)
+
+		TopbarButton.MouseButton1Click:Connect(function()
+			TweenService:Create(TopbarButton, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
+		end)
+	end
+end
+
+function RayfieldLibrary:LoadConfiguration()
+	if CEnabled then
+		pcall(function()
+			if isfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension) then
+				LoadConfiguration(readfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension))
+				RayfieldLibrary:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
+			end
+		end)
+	end
+end
+
+---############################################---
+---############### ACTUAL CODE ################---
+---############################################---
+
+local scriptVersion = "0.0.1a"
+
+---### Loading Section ###---
 task.wait(2)
-repeat  task.wait() until game:IsLoaded()
+repeat task.wait() until game:IsLoaded()
 if game.PlaceId == 8304191830 then
     repeat task.wait() until game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
     repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
@@ -11,15 +2458,16 @@ else
     game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
     repeat task.wait() until game:GetService("Workspace")["_waves_started"].Value == true
 end
-------------------------------
+---### Loading Section End ###---
+
 local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace") 
-local plr = game:GetService("Players").LocalPlayer
+local player = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
 local mouse = game.Players.LocalPlayer:GetMouse()
 local UserInputService = game:GetService("UserInputService")
 
-getgenv().savefilename = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
+getgenv().saveFileName = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
 local startTime = os.time(os.date("!*t"))
@@ -352,12 +2800,11 @@ local storyLevels = {
 	}
 }
 
-
-local function getNextLevel(currentLevel)
+local function GetNextLevel(currentLevel)
     for i, v in pairs(storyLevels) do
         for j, u in pairs(v.levels) do
             if currentLevel == u["id"] then
-                if j ~= "6" then
+                if j ~= "6" then --assuming 6 levels per map
                     return v.levels[tostring(tonumber(j) + 1)]["id"]
                 else
                     if levels[tostring(i + 1)] then
@@ -371,20 +2818,19 @@ local function getNextLevel(currentLevel)
     end
 end
 
-local function getCurrentLevelId()
+local function GetCurrentLevelId()
     if game.Workspace._MAP_CONFIG then
         return game:GetService("Workspace")._MAP_CONFIG.GetLevelData:InvokeServer()["id"]
     end
 end
 
-local function getCurrentLevelName()
+local function GetCurrentLevelName()
     if game.Workspace._MAP_CONFIG then
         return game:GetService("Workspace")._MAP_CONFIG.GetLevelData:InvokeServer()["name"]
     end
 end
 
---#region Webhook Sender
-local function webhook()
+local function Webhook()
 	pcall(function()
 		local url = tostring(getgenv().webUrl) --webhook
 		print("Webhook Check")
@@ -393,12 +2839,12 @@ local function webhook()
 			return
 		end 
 			
-    	XP = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text)
+    	experience = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text)
 		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text)
-		cwaves = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text
-		ctime = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.Timer.Text
-		waves = cwaves:split(": ")
-		ttime = ctime:split(": ")
+		completedWaves = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text
+		completionTime = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.Timer.Text
+		waveNumber = completedWaves:split(": ")
+		timeNumber = completionTime:split(": ")
 
 		local data = {
 			["content"] = "",
@@ -407,7 +2853,7 @@ local function webhook()
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Level Name: " .. getCurrentLevelName() .. " | Result",
+						["name"] = "Level Name: " .. GetCurrentLevelName() .. " | Result",
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0x00ff00,
@@ -419,7 +2865,7 @@ local function webhook()
 					["fields"] = {
 						{
 							["name"] = "Total Waves:",
-							["value"] = tostring(waves[2]) ..
+							["value"] = tostring(waveNumber[2]) ..
 								" <:wave:997136622363627530>",
 							["inline"] = true
 						}, {
@@ -428,11 +2874,11 @@ local function webhook()
 							["inline"] = true
 						}, {
                             ["name"] = "Recieved XP:",
-                            ["value"] = XP .. " 🧪",
+                            ["value"] = experience .. " 🧪",
                             ["inline"] = true
                         }, {
                             ["name"] = "Total Time:",
-                            ["value"] = tostring(ttime[2]) .. " ⏳",
+                            ["value"] = tostring(timeNumber[2]) .. " ⏳",
                             ["inline"] = true
                         }, {
                             ["name"] = "Current Gems:",
@@ -448,19 +2894,17 @@ local function webhook()
 			}
 		}
 
-		local porn = game:GetService("HttpService"):JSONEncode(data)
+		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
 
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
-		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
 		warn("Sending webhook notification...")
-		request(sex)
+		request(discordMessageData)
 	end)
 end
---#endregion
 
---#region BABY Webhook Sender
-local function babywebhook()
+local function BabyWebhook()
 	pcall(function()
 		local url = tostring(getgenv().webUrl) --webhook
 		print("Wave Webhook?")
@@ -484,7 +2928,7 @@ local function babywebhook()
 			["embeds"] = {
 				{
 					["author"] = {
-						["name"] = "Current Level: " .. getCurrentLevelName() .. " | " .. "Current Wave: " .. current_wave,
+						["name"] = "Current Level: " .. GetCurrentLevelName() .. " | " .. "Current Wave: " .. current_wave,
 						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
 					},
 					["color"] = 0x00FFFF,
@@ -512,18 +2956,17 @@ local function babywebhook()
 			}
 		}
 
-		local porn = game:GetService("HttpService"):JSONEncode(data)
+		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
 
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
-		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
 		warn("Sending baby webhook notification...")
-		request(sex)
+		request(discordMessageData)
 	end)
 end
---#endregion
---#region SHOP SNIPER Webhook Sender
-local function shopsniperwebhook(test)
+
+local function ShopSniperWebhook(test)
     test = test or false
 	pcall(function()
 		local url = tostring(getgenv().sniperUrl) --webhook
@@ -600,25 +3043,21 @@ local function shopsniperwebhook(test)
                 })
         end
         print("exec1")
-		local porn = game:GetService("HttpService"):JSONEncode(data)
+		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
 
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
-		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
         if getgenv().currentMerchantItems ~= shop_item_ids or test then
             getgenv().currentMerchantItems = shop_item_ids
             updatejson()
             warn("Sending sniper webhook notification...")
-            request(sex)
+            request(discordMessageData)
         end
-        
-
 	end)
 end
---#endregion
 
---#region SPECIAL SUMMON SNIPER Webhook Sender
-local function specialsummonsniperwebhook(test)
+local function SpecialSummonSniperWebhook(test)
     test = test or false
 	pcall(function()
 		local url = tostring(getgenv().sniperUrl) --webhook
@@ -677,23 +3116,21 @@ local function specialsummonsniperwebhook(test)
 			}
 		}
 		
-		local porn = game:GetService("HttpService"):JSONEncode(data)
+		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
 
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
-		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
         if getgenv().currentSpecialBannerUnits ~= unitNamesForJson or test then
             getgenv().currentSpecialBannerUnits = unitNamesForJson
             updatejson()
             warn("Sending special sniper webhook notification...")
-            request(sex)
+            request(discordMessageData)
         end
 	end)
 end
---#endregion
 
---#region STANDARD SUMMON SNIPER Webhook Sender
-local function standardsummonsniperwebhook(test)
+local function StandardSummonSniperWebhook(test)
     test = test or false
 	pcall(function()
 		local url = tostring(getgenv().sniperUrl) --webhook
@@ -750,19 +3187,18 @@ local function standardsummonsniperwebhook(test)
             table.insert(data["embeds"][1]["fields"], unit_stats)
         end
         
-		local porn = game:GetService("HttpService"):JSONEncode(data)
+		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
-		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
         if getgenv().currentStandardBannerUnits ~= unitIdsForJson or test then
             getgenv().currentStandardBannerUnits = unitIdsForJson
             updatejson()
             warn("Sending standard sniper webhook notification...")
-            request(sex)
+            request(discordMessageData)
         end
 	end)
 end
---#endregion
 
 getgenv().UnitCache = {}
 
@@ -778,12 +3214,10 @@ end
 --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
 --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
 
-function sex()
-    -- reads jsonfile
-    local jsonData = readfile(savefilename)
+function MainModule()
+    local jsonData = readfile(saveFileName)
     local data = HttpService:JSONDecode(jsonData)
 
---#region global values
     getgenv().AutoLeave = data.AutoLeave
     getgenv().AutoReplay = data.AutoReplay
     getgenv().AutoChallenge = data.AutoChallenge  
@@ -810,19 +3244,13 @@ function sex()
     getgenv().currentMerchantItems = data.currentmerchantitems
     getgenv().currentSpecialBannerUnits = data.currentspecialbannerunits
     getgenv().currentStandardBannerUnits = data.currentstandardbannerunits
-    --getgenv().door = data.door
 
     getgenv().SpawnUnitPos = data.xspawnUnitPos
     getgenv().SelectedUnits = data.xselectedUnits
     getgenv().autoabilities = data.autoabilities
---#endregion
 
----// updates the json file
---#region update json
     function updatejson()
         local xdata = {
-            -- unitname = getgenv().unitname,
-            -- unitid = getgenv().unitid,
             autoloadtp = getgenv().AutoLoadTP,
             AutoLeave = getgenv().AutoLeave,
             AutoReplay = getgenv().AutoReplay,
@@ -856,59 +3284,87 @@ function sex()
         }
 
         local json = HttpService:JSONEncode(xdata)
-        writefile(savefilename, json)
+        writefile(saveFileName, json)
     end
---#endregion
 
     --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
     --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
-
-    -- Uilib Shits
 
     local exec = tostring(identifyexecutor())
+    local RayfieldLib = RayfieldLibrary
 
-    local DiscordLib = loadstring(game:HttpGet "https://raw.githubusercontent.com/Forever4D/Lib/main/DiscordLib2.lua")()
-    local win = DiscordLib:Window("[✨UPD 8] Anime Adventures "..versionx.." - "..exec)
-       
-    if exec == "Synapse X" or exec == "ScriptWare" or exec == "Trigon" then
-        print("Level 7 executor found")
-    else
-        local gettrigonserver = win:Server("Get Trigon Evo!", "http://www.roblox.com/asset/?id=7628278821")
-        local gettrigon = gettrigonserver:Channel("📐 Get Trigon Evo!")
-        gettrigon:Label("⚠️ It looks like you're using "..exec..".💀⚠️")
-        gettrigon:Label("❗ You maybe wanna try out Trigon Evo, It could be better\nthen "..exec..". 🤮")
-        gettrigon:Label("❗ Click the button below to copy Trigon Evo's Discord server!!")
-        gettrigon:Button("👉 Copy Trigon Discord Link!", function()
-            setclipboard("https://discord.gg/rnZXbd2yfW")
-            DiscordLib:Notification("Copied!!", "✔ Trigon Evo's Discord Invite Link Has Been Copied To Your Clipboard!!", "Okay!")
-        end)
-    end
+    local mainWindow = RayfieldLibrary:CreateWindow({
+        Name = "Anime Adventures " .. scriptVersion .. " - " .. exec,
+        LoadingTitle = "Anime Adventures " .. scriptVersion,
+        LoadingSubtitle = "rewritten by Defrag"
+    })
 
-    local autofrmserver = win:Server("Auto Farm Section", "http://www.roblox.com/asset/?id=11579310982")
-    local webhookserver = win:Server("Discord Wehhook  ", "http://www.roblox.com/asset/?id=11585480207")
-    local cngelogserver = win:Server("Changelog        ", "http://www.roblox.com/asset/?id=11579189531")
-    local creditsserver = win:Server("Credits          ", "http://www.roblox.com/asset/?id=11579371312")
+    local autoFarmTab = mainWindow:CreateTab("Auto Farm")
+    local webhookTab = mainWindow:CreateTab("Webhooks")
+    local creditsTab = mainWindow:CreateTab("Credits")
 
+    local webhookSection = webhookTab:CreateSection("Webhooks")
+		webhookTab:CreateLabel("Webhooks send notifications in Discord everytime a game is finished!")
+		
+		local webhookPlaceholder
+		if getgenv().webUrl == "" then
+			webhookPlaceholder = "Insert URL here!"
+		else
+			webhookPlaceholder = "Good to go!"
+		end
+		webhookTab:CreateInput({
+            Name = "Webhook URL {Press Enter}" , 
+            PlaceholderText = webhookPlaceholder, 
+            RemoveTextAfterFocusLost = false, 
+            Callback = function(web_url)
+                getgenv().webUrl = web_url
+                updatejson()
+		end})
+    
+        local sniperWebhookPlaceholder
+		if getgenv().sniperUrl == "" then
+			sniperWebhookPlaceholder = "Insert url here!"
+		else
+			sniperWebhookPlaceholder = "Good to go!"
+		end
 
+        webhookTab:CreateInput({
+            Name = "Sniper Webhook URL {Press Enter}" , 
+            PlaceholderText = sniperWebhookPlaceholder, 
+            RemoveTextAfterFocusLost = false, 
+            Callback = function(sniper_url)
+                getgenv().sniperUrl = sniper_url
+                updatejson()
+		end})
 
+        webhookTab:CreateButton({
+            Name = "Test Regular Webhooks", 
+            Callback = function()
+                Webhook()
+                BabyWebhook()
+            end})
+    
+        webhookTab:CreateButton({
+            Name = "Test Sniper Webhooks", 
+            Callback = function()
+                ShopSniperWebhook(true)
+                SpecialSummonSniperWebhook(true)
+                StandardSummonSniperWebhook(true)
+            end})
 
-
-
-    if game.PlaceId == 8304191830 then
-
-        local unitSelectTab = autofrmserver:Channel("👷 Select Units")
-        local selectWorldTab = autofrmserver:Channel("🌎 Select World")
-        local autofarmtab = autofrmserver:Channel("🤖 Auto Farm")
-        local autoChallengeTab = autofrmserver:Channel("🎯 Auto Challenge")
+            
     
 
---------------------------------------------------
---------------- Select Units Tab -----------------
---------------------------------------------------
---#region Select Units Tab
+    if game.PlaceId == 8304191830 then
+        
+        local unitSelectSection = autoFarmTab:CreateSection("Select Units")
+
+        --------------------------------------------------
+        --------------- Select Units Tab -----------------
+        --------------------------------------------------
         local Units = {}
 
-        local function loadUnit()
+        local function LoadUnits()
             repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
             task.wait(2)
             table.clear(Units)
@@ -920,14 +3376,13 @@ function sex()
             end
         end
 
-        loadUnit()
+        LoadUnits()
 
         local function Check(x, y)
             for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
                 if v:IsA("ImageButton") then
                     if v.EquippedList.Equipped.Visible == true then
                         if v.Main.petimage:GetChildren()[2].Name == x then
-                            --print(v.name.Text.." #"..v._uuid.Value)
                             getgenv().SelectedUnits["U"..tostring(y)] = tostring(v.name.Text.." #"..v._uuid.Value)
                             updatejson()
                             return true
@@ -952,109 +3407,130 @@ function sex()
             updatejson()
         end
 
-        unitSelectTab:Button("Select Equipped Units", function()
-            for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui["spawn_units"].Lives.Frame.Units:GetChildren()) do
-                if v:IsA("ImageButton") then
-                    local unitxx = v.Main.petimage.WorldModel:GetChildren()[1]
-                    if unitxx ~= nil then
-                        if Check(unitxx.Name,v) then
-                            print(unitxx, v)
+        autoFarmTab:CreateButton({
+            Name = "Select Equipped Units", 
+            Callback = function()
+                for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui["spawn_units"].Lives.Frame.Units:GetChildren()) do
+                    if v:IsA("ImageButton") then
+                        local unitxx = v.Main.petimage.WorldModel:GetChildren()[1]
+                        if unitxx ~= nil then
+                            if Check(unitxx.Name,v) then
+                                print(unitxx, v)
+                            end
                         end
                     end
                 end
+                
+                RayfieldLib:Notify({
+                Title = "Equipped Units Are Selected!",
+                Content = "The dropdowns may not show the unit names now, but it will show next time you execute!",
+                Duration = 6.5,
+                Image = 4483362458,
+                Actions = { -- Notification Buttons
+                    Ignore = {
+                        Name = "Okay!",
+                        Callback = function()
+                            print("The user tapped Okay!")
+                        end},
+                    },
+                })
             end
-            DiscordLib:Notification("Equipped Units Are Selected!", "The dropdowns may not show the unit names now, but it will show next time you execute!", "Okay!")
+        })
 
-        end)
+        local drop = autoFarmTab:CreateDropdown({
+            Name = "Unit 1",
+            Options = Units,
+            CurrentOption = getgenv().SelectedUnits["U1"],
+            Callback = function(selectedUnit)
+                getgenv().SelectedUnits["U1"] = selectedUnit
+                Equip()
+                Dropdown:Set(selectedUnit)
+            end,
+        })
 
-        local drop = unitSelectTab:Dropdown("Unit 1", Units, getgenv().SelectedUnits["U1"], function(bool)
-            getgenv().SelectedUnits["U1"] = bool
-            Equip()
-        end)
+        local drop2 = autoFarmTab:CreateDropdown({
+            Name = "Unit 2",
+            Options = Units,
+            CurrentOption = getgenv().SelectedUnits["U2"],
+            Callback = function(selectedUnit)
+                getgenv().SelectedUnits["U2"] = selectedUnit
+                Equip()
+                Dropdown:Set(selectedUnit)
+            end,
+        })
 
-        local drop2 = unitSelectTab:Dropdown("Unit 2", Units, getgenv().SelectedUnits["U2"], function(bool)
-            getgenv().SelectedUnits["U2"] = bool
-            Equip()
-        end)
+        local drop3 = autoFarmTab:CreateDropdown({
+            Name = "Unit 3",
+            Options = Units,
+            CurrentOption = getgenv().SelectedUnits["U3"],
+            Callback = function(selectedUnit)
+                getgenv().SelectedUnits["U3"] = selectedUnit
+                Equip()
+                Dropdown:Set(selectedUnit)
+            end,
+        })
 
-        local drop3 = unitSelectTab:Dropdown("Unit 3", Units, getgenv().SelectedUnits["U3"], function(bool)
-            getgenv().SelectedUnits["U3"] = bool
-            Equip()
-        end)
-
-        local drop4 = unitSelectTab:Dropdown("Unit 4", Units, getgenv().SelectedUnits["U4"], function(bool)
-            getgenv().SelectedUnits["U4"] = bool
-            Equip()
-        end)
+        local drop4 = autoFarmTab:CreateDropdown({
+            Name = "Unit 4",
+            Options = Units,
+            CurrentOption = getgenv().SelectedUnits["U4"],
+            Callback = function(selectedUnit)
+                getgenv().SelectedUnits["U4"] = selectedUnit
+                Equip()
+                Dropdown:Set(selectedUnit)
+            end,
+        })
 
         local axx =  game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")
         _G.drop5 = nil
         _G.drop6 = nil
+
         if tonumber(axx[2]) >= 20 then
-            _G.drop5 = unitSelectTab:Dropdown("Unit 5", Units, getgenv().SelectedUnits["U5"], function(bool)
-                getgenv().SelectedUnits["U5"] = bool
-                Equip()
-            end)
+            _G.drop5 = autoFarmTab:CreateDropdown({
+                Name = "Unit 5",
+                Options = Units,
+                CurrentOption = getgenv().SelectedUnits["U5"],
+                Callback = function(selectedUnit)
+                    getgenv().SelectedUnits["U5"] = selectedUnit
+                    Equip()
+                    Dropdown:Set(selectedUnit)
+                end,
+            })
         end
 
         if tonumber(axx[2]) >= 50 then
-            _G.drop6 = unitSelectTab:Dropdown("Unit 6", Units, getgenv().SelectedUnits["U6"], function(bool)
-                getgenv().SelectedUnits["U6"] = bool
-                Equip()
-            end)
+            _G.drop6 = autoFarmTab:CreateDropdown({
+                Name = "Unit 6",
+                Options = Units,
+                CurrentOption = getgenv().SelectedUnits["U6"],
+                Callback = function(selectedUnit)
+                    getgenv().SelectedUnits["U6"] = selectedUnit
+                    Equip()
+                    Dropdown:Set(selectedUnit)
+                end,
+            })
         end
---------------// Refresh Unit List \\------------- 
-        unitSelectTab:Button("Refresh Unit List", function()
-            drop:Clear()
-            drop2:Clear()
-            drop3:Clear()
-            drop4:Clear()
-            if _G.drop5 ~= nil then
-                _G.drop5:Clear()
-            end
-            if _G.drop6 ~= nil then
-                _G.drop6:Clear()
-            end 
 
-            loadUnit()
-            game:GetService("ReplicatedStorage").endpoints.client_to_server.unequip_all:InvokeServer()
-            for i, v in ipairs(Units) do
-                drop:Add(v)
-                drop2:Add(v)
-                drop3:Add(v)
-                drop4:Add(v)
-                if _G.drop5 ~= nil then
-                    _G.drop5:Add(v)
-                end
-                if _G.drop6 ~= nil then
-                    _G.drop6:Add(v)
-                end 
-            end
-            getgenv().SelectedUnits = {
-                U1 = nil,
-                U2 = nil,
-                U3 = nil,
-                U4 = nil,
-                U5 = nil,
-                U6 = nil
-            }
-        end) 
-        unitSelectTab:Label(" ")
-        unitSelectTab:Label(" ")
---#endregion
---------------------------------------------------
---------------- Select World Tab -----------------
---------------------------------------------------
---#region Select world tab
-        getgenv().levels = {"nill"}
+        local selectWorldSection = autoFarmTab:CreateSection("Select World")
 
-        getgenv().diff = selectWorldTab:Dropdown("Select Difficulty", {"Normal", "Hard"}, getgenv().difficulty, function(diff)
-            getgenv().difficulty = diff
-            updatejson()
-        end)
+        getgenv().levels = {"nil"}
 
-        local worlddrop = selectWorldTab:Dropdown("Select World", {"Plannet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
-        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral"}, getgenv().world, function(world)
+        getgenv().diff = autoFarmTab:CreateDropdown({
+            Name = "Select Difficulty",
+            Options = {"Normal", "Hard"},
+            CurrentOption = getgenv().difficulty,
+            Callback = function(diff)
+                getgenv().difficulty = diff
+                updatejson()
+            end,
+        })
+
+        local worlddrop = autoFarmTab:CreateDropdown({
+            Name = "Select World", 
+            Options = {"Plannet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
+        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral"},
+        CurrentOption = getgenv().world, 
+        Callback = function(world)
             getgenv().world = world
             updatejson()
 
@@ -1162,7 +3638,7 @@ function sex()
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
-            elseif world =="Cape Canaveral" then
+            elseif world == "Cape Canaveral" then
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"jojo_infinite","jojo_level_1","jojo_level_2","jojo_level_3","jojo_level_4","jojo_level_5","jojo_level_6",}
@@ -1170,208 +3646,184 @@ function sex()
                     getgenv().leveldrop:Add(v)
                 end
             end
-        end)
+        end})
+        
+        getgenv().leveldrop = autoFarmTab:CreateDropdown({
+            Name = "Select Level", 
+            Options = getgenv().levels, 
+            CurrentOption = getgenv().level, 
+            Callback = function(level)
+                getgenv().level = level
+                updatejson()
+            end})
 
-      
-            getgenv().leveldrop = selectWorldTab:Dropdown("Select Level", getgenv().levels, getgenv().level, function(level)
-            getgenv().level = level
-            updatejson()
-            
-        end)
---#endregion
+
 --------------------------------------------------
 ------------------ Auto Farm Tab -----------------
 --------------------------------------------------
---#region Auto Farm Tab
-        autofarmtab:Toggle("Auto Continue", getgenv().AutoContinue, function(bool)
-            getgenv().AutoContinue = bool
-            updatejson()
-        end)
-        autofarmtab:Toggle("Auto Replay", getgenv().AutoReplay, function(bool)
-            getgenv().AutoReplay = bool
-            updatejson()
-        end)
-        autofarmtab:Toggle("Auto Leave", getgenv().AutoLeave, function(bool)
-            getgenv().AutoLeave = bool
-            updatejson()
-        end)
-        autofarmtab:Toggle("Auto Farm Event ⭐⭐", getgenv().AutoFarmTP, function(bool)
-            getgenv().AutoFarmTP = bool
-            updatejson()
-        end)
+        
+        local autoFarmSection = autoFarmTab:CreateSection("Auto-Farm")
 
-        autofarmtab:Toggle("Auto Start Infinity Castle", getgenv().AutoFarmIC, function(bool)
-            getgenv().AutoFarmIC = bool
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Continue", 
+            Value = getgenv().AutoContinue, 
+            Callback = function(bool)
+                getgenv().AutoContinue = bool
+                updatejson()
+            end})
 
-        autofarmtab:Toggle("Auto Farm", getgenv().AutoFarm, function(bool)
-            getgenv().AutoFarm = bool
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Replay", 
+            Value = getgenv().AutoReplay, 
+            Callback = function(bool)
+                getgenv().AutoReplay = bool
+                updatejson()
+            end})
 
-        autofarmtab:Toggle("Auto Start", getgenv().autoStart, function(bool)
-            getgenv().autoStart = bool
-            updatejson()
+        autoFarmTab:CreateToggle({
+            Name = "Auto Leave", 
+            Value = getgenv().AutoLeave, 
+            Callback = function(bool)
+                getgenv().AutoLeave = bool
+                updatejson()
+            end})
 
-            --[[if getgenv().autoStart and getgenv().AutoFarm then
+        autoFarmTab:CreateToggle({
+            Name = "Auto Farm Event", 
+            Value = getgenv().AutoFarmTP, 
+            Callback = function(bool)
+                getgenv().AutoFarmTP = bool
+                updatejson()
+            end})
+        
+        autoFarmTab:CreateToggle({
+            Name = "Auto Start Infinity Castle", 
+            Value = getgenv().AutoFarmIC, 
+            Callback = function(bool)
+                getgenv().AutoFarmIC = bool
+                updatejson()
+            end})
 
-                for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
-                    if v.Name == "Owner" and v.Value == nil then
-                        getgenv().door = v.Parent.Name
-                        break
-                    end
+        autoFarmTab:CreateToggle({
+            Name = "Auto Farm", 
+            Value = getgenv().AutoFarm, 
+            Callback = function(bool)
+                getgenv().AutoFarm = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Start", 
+            Value = getgenv().autoStart, 
+            Callback = function(bool)
+                getgenv().autoStart = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Abilities", 
+            Value = getgenv().autoabilities, 
+            Callback = function(bool)
+                getgenv().autoabilities = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Upgrade Units", 
+            Value = getgenv().autoUpgrade, 
+            Callback = function(bool)
+                getgenv().autoUpgrade = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Sell at Specific Wave", 
+            Value = getgenv().autoabilities, 
+            Callback = function(bool)
+                getgenv().autoSell = bool
+                updatejson()
+                if getgenv().autoSell == false then
+                    getgenv().disableAutoFarm = false
+                end
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Sell at Specific Wave", 
+            Value = getgenv().autoQuit, 
+            Callback = function(bool)
+                getgenv().autoQuit = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateInput({
+            Name = "Select Wave Number for Auto Sell {Press Enter}", 
+            PlaceholderText = tostring(getgenv().sellatwave), 
+            RemoveTextAfterFocusLost = false,
+            Callback = function(t)
+                getgenv().sellatwave = tonumber(t)
+                updatejson()
+            end})
+
+        autoFarmTab:CreateInput({
+            Name = "Select Wave Number for Auto Quit {Press Enter}", 
+            PlaceholderText = tostring(getgenv().quitAtWave), 
+            RemoveTextAfterFocusLost = false,
+            Callback = function(t)
+                getgenv().sellatwave = tonumber(t)
+                updatejson()
+            end})
+
+        local autoLoadSection = autoFarmTab:CreateSection("Auto Load Script")
+		autoFarmTab:CreateLabel("This Automatically executes script when you teleport to the main area.")
+        autoFarmTab:CreateLabel("You don't need to put the script in your autoexec folder!")
+        autoFarmTab:CreateToggle({
+            Name = "Auto Load Script",
+            Value = getgenv().AutoLoadTP,
+            Callback =  function(bool)
+                getgenv().AutoLoadTP = bool
+                updatejson()
+                if exec == "Synapse X" and getgenv().AutoLoadTP then
+                    syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
+                    queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
                 end
 
-                task.wait()
-
-                local args = {
-                    [1] = getgenv().door
-                }
-                game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
-
-                task.wait()
-
-                if getgenv().level:match("infinite") then
-                    local args = {
-                        [1] = getgenv().door, -- Lobby 
-                        [2] = getgenv().level, -- World
-                        [3] = true, -- Friends Only or not
-                        [4] = "Hard"
-                    }
-                    game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-                else
-                    local args = {
-                        [1] = getgenv().door, -- Lobby 
-                        [2] = getgenv().level, -- World
-                        [3] = true, -- Friends Only or not
-                        [4] = getgenv().difficulty
-                    }
-                    game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-                end
-
-
-                task.wait()
-
-                local args = {
-                    [1] = getgenv().door
-                }
-                game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
-            end ]]
-
-        end)
-
-        autofarmtab:Toggle("Auto Abilities", getgenv().autoabilities, function(bool)
-            getgenv().autoabilities = bool
-            updatejson()
-        end)
-
-        autofarmtab:Toggle("Auto Upgrade Units", getgenv().autoUpgrade, function(bool)
-            getgenv().autoUpgrade = bool
-            updatejson()
-        end)
-
-        autofarmtab:Toggle("Auto Sell at Specific Wave", getgenv().autoSell, function(x)
-            getgenv().autoSell = x
-            updatejson()
-            if getgenv().autoSell == false then
-                getgenv().disableAutoFarm = false
-            end
-        end)
-
-        autofarmtab:Toggle("Auto Quit at Specific Wave", getgenv().autoQuit, function(x)
-            getgenv().autoQuit = x
-            updatejson()
-        end)
-
-        ---- 
-        autofarmtab:Textbox("Select Wave Number for Auto Sell {Press Enter}", tostring(getgenv().sellatwave), false, function(t)
-            getgenv().sellatwave = tonumber(t)
-            updatejson()
-        end)
-        
-        autofarmtab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().quitAtWave), false, function(t)
-            getgenv().quitAtWave = tonumber(t)
-            updatejson()
-        end)
-
-        local autoloadtab = autofrmserver:Channel("⌛ Auto Load Script")
-		autoloadtab:Label("This Automatically executes script when you teleport to man.")
-        autoloadtab:Label("You don't need to put the script in AutoExec folder!")
-        autoloadtab:Toggle("Auto Load Script", getgenv().AutoLoadTP, function(bool)
-            --queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
-            getgenv().AutoLoadTP = bool
-            updatejson()
-            if exec == "Synapse X" and getgenv().AutoLoadTP then
-                syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
-            elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
-                queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
-            end
-
-        end)
-        autoloadtab:Label("⚠️ If it doesnt work properly then put the script in Autoexec\nfolder!!! ⚠️")
+        end})
+        autoFarmTab:CreateLabel("If it doesn't work properly, then put the script in autoexec folder.")
 
         
 
-		local webhooktab = webhookserver:Channel("🌐 Webhook")
-		webhooktab:Label("Webhook sends notification in discord everytime\nGame is Finished!")
-		
-		local webhookPlaceholder
-		if getgenv().webUrl == "" then
-			webhookPlaceholder = "Insert url here!"
-		else
-			webhookPlaceholder = getgenv().webUrl
-		end
-		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
-            getgenv().webUrl = web_url
-            updatejson()
-		end)
-    
-        local sniperWebhookPlaceholder
-		if getgenv().sniperUrl == "" then
-			sniperWebhookPlaceholder = "Insert url here!"
-		else
-			sniperWebhookPlaceholder = getgenv().sniperUrl
-		end
-		
-		webhooktab:Textbox("Sniper Webhook URL {Press Enter}" , sniperWebhookPlaceholder, false, function(sniper_url)
-            getgenv().sniperUrl = sniper_url
-            updatejson()
-		end)
-    
-        webhooktab:Button("Test Sniper Webhooks", function()
-            shopsniperwebhook(true)
-            specialsummonsniperwebhook(true)
-            standardsummonsniperwebhook(true)
-        end)
 
-        autofarmtab:Label(" ")
-        autofarmtab:Label(" ")
-        autofarmtab:Label(" ")
-        autofarmtab:Label(" ")
---#endregion
---------------------------------------------------
--------------------- Auto Challenge --------------
---------------------------------------------------
---#region Auto Challenge
-        autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
-            getgenv().AutoChallenge = bool
-            updatejson()
-        end)
-        local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
-            getgenv().selectedreward = reward
-            updatejson()
-        end)
 
-        autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
-            getgenv().AutoChallengeAll = bool
-            updatejson()
-        end)
---#endregion
---------------------------------------------------
--------------------- Auto Buy/Sell ---------------
---------------------------------------------------
---#region Auto Buy/Sell
+        --------------------------------------------
+        
+        local autoChallengeSection = autoFarmTab:CreateSection("Auto-Challenge")
+        
+        autoFarmTab:CreateToggle({
+            Name = "Auto Challenge", 
+            Value = getgenv().AutoChallenge, 
+            Callback = function(bool)
+                getgenv().AutoChallenge = bool
+                updatejson()
+            end})
+        
+        local worlddrop = autoFarmTab:CreateDropdown({
+            Name = "Select Reward",
+            Options = {"star_fruit_random","star_remnant","gems", "gold"},
+            CurrentOption = getgenv().selectedreward, 
+            Callback = function(reward)
+                getgenv().selectedreward = reward
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Farm All Rewards", 
+            Value = getgenv().AutoChallengeAll, 
+            Callback = function(bool)
+                getgenv().AutoChallengeAll = bool
+                updatejson()
+            end})
+        
         getgenv().UnitSellTog = false
         getgenv().autosummontickets = false
         getgenv().autosummongem = false
@@ -1381,7 +3833,7 @@ function sex()
         getgenv().autosummongeme = false
         getgenv().autosummongem10e = false
 
-        local misc = autofrmserver:Channel("💸 Auto Buy/Sell")
+        local autoBuySellSection = autoFarmTab:CreateSection("Auto Buy/Sell")
 
 
         local function autobuyfunc(xx, item)
@@ -1395,139 +3847,349 @@ function sex()
             
         end
 
-        misc:Label("Special - 2x Mythic")
-        misc:Toggle("Auto Summon {Use Ticket 1}", getgenv().autosummonticketse, function(bool)
-            getgenv().autosummonticketse = bool
-            while getgenv().autosummonticketse do
-                autobuyfunc("EventClover", "ticket")
-            end
-            updatejson()
-        end)
+        autoFarmTab:CreateLabel("Special Banner - 2x Mythic")
+        autoFarmTab:CreateToggle({
+            Name = "Auto Summon {Use Ticket}",
+            Value =  getgenv().autosummonticketse, 
+            Callback = function(bool)
+                getgenv().autosummonticketse = bool
+                while getgenv().autosummonticketse do
+                    autobuyfunc("EventClover", "ticket")
+                end
+                updatejson()
+            end})
 
-        misc:Toggle("Auto Summon {Buy 1}", getgenv().autosummongeme, function(bool)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Summon {Buy 1}", 
+            Value = getgenv().autosummongeme,
+            Callback = function(bool)
             getgenv().autosummongeme = bool
             while getgenv().autosummongeme do
                 autobuyfunc("EventClover", "gems")
             end
             updatejson()
-        end)
+            end})
 
-        misc:Toggle("Auto Summon {Buy 10}", getgenv().autosummongem10e, function(bool)
-            getgenv().autosummongem10 = bool
-            while getgenv().autosummongem10 do
-                autobuyfunc("EventClover", "gems10")
-            end
-            updatejson()
-        end)
-        misc:Label("Standard")
-        misc:Toggle("Auto Summon {Use Ticket 1}", getgenv().autosummontickets, function(bool)
-            getgenv().autosummontickets = bool
-            while getgenv().autosummontickets do
-                autobuyfunc("Standard", "ticket")
-            end
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Summon {Buy 10}", 
+            Value = getgenv().autosummongem10e,
+            Callback = function(bool)
+                getgenv().autosummongem10e = bool
+                while getgenv().autosummongem10e do
+                    autobuyfunc("EventClover", "gems10")
+                end
+                updatejson()
+            end})
 
-        misc:Toggle("Auto Summon {Buy 1}", getgenv().autosummongem, function(bool)
+        autoFarmTab:CreateLabel("Standard Banner")
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Summon {Use Ticket}",
+            Value =  getgenv().autosummontickets, 
+            Callback = function(bool)
+                getgenv().autosummontickets = bool
+                while getgenv().autosummontickets do
+                    autobuyfunc("EventClover", "ticket")
+                end
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Summon {Buy 1}", 
+            Value = getgenv().autosummongem,
+            Callback = function(bool)
             getgenv().autosummongem = bool
             while getgenv().autosummongem do
-                autobuyfunc("Standard", "gems")
+                autobuyfunc("EventClover", "gems")
             end
             updatejson()
-        end)
+            end})
 
-        misc:Toggle("Auto Summon {Buy 10}", getgenv().autosummongem10, function(bool)
-            getgenv().autosummongem10 = bool
-            while getgenv().autosummongem10 do
-                autobuyfunc("Standard", "gems10")
-            end
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Summon {Buy 10}", 
+            Value = getgenv().autosummongem10,
+            Callback = function(bool)
+                getgenv().autosummongem10 = bool
+                while getgenv().autosummongem10 do
+                    autobuyfunc("EventClover", "gems10")
+                end
+                updatejson()
+            end})
 
-        misc:Label("Sell Units")
-        local utts = misc:Dropdown("Select Rarity", {"Rare", "Epic"}, getgenv().UnitToSell, function(u)
-            getgenv().UnitToSell = u
-        end)
+        autoFarmTab:CreateLabel("Sell Units")
+        local utts = autoFarmTab:CreateDropdown({
+            Name = "Select Rarity", 
+            Options = {"Rare", "Epic"}, 
+            CurrentOption = tostring(getgenv().UnitToSell), 
+            Callback = function(u)
+                getgenv().UnitToSell = u
+            end})
 
-        misc:Toggle("Auto Sell Units", getgenv().UnitSellTog, function(bool)
-            getgenv().UnitSellTog = bool
-        end) 
---#endregion
---------------------------------------------------
---------------------------------------------------
---------------------------------------------------
---#region --- Inside match ---
+        autoFarmTab:CreateToggle({
+            Name = "Auto Sell Units", 
+            Value = getgenv().UnitSellTog, 
+            Callback = function(bool)
+                getgenv().UnitSellTog = bool
+            end}) 
     else -- When in a match
         game.Players.LocalPlayer.PlayerGui.MessageGui.Enabled = false
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error.Volume = 0
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error_old.Volume = 0
-        
-
-
-
-
-    local autofarmtab = autofrmserver:Channel("🤖 Auto Farm")
-    local autoChallengeTab = autofrmserver:Channel("🎯 Auto Challenge")
-    local autoloadtab = autofrmserver:Channel("⌛ Auto Load Script_")
-    local autoSellTab = autofrmserver:Channel("💸 Auto Sell")
-    local webhooktab = webhookserver:Channel("🌐 Webhook")
     
-		autoloadtab:Label("This Automatically executes script when you teleport to man.")
-        autoloadtab:Label("You don't need to put the script in AutoExec folder!")
-        autoloadtab:Toggle("Auto Load Script", getgenv().AutoLoadTP, function(bool)
-            getgenv().AutoLoadTP = bool
-            updatejson()
-            if exec == "Synapse X" and getgenv().AutoLoadTP then
-                syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
-            elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
-                queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
-            end
+        local autoLoadSection = autoFarmTab:CreateSection("Auto Load Script")
+		autoFarmTab:CreateLabel("This Automatically executes script when you teleport to the main area.")
+        autoFarmTab:CreateLabel("You don't need to put the script in your autoexec folder!")
+        autoFarmTab:CreateToggle({
+            Name = "Auto Load Script", 
+            Value = getgenv().AutoLoadTP, 
+            Callback = function(bool)
+                getgenv().AutoLoadTP = bool
+                updatejson()
+                if exec == "Synapse X" and getgenv().AutoLoadTP then
+                    syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
+                    queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                end
+            end})
 
-        end)
-        autoloadtab:Label("⚠️ If it doesnt work properly then put the script in Autoexec\nfolder!!! ⚠️")
+        autoFarmTab:CreateLabel("If it doesn't work properly, then put the script in the autoexec folder!")
 
---#region Auto Farm Tab
-        autofarmtab:Toggle("Auto Continue", getgenv().AutoContinue, function(bool)
-            getgenv().AutoContinue = bool
-            updatejson()
-        end)
-        autofarmtab:Toggle("Auto Replay", getgenv().AutoReplay, function(bool)
-            getgenv().AutoReplay = bool
-            updatejson()
-        end)
-        autofarmtab:Toggle("Auto Leave", getgenv().AutoLeave, function(bool)
-            getgenv().AutoLeave = bool
-            updatejson()
-        end)
-        autofarmtab:Toggle("Auto Farm Event ⭐⭐", getgenv().AutoFarmTP, function(bool)
-            getgenv().AutoFarmTP = bool
-            updatejson()
-        end)
+        local autoFarmSection = autoFarmTab:CreateSection("Auto Farm")
 
-        autofarmtab:Toggle("Auto Start Infinity Castle", getgenv().AutoFarmIC, function(bool)
-            getgenv().AutoFarmIC = bool
-            updatejson()
-        end)
+        --#region Auto Farm Tab
+        autoFarmTab:CreateToggle({
+            Name = "Auto Continue", 
+            Value = getgenv().AutoContinue, 
+            Callback = function(bool)
+                getgenv().AutoContinue = bool
+                updatejson()
+            end})
 
-        autofarmtab:Toggle("Auto Farm", getgenv().AutoFarm, function(bool)
-            getgenv().AutoFarm = bool
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Replay", 
+            Value = getgenv().AutoReplay, 
+            Callback = function(bool)
+                getgenv().AutoReplay = bool
+                updatejson()
+            end})
 
-        autofarmtab:Toggle("Auto Abilities", getgenv().autoabilities, function(bool)
-            getgenv().autoabilities = bool
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Leave", 
+            Value = getgenv().AutoLeave, 
+            Callback = function(bool)
+                getgenv().AutoLeave = bool
+                updatejson()
+            end})
 
-        autofarmtab:Toggle("Auto Start", getgenv().autoStart, function(bool)
-            getgenv().autoStart = bool
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Farm Event", 
+            Value = getgenv().AutoFarmTP, 
+            Callback = function(bool)
+                getgenv().AutoFarmTP = bool
+                updatejson()
+            end})
 
-        autofarmtab:Toggle("Auto Upgrade Units", getgenv().autoUpgrade, function(bool)
-            getgenv().autoUpgrade = bool
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Start Infinity Castle", 
+            Value = getgenv().AutoFarmIC, 
+            Callback = function(bool)
+                getgenv().AutoFarmIC = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Farm", 
+            Value = getgenv().AutoFarm, 
+            Callback = function(bool)
+                getgenv().AutoFarm = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Start", 
+            Value = getgenv().autoStart, 
+            Callback = function(bool)
+                getgenv().autoStart = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Abilities", 
+            Value = getgenv().autoabilities, 
+            Callback = function(bool)
+                getgenv().autoabilities = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Upgrade Units", 
+            Value = getgenv().autoUpgrade, 
+            Callback = function(bool)
+                getgenv().autoUpgrade = bool
+                updatejson()
+            end})
+
+        local placementSection = autoFarmTab:CreateSection("Set Unit Placements")
+        --// Set Position \\--
+        autoFarmTab:CreateButton({
+            Name = "Set Unit 1 Postion", 
+            Callback = function()
+                RayfieldLib:Notify({
+                    Title = "Set Unit 1 Spawn Position",
+                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+                    Duration = 99999999,
+                    Actions = { -- Notification Buttons
+                        Ignore = {
+                            Name = "Done",
+                            Callback = function()
+                            print("The user tapped Okay!")
+                        end
+                    }
+                }
+            })
+                MouseClick("UP1")
+            end})
+
+        autoFarmTab:CreateButton({
+            Name = "Set Unit 2 Postion", 
+            Callback = function()
+                RayfieldLib:Notify({
+                    Title = "Set Unit 2 Spawn Position",
+                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+                    Duration = 99999999,
+                    Actions = { -- Notification Buttons
+                        Ignore = {
+                            Name = "Done",
+                            Callback = function()
+                            print("The user tapped Okay!")
+                        end
+                    }
+                }
+            })
+                MouseClick("UP2")
+            end})
+
+        autoFarmTab:CreateButton({
+            Name = "Set Unit 3 Postion", 
+            Callback = function()
+                RayfieldLib:Notify({
+                    Title = "Set Unit 3 Spawn Position",
+                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+                    Duration = 99999999,
+                    Actions = { -- Notification Buttons
+                        Ignore = {
+                            Name = "Done",
+                            Callback = function()
+                            print("The user tapped Okay!")
+                        end
+                    }
+                }
+            })
+                MouseClick("UP3")
+            end})
+
+        autoFarmTab:CreateButton({
+            Name = "Set Unit 4 Postion", 
+            Callback = function()
+                RayfieldLib:Notify({
+                    Title = "Set Unit 4 Spawn Position",
+                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+                    Duration = 99999999,
+                    Actions = { -- Notification Buttons
+                        Ignore = {
+                            Name = "Done",
+                            Callback = function()
+                            print("The user tapped Okay!")
+                        end
+                    }
+                }
+            })
+                MouseClick("UP4")
+            end})
+
+        
+        local axxc = game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")
+
+        if tonumber(axxc[2]) >= 20 then
+            autoFarmTab:CreateButton({
+            Name = "Set Unit 5 Postion", 
+            Callback = function()
+                RayfieldLib:Notify({
+                    Title = "Set Unit 5 Spawn Position",
+                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+                    Duration = 99999999,
+                    Actions = { -- Notification Buttons
+                        Ignore = {
+                            Name = "Done",
+                            Callback = function()
+                            print("The user tapped Okay!")
+                        end
+                    }
+                }
+            })
+                MouseClick("UP5")
+            end})
+        end
+
+        if tonumber(axxc[2]) >= 50 then
+            autoFarmTab:CreateButton({
+            Name = "Set Unit 6 Postion", 
+            Callback = function()
+                RayfieldLib:Notify({
+                    Title = "Set Unit 6 Spawn Position",
+                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+                    Duration = 99999999,
+                    Actions = { -- Notification Buttons
+                        Ignore = {
+                            Name = "Done",
+                            Callback = function()
+                            print("The user tapped Okay!")
+                        end
+                    }
+                }
+            })
+                MouseClick("UP6")
+            end})
+        end
+        
+        local autoSellSection = autoFarmTab:CreateSection("Auto Sell/Quit")
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Sell at Specific Wave", 
+            Value = getgenv().autoabilities, 
+            Callback = function(bool)
+                getgenv().autoSell = bool
+                updatejson()
+                if getgenv().autoSell == false then
+                    getgenv().disableAutoFarm = false
+                end
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Quit at Specific Wave", 
+            Value = getgenv().autoQuit, 
+            Callback = function(bool)
+                getgenv().autoQuit = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateInput({
+            Name = "Select Wave Number for Auto Sell {Press Enter}", 
+            PlaceholderText = tostring(getgenv().sellatwave), 
+            RemoveTextAfterFocusLost = false,
+            Callback = function(t)
+                getgenv().sellatwave = tonumber(t)
+                updatejson()
+            end})
+
+        autoFarmTab:CreateInput({
+            Name = "Select Wave Number for Auto Quit {Press Enter}", 
+            PlaceholderText = tostring(getgenv().quitAtWave), 
+            RemoveTextAfterFocusLost = false,
+            Callback = function(t)
+                getgenv().sellatwave = tonumber(t)
+                updatejson()
+            end})
 
         function MouseClick(UnitPos)
             local connection
@@ -1542,7 +4204,19 @@ function sex()
                         a.Position = mouse.hit.p
                         task.wait()
                         a.Anchored = true
-                        DiscordLib:Notification("Spawn Unit Posotion:", tostring(a.Position), "Okay!")
+                        RayfieldLib:Notify({
+                            Title = "Spawn Unit Position:",
+                            Content =  tostring(a.Position),
+                            Duration = 6.5,
+                            Actions = { -- Notification Buttons
+                                Ignore = {
+                                    Name = "Okay!",
+                                    Callback = function()
+                                        print("The user tapped Okay!")
+                                    end
+                                }
+                            }
+                        })
                         a.CanCollide = false
                         for i = 0, 1, 0.1 do
                             a.Transparency = i
@@ -1627,200 +4301,167 @@ function sex()
                 end)
         end
 
-        --// Set Position \\--
-        autofarmtab:Button("Set Unit 1 Postion", function()
-            DiscordLib:Notification("Set Unit 1 Spawn Position",
-                "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-                "Done")
-                warn(1)
-            MouseClick("UP1")
-            warn(2)
-        end)
-
-        autofarmtab:Button("Set Unit 2 Postion", function()
-            DiscordLib:Notification("Set Unit 2 Spawn Position",
-                "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-                "Done")
-            MouseClick("UP2")
-        end)
-        autofarmtab:Button("Set Unit 3 Postion", function()
-            DiscordLib:Notification("Set Unit 3 Spawn Position",
-                "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-                "Done")
-            MouseClick("UP3")
-        end)
-        autofarmtab:Button("Set Unit 4 Postion", function()
-            DiscordLib:Notification("Set Unit 4 Spawn Position",
-                "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-                "Done")
-            MouseClick("UP4")
-        end)
-
-        
-        local axxc = game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")
-
-        if tonumber(axxc[2]) >= 20 then
-            autofarmtab:Button("Set Unit 5 Postion", function()
-                DiscordLib:Notification("Set Unit 5 Spawn Position",
-                    "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-                    "Done")
-                MouseClick("UP5")
-            end)
-        end
-
-        if tonumber(axxc[2]) >= 50 then
-            autofarmtab:Button("Set Unit 6 Postion", function()
-                DiscordLib:Notification("Set Unit 6 Spawn Position",
-                    "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-                    "Done")
-                MouseClick("UP6")
-            end)
-        end
-
 
         -- set unit position end--
-        autofarmtab:Label("--- Saved Config (Doesn't Refresh) ---")
-        autofarmtab:Label("Auto Sell at Wave: " .. tostring(getgenv().sellatwave))
-        autofarmtab:Label("Webhook: " .. tostring(getgenv().webUrl))
-        autofarmtab:Label("Auto Farm: " .. tostring(getgenv().AutoFarm))
-        autofarmtab:Label("Auto Start: " .. tostring(getgenv().autoStart))
-        autofarmtab:Label("Auto Sell: " .. tostring(getgenv().autoSell))
-        autofarmtab:Label("Auto Upgrade: " .. tostring(getgenv().autoUpgrade))
-        autofarmtab:Label("Difficulty: " .. tostring(getgenv().difficulty))
-        autofarmtab:Label("Selected World: " .. tostring(getgenv().world))
-        autofarmtab:Label("Selected Level: " .. tostring(getgenv().level))
-        autofarmtab:Label(" ")
-        autofarmtab:Label(" ")
+        autoFarmTab:CreateLabel("--- Saved Config (Doesn't Refresh) ---")
+        autoFarmTab:CreateLabel("Auto Sell at Wave: " .. tostring(getgenv().sellatwave))
+        autoFarmTab:CreateLabel("Auto Farm: " .. tostring(getgenv().AutoFarm))
+        autoFarmTab:CreateLabel("Auto Start: " .. tostring(getgenv().autoStart))
+        autoFarmTab:CreateLabel("Auto Sell: " .. tostring(getgenv().autoSell))
+        autoFarmTab:CreateLabel("Auto Upgrade: " .. tostring(getgenv().autoUpgrade))
+        autoFarmTab:CreateLabel("Difficulty: " .. tostring(getgenv().difficulty))
+        autoFarmTab:CreateLabel("Selected World: " .. tostring(getgenv().world))
+        autoFarmTab:CreateLabel("Selected Level: " .. tostring(getgenv().level))
 
 --#endregion
 
 --#region Auto Challenge 
-autoChallengeTab:Toggle("Auto Challenge", getgenv().AutoChallenge, function(bool)
-    getgenv().AutoChallenge = bool
-    updatejson()
-end)
-local worlddrop = autoChallengeTab:Dropdown("Select Reward", {"star_fruit_random","star_remnant","gems", "gold"}, getgenv().selectedreward, function(reward)
-    getgenv().selectedreward = reward
-    updatejson()
-end)
 
-autoChallengeTab:Toggle("Farm All Rewards", getgenv().AutoChallengeAll, function(bool)
-    getgenv().AutoChallengeAll = bool
-    updatejson()
-end)
---#endregion
+        local autoChallengeSection = autoFarmTab:CreateSection("Auto Challenge")
+
+        autoFarmTab:CreateToggle({
+            Name = "Auto Challenge", 
+            Value = getgenv().AutoChallenge, 
+            Callback = function(bool)
+                getgenv().AutoChallenge = bool
+                updatejson()
+            end})
+
+        local worlddrop = autoFarmTab:CreateDropdown({
+            Name = "Select Reward",
+            Options = {"star_fruit_random","star_remnant","gems", "gold"},
+            CurrentOption = getgenv().selectedreward, 
+                Callback = function(reward)
+                getgenv().selectedreward = reward
+                updatejson()
+            end})
+
+        autoFarmTab:CreateToggle({
+            Name = "Farm All Rewards", 
+            Value = getgenv().AutoChallengeAll, 
+            Callback = function(bool)
+                getgenv().AutoChallengeAll = bool
+                updatejson()
+            end})
 
 --#region Auto Sell Tab
-        autoSellTab:Toggle("Auto Sell at Specfic Wave", getgenv().autoSell, function(x)
-            getgenv().autoSell = x
-            updatejson()
-            if getgenv().autoSell == false then
-                getgenv().disableAutoFarm = false
-            end
-        end)
 
-        autoSellTab:Toggle("Auto Quit at Specific Wave", getgenv().autoQuit, function(x)
-            getgenv().autoQuit = x
-            updatejson()
-        end)
+        local autoSellSection = autoFarmTab:CreateSection("Auto Sell/Queit")
 
-        autoSellTab:Textbox("Select Wave Number for Auto Sell {Press Enter}", getgenv().sellatwave, false, function(t)
-            getgenv().sellatwave = tonumber(t)
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Sell at Specific Wave", 
+            Value = getgenv().autoSell, 
+            Callback = function(bool)
+                getgenv().autoSell = bool
+                updatejson()
+            end})
 
-        autoSellTab:Textbox("Select Wave Number for Auto Quit {Press Enter}", tostring(getgenv().quitAtWave), false, function(t)
-            getgenv().quitAtWave = tonumber(t)
-            updatejson()
-        end)
+        autoFarmTab:CreateToggle({
+            Name = "Auto Quit at Specific Wave", 
+            Value = getgenv().autoQuit, 
+            Callback = function(bool)
+                getgenv().autoQuit = bool
+                updatejson()
+            end})
+
+        autoFarmTab:CreateInput({
+            Name = "Select Wave Number for Auto Sell {Press Enter}", 
+            PlaceholderText = tostring(getgenv().sellatwave), 
+            RemoveTextAfterFocusLost = false,
+            Callback = function(t)
+                getgenv().sellatwave = tonumber(t)
+                updatejson()
+            end})
+
+        autoFarmTab:CreateInput({
+            Name = "Select Wave Number for Auto Quit {Press Enter}", 
+            PlaceholderText = tostring(getgenv().quitAtWave), 
+            RemoveTextAfterFocusLost = false,
+            Callback = function(t)
+                getgenv().sellatwave = tonumber(t)
+                updatejson()
+            end})
 --#endregion
 
 
 
 --#region Webhook
 		--//Webhook Tab (in-game)\\--
-		webhooktab:Label("Webhook sends notification in discord everytime game Finishes.")
+		local webhookSection = webhookTab:CreateSection("Webhooks")
+		webhookTab:CreateLabel("Webhooks send notifications in Discord everytime a game is finished!")
+		
 		local webhookPlaceholder
 		if getgenv().webUrl == "" then
-			webhookPlaceholder = "Insert url here!"
+			webhookPlaceholder = "Insert URL here!"
 		else
-			webhookPlaceholder = getgenv().webUrl
+			webhookPlaceholder = "Good to go!"
 		end
-		
-		local sniperWebhookPlaceholder
+		webhookTab:CreateInput({
+            Name = "Webhook URL {Press Enter}" , 
+            PlaceholderText = webhookPlaceholder, 
+            RemoveTextAfterFocusLost = false, 
+            Callback = function(web_url)
+                getgenv().webUrl = web_url
+                updatejson()
+		end})
+    
+        local sniperWebhookPlaceholder
 		if getgenv().sniperUrl == "" then
 			sniperWebhookPlaceholder = "Insert url here!"
 		else
-			sniperWebhookPlaceholder = getgenv().sniperUrl
+			sniperWebhookPlaceholder = "Good to go!"
 		end
-		
-		webhooktab:Textbox("Webhook URL {Press Enter}" , webhookPlaceholder, false, function(web_url)
-            getgenv().webUrl = web_url
-            updatejson()
-		end)
-        webhooktab:Textbox("Sniper Webhook URL {Press Enter}" , sniperWebhookPlaceholder, false, function(sniper_url)
-            getgenv().sniperUrl = sniper_url
-            updatejson()
-        end)
-        webhooktab:Button("Test Webhook", function()
-            webhook()
-        end)
+
+        webhookTab:CreateInput({
+            Name = "Sniper Webhook URL {Press Enter}" , 
+            PlaceholderText = sniperWebhookPlaceholder, 
+            RemoveTextAfterFocusLost = false, 
+            Callback = function(sniper_url)
+                getgenv().sniperUrl = sniper_url
+                updatejson()
+		end})
+
+        webhookTab:CreateButton({
+            Name = "Test Regular Webhooks", 
+            Callback = function()
+                Webhook()
+                BabyWebhook()
+            end})
+    
+        webhookTab:CreateButton({
+            Name = "Test Sniper Webhooks", 
+            Callback = function()
+                ShopSniperWebhook(true)
+                SpecialSummonSniperWebhook(true)
+                StandardSummonSniperWebhook(true)
+            end})
 --#endregion
 
 
     end
+
 --#endregion
 
---#region changelog
-    local changelog = cngelogserver:Channel("💬 Changelog")
-    changelog:Label("-- 1.6.4 --")
-    changelog:Label("+ Added auto farm for the NEW EVENT!")
-    changelog:Label("+ Fixes JoJo world unit placing issue")
-    changelog:Label("-- 1.6.3 --")
-    changelog:Label("+ Added JoJo World")
-    changelog:Label("-- 1.6.2 --")
-    changelog:Label("+ Auto Leave makes u join the smallest server!")
-    changelog:Label("-- 1.6.1 --")
-    changelog:Label("+ Added Auto Replay")
-    changelog:Label("+ Fixed Hollow Stage")
-    changelog:Label("-- 1.6.0 --")
-    changelog:Label("+ Added Legend Stages - Hollow Invation")
-    changelog:Label("-- 1.5.9 --")
-    changelog:Label("+ Fixed Auto Farm not starting\n+ Added new default positions for units.")
-    changelog:Label("-- 1.5.8 --\n")
-    changelog:Label("+ Added Auto Challenge\n+ Added Auto Leave Toggle\n+ Better Auto Farming now\n+ Fixed some bugs\n")
-    changelog:Label("-- 1.5.7 -- ")
-    changelog:Label("+ Added Auto Buy for Special Banner")
-    changelog:Label("-- 1.5.6 -- ")
-    changelog:Label("+ Fixed not executing")
-    changelog:Label("-- 1.5.5 -- ")
-    changelog:Label("+ Added Clover Legend\n+ Fixed Auto Ability breaking randomly")
-    changelog:Label("-- v1.5.4 --")
-    changelog:Label("+ Added Clover Kingdom")
---#endregion
-
-    local credits = creditsserver:Channel("✨ Credits")
-    credits:Label("Arpon AG#6612")
-    credits:Label("Forever4D#0001")
-    credits:Label(" ")
+    local credits = creditsTab:CreateSection("Credits")
+    creditsTab:CreateLabel("Arpon AG#6612")
+    creditsTab:CreateLabel("Forever4D#0001")
+    creditsTab:CreateLabel("Defrag")
 end
 
 --------------------------------------------------
 --------------------------------------------------
 
 ---// Checks if file exist or not\\---
-if isfile(savefilename) then 
+if isfile(saveFileName) then 
 
-    local jsonData = readfile(savefilename)
+    local jsonData = readfile(saveFileName)
     local data = HttpService:JSONDecode(jsonData)
 
-    sex()
+    MainModule()
 
 else
 --#region CREATES JSON
     local xdata = {
-        -- unitname = "name",
-        -- unitid = "id",
         AutoReplay = false,
         AutoLeave = false,
         AutoChallenge = false,
@@ -2312,9 +4953,9 @@ else
     }
 
     local json = HttpService:JSONEncode(xdata)
-    writefile(savefilename, json)
+    writefile(saveFileName, json)
 
-    sex()
+    MainModule()
 --#endregion
 end
 
@@ -2357,7 +4998,7 @@ coroutine.resume(coroutine.create(function()
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
         if wave ~= _wave then
             wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
-            pcall(function() babywebhook() end)
+            pcall(function() BabyWebhook() end)
         end
 
         if getgenv().AutoFarm and not getgenv().disableAutoFarm then
@@ -2527,7 +5168,7 @@ coroutine.resume(coroutine.create(function()
         if GameFinished.Value == true then
             repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
             task.wait()
-            pcall(function() webhook() end)
+            pcall(function() Webhook() end)
             print("next button pressed")
             task.wait(2.1)
 
@@ -2540,7 +5181,7 @@ coroutine.resume(coroutine.create(function()
 
             if getgenv().AutoContinue then
                 if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
-                    getgenv().level = getNextLevel(getCurrentLevel())
+                    getgenv().level = GetNextLevel(GetCurrentLevel())
                     updatejson()
                     for i = 1, 25 do
                         Teleport()
@@ -2549,7 +5190,7 @@ coroutine.resume(coroutine.create(function()
                         task.wait(1)
                     end
                 else
-                    getgenv().level = getCurrentLevel()
+                    getgenv().level = GetCurrentLevel()
                     updatejson()
                     for i = 1, 25 do
                         local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
@@ -2769,9 +5410,9 @@ local function startfarming()
     if getgenv().autoStart and getgenv().AutoFarm and getgenv().teleporting 
                            and getgenv().AutoFarmTP == false and getgenv().AutoFarmIC == false then
         if game.PlaceId == 8304191830 then
-            local cpos = plr.Character.HumanoidRootPart.CFrame
+            local cpos = player.Character.HumanoidRootPart.CFrame
 
-            if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= plr.Name then
+            if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
                 for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
                     if v.Name == "Owner" and v.Value == nil then
                         local args = {
@@ -2805,7 +5446,7 @@ local function startfarming()
                         
                         game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
                         getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
-                        plr.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+                        player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
                         break
                     end
                 end
@@ -2813,9 +5454,9 @@ local function startfarming()
 
             task.wait()
 
-            plr.Character.HumanoidRootPart.CFrame = cpos
+            player.Character.HumanoidRootPart.CFrame = cpos
 
-            if Workspace._LOBBIES.Story[getgenv().door].Owner == plr.Name then
+            if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name then
                 if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
                     getgenv().teleporting = false
                 else
@@ -2832,7 +5473,7 @@ end
 
 local function startChallenge()
     if game.PlaceId == 8304191830 then
-        local cpos = plr.Character.HumanoidRootPart.CFrame
+        local cpos = player.Character.HumanoidRootPart.CFrame
 
         if getgenv().AutoChallenge and getgenv().autoStart and getgenv().AutoFarm  and checkReward() == true then
 
@@ -2849,7 +5490,7 @@ local function startChallenge()
                 end
             end
             task.wait()
-            plr.Character.HumanoidRootPart.CFrame = cpos
+            player.Character.HumanoidRootPart.CFrame = cpos
            
         end
     end
@@ -2904,7 +5545,7 @@ local function FarmCastlePark()
     elseif getgenv().AutoFarmTP and getgenv().AutoFarm then
         if game.PlaceId == 8304191830 then
 
-            local cpos = plr.Character.HumanoidRootPart.CFrame
+            local cpos = player.Character.HumanoidRootPart.CFrame
 
             for i, v in pairs(game:GetService("Workspace")["_EVENT_CHALLENGES"].Lobbies:GetDescendants()) do
                     if v.Name == "Owner" and v.Value == nil then
@@ -2917,14 +5558,14 @@ local function FarmCastlePark()
 
                         task.wait()
 
-                        plr.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+                        player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
                         break
                     end
                 end
 
             task.wait()
 
-            plr.Character.HumanoidRootPart.CFrame = cpos
+            player.Character.HumanoidRootPart.CFrame = cpos
             warn("farming")
             task.wait(5)
 
@@ -2984,12 +5625,13 @@ end)
 
 if game.PlaceId == 8304191830 then
     
-    pcall(function() shopsniperwebhook(true) end)
-    pcall(function() specialsummonsniperwebhook(true) end)
-    pcall(function() standardsummonsniperwebhook(true) end)
+    pcall(function() ShopSniperWebhook(true) end)
+    pcall(function() SpecialSummonSniperWebhook(true) end)
+    pcall(function() StandardSummonSniperWebhook(true) end)
     
     
 end
 
 print("Successfully Loaded!!")
 ---------------------------------------------------------------------
+
