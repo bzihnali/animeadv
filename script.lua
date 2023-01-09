@@ -5074,7 +5074,7 @@ coroutine.resume(coroutine.create(function()
     end
 
 
-    while task.wait(1.5) do
+    while task.wait(0.2) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
         if wave ~= _wave then
             wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
@@ -5360,15 +5360,17 @@ function autoUpgradefunc()
             return a[2] > b[2]
         end)
 
-        function recursiveUpgrade()
-            for i, v in ipairs(unitList) do
-                if game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(v[3])[1] then
-                    recursiveUpgrade()
-                end
+        function recursiveUpgrade(unit)
+            local preUpgradeSpent = unit["_stats"]["total_spent"]
+            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unit[3])
+            if v["_stats"]["money_spend"] > preUpgradeSpent then
+                recursiveUpgrade()
             end
         end
 
-        recursiveUpgrade()
+        for i, v in pairs(unitList) do
+            recursiveUpgrade(unit)
+        end
         
     end)
 
