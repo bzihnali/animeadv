@@ -3803,15 +3803,7 @@ function MainModule()
                         RayfieldLib:Notify({
                             Title = "Queued to Auto-Attach on Teleport!",
                             Content =  "Success",
-                            Duration = 6.5,
-                            Actions = { -- Notification Buttons
-                                Ignore = {
-                                    Name = "Okay!",
-                                    Callback = function()
-                                        print("The user tapped Okay!")
-                                    end
-                                }
-                            }
+                            Duration = 6.5
                         })
                     end
 
@@ -3984,15 +3976,7 @@ function MainModule()
                         RayfieldLib:Notify({
                             Title = "Queued to Auto-Attach on Teleport!",
                             Content =  "Success",
-                            Duration = 6.5,
-                            Actions = { -- Notification Buttons
-                                Ignore = {
-                                    Name = "Okay!",
-                                    Callback = function()
-                                        print("The user tapped Okay!")
-                                    end
-                                }
-                            }
+                            Duration = 6.5
                         })
                     end
 
@@ -5682,12 +5666,7 @@ if getgenv().AutoLoadTP == true then
         RayfieldLib:Notify({
             Title = "Queued to Auto-Attach on Teleport!",
             Content = "Success",
-            Duration = 6.5,
-            Actions = { -- Notification Buttons
-                Ignore = {
-                    Name = "Okay!"
-                }
-            }
+            Duration = 6.5
         })
     else
         queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
