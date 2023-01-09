@@ -5364,10 +5364,12 @@ function autoUpgradefunc()
             for i, v in ipairs(unitList) do
                 if game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(v[3])[1] then
                     recursiveUpgrade()
+                end
             end
-        
- 
+        end
 
+        recursiveUpgrade()
+        
     end)
 
     if err then
