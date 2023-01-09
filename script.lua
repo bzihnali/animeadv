@@ -1547,11 +1547,13 @@ function RayfieldLibrary:CreateWindow(Settings)
 				Section.Title.Text = NewSection
 			end
 
-            function SectionValue:Destroy()
+			SDone = true
+
+            function SectionValue:SelfDestruct()
+                SectionValue = {}
+                Section.Visible = false
                 Section:Destroy()
             end
-
-			SDone = true
 
 			return SectionValue
 		end
@@ -2336,7 +2338,14 @@ function RayfieldLibrary:CreateWindow(Settings)
 			end
 			return SliderSettings
 		end
-
+        
+        function Tab:Clear()
+            for _, Element in ipairs(TabPage:GetChildren()) do
+                if Element.ClassName == "Frame" and Element.Name ~= "Placeholder"  then
+                    Element:Destroy()
+                end
+            end
+        end
 
 		return Tab
 	end
@@ -3295,9 +3304,9 @@ function MainModule()
     --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
 
     local exec = tostring(identifyexecutor())
-    local RayfieldLib = RayfieldLibrary
+    RayfieldLib = RayfieldLibrary
 
-    local mainWindow = RayfieldLibrary:CreateWindow({
+    mainWindow = RayfieldLibrary:CreateWindow({
         Name = "Anime Adventures " .. scriptVersion .. " - " .. exec,
         LoadingTitle = "Anime Adventures " .. scriptVersion,
         LoadingSubtitle = "rewritten by Defrag"
@@ -3788,6 +3797,24 @@ function MainModule()
                 updatejson()
                 if exec == "Synapse X" and getgenv().AutoLoadTP then
                     syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+
+                    if exec == "Synapse X" then
+                        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                        RayfieldLib:Notify({
+                            Title = "Queued to Auto-Attach on Teleport!",
+                            Content =  "Success",
+                            Duration = 6.5,
+                            Actions = { -- Notification Buttons
+                                Ignore = {
+                                    Name = "Okay!",
+                                    Callback = function()
+                                        print("The user tapped Okay!")
+                                    end
+                                }
+                            }
+                        })
+                    end
+
                 elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
                     queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
                 end
@@ -3936,8 +3963,6 @@ function MainModule()
                 getgenv().UnitSellTog = bool
             end}) 
     else -- When in a match
-        local UnitTrackerTab = mainWindow:CreateTab("Unit Tracker")
-
         game.Players.LocalPlayer.PlayerGui.MessageGui.Enabled = false
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error.Volume = 0
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error_old.Volume = 0
@@ -3953,6 +3978,24 @@ function MainModule()
                 updatejson()
                 if exec == "Synapse X" and getgenv().AutoLoadTP then
                     syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+
+                    if exec == "Synapse X" then
+                        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                        RayfieldLib:Notify({
+                            Title = "Queued to Auto-Attach on Teleport!",
+                            Content =  "Success",
+                            Duration = 6.5,
+                            Actions = { -- Notification Buttons
+                                Ignore = {
+                                    Name = "Okay!",
+                                    Callback = function()
+                                        print("The user tapped Okay!")
+                                    end
+                                }
+                            }
+                        })
+                    end
+
                 elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
                     queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
                 end
@@ -4970,13 +5013,17 @@ end
 --#endregion
 --------------------------------------------------
 
+--[[
 coroutine.resume(coroutine.create(function()
     repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
 
-    while task.wait() do {
-        unitList = {}
-        sections = {}
-        toggles = {}
+    unitTrackerTab = mainWindow:CreateTab("Unit Tracker")
+
+    while task.wait() do 
+        
+        local unitList = {}
+        local sections = {}
+        local toggles = {}
 
         for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
             if v:FindFirstChild("_stats") then
@@ -4986,13 +5033,17 @@ coroutine.resume(coroutine.create(function()
             end
         end
     
-        for id, upgrade in pairs(unitList) do 
-            table.insert(toggles, UnitTrackerTab:CreateSection(Name = id .. "(Upgrade [" .. upgrade .. "])"))
-    }
+        for _, unit in pairs(unitList) do
+            local unitHolder = unitTrackerTab:CreateSection(unit[1] .. " (Upgrade [" .. tostring(unit[2]) .. " > " ..tostring(unit[2] + 1) .. "])")
+            table.insert(sections, unitHolder)
+        end
 
-    
-))
+        task.wait(3)
 
+        unitTrackerTab:Clear()
+    end
+end))
+--]]
 
 ------// Auto Farm \\------
 --#region Auto Farm Loop
@@ -5309,9 +5360,12 @@ function autoUpgradefunc()
             return a[2] > b[2]
         end)
 
-        for i, v in ipairs(unitList) do
-            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(v[3])
-        end
+        function recursiveUpgrade()
+            for i, v in ipairs(unitList) do
+                if game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(v[3])[1] then
+                    recursiveUpgrade()
+            end
+        
  
 
     end)
@@ -5621,6 +5675,16 @@ if getgenv().AutoLoadTP == true then
 
     if exec == "Synapse X" then
         syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+        RayfieldLib:Notify({
+            Title = "Queued to Auto-Attach on Teleport!",
+            Content = "Success",
+            Duration = 6.5,
+            Actions = { -- Notification Buttons
+                Ignore = {
+                    Name = "Okay!"
+                }
+            }
+        })
     else
         queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
     end
