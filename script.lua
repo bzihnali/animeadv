@@ -3803,7 +3803,15 @@ function MainModule()
                         RayfieldLib:Notify({
                             Title = "Queued to Auto-Attach on Teleport!",
                             Content =  "Success",
-                            Duration = 6.5
+                            Duration = 6.5,
+                            Actions = { -- Notification Buttons
+                                Ignore = {
+                                    Name = "Okay!",
+                                    Callback = function()
+                                        print("The user tapped Okay!")
+                                    end
+                                }
+                            }
                         })
                     end
 
@@ -3976,7 +3984,15 @@ function MainModule()
                         RayfieldLib:Notify({
                             Title = "Queued to Auto-Attach on Teleport!",
                             Content =  "Success",
-                            Duration = 6.5
+                            Duration = 6.5,
+                            Actions = { -- Notification Buttons
+                                Ignore = {
+                                    Name = "Okay!",
+                                    Callback = function()
+                                        print("The user tapped Okay!")
+                                    end
+                                }
+                            }
                         })
                     end
 
@@ -5344,16 +5360,8 @@ function autoUpgradefunc()
             return a[2] > b[2]
         end)
 
-        function recursiveUpgrade(unit)
-            local preUpgradeSpent = unit["_stats"]["total_spent"]
-            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unit[3])
-            if v["_stats"]["money_spend"] > preUpgradeSpent then
-                recursiveUpgrade()
-            end
-        end
-
-        for i, v in pairs(unitList) do
-            recursiveUpgrade(unit)
+        for _, unitEntry in pairs(unitList) do
+            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
         end
         
     end)
@@ -5666,7 +5674,12 @@ if getgenv().AutoLoadTP == true then
         RayfieldLib:Notify({
             Title = "Queued to Auto-Attach on Teleport!",
             Content = "Success",
-            Duration = 6.5
+            Duration = 6.5,
+            Actions = { -- Notification Buttons
+                Ignore = {
+                    Name = "Okay!"
+                }
+            }
         })
     else
         queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
