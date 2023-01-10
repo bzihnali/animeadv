@@ -4398,47 +4398,6 @@ function MainModule()
                 updatejson()
             end})
 
---#region Auto Sell Tab
-
-        local autoSellSection = autoFarmTab:CreateSection("Auto Sell/Queit")
-
-        autoFarmTab:CreateToggle({
-            Name = "Auto Sell at Specific Wave", 
-            CurrentValue = getgenv().autoSell, 
-            Callback = function(bool)
-                getgenv().autoSell = bool
-                updatejson()
-            end})
-
-        autoFarmTab:CreateToggle({
-            Name = "Auto Quit at Specific Wave", 
-            CurrentValue = getgenv().autoQuit, 
-            Callback = function(bool)
-                getgenv().autoQuit = bool
-                updatejson()
-            end})
-
-        autoFarmTab:CreateInput({
-            Name = "Select Wave Number for Auto Sell {Press Enter}", 
-            PlaceholderText = tostring(getgenv().sellatwave), 
-            RemoveTextAfterFocusLost = false,
-            Callback = function(t)
-                getgenv().sellatwave = tonumber(t)
-                updatejson()
-            end})
-
-        autoFarmTab:CreateInput({
-            Name = "Select Wave Number for Auto Quit {Press Enter}", 
-            PlaceholderText = tostring(getgenv().quitAtWave), 
-            RemoveTextAfterFocusLost = false,
-            Callback = function(t)
-                getgenv().sellatwave = tonumber(t)
-                updatejson()
-            end})
---#endregion
-
-
-
 --#region Webhook
 		--//Webhook Tab (in-game)\\--
 		local webhookSection = webhookTab:CreateSection("Webhooks")
