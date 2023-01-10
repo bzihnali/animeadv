@@ -5074,7 +5074,7 @@ coroutine.resume(coroutine.create(function()
     end
 
 
-    while task.wait(0.2) do
+    while task.wait(1.5) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
         if wave ~= _wave then
             wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
@@ -5723,3 +5723,4 @@ end
 
 print("Successfully Loaded!!")
 ---------------------------------------------------------------------
+
