@@ -2932,7 +2932,6 @@ local function BabyWebhook()
         
         timeSinceStart = os.time(os.date("!*t")) - startTime
         gemsSinceStart = game.Players.LocalPlayer._stats.gem_amount.Value - startGems
-        print("timeSinceStart")
 
 		local data = {
 			["content"] = "",
@@ -2975,7 +2974,7 @@ local function BabyWebhook()
 		request = http_request or request or HttpPost or syn.request or http.request
 		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
 		warn("Sending baby webhook notification...")
-		request(discordMessageData)
+		print(request(discordMessageData).Success)
 	end)
 end
 
@@ -3316,54 +3315,7 @@ function MainModule()
     local webhookTab = mainWindow:CreateTab("Webhooks")
     local creditsTab = mainWindow:CreateTab("Credits")
 
-    local webhookSection = webhookTab:CreateSection("Webhooks")
-		webhookTab:CreateLabel("Webhooks send notifications in Discord everytime a game is finished!")
-		
-		local webhookPlaceholder
-		if getgenv().webUrl == "" then
-			webhookPlaceholder = "Insert URL here!"
-		else
-			webhookPlaceholder = "Good to go!"
-		end
-		webhookTab:CreateInput({
-            Name = "Webhook URL {Press Enter}" , 
-            PlaceholderText = webhookPlaceholder, 
-            RemoveTextAfterFocusLost = false, 
-            Callback = function(web_url)
-                getgenv().webUrl = web_url
-                updatejson()
-		end})
     
-        local sniperWebhookPlaceholder
-		if getgenv().sniperUrl == "" then
-			sniperWebhookPlaceholder = "Insert url here!"
-		else
-			sniperWebhookPlaceholder = "Good to go!"
-		end
-
-        webhookTab:CreateInput({
-            Name = "Sniper Webhook URL {Press Enter}" , 
-            PlaceholderText = sniperWebhookPlaceholder, 
-            RemoveTextAfterFocusLost = false, 
-            Callback = function(sniper_url)
-                getgenv().sniperUrl = sniper_url
-                updatejson()
-		end})
-
-        webhookTab:CreateButton({
-            Name = "Test Regular Webhooks", 
-            Callback = function()
-                Webhook()
-                BabyWebhook()
-            end})
-    
-        webhookTab:CreateButton({
-            Name = "Test Sniper Webhooks", 
-            Callback = function()
-                ShopSniperWebhook(true)
-                SpecialSummonSniperWebhook(true)
-                StandardSummonSniperWebhook(true)
-            end})
 
             
     
@@ -3671,9 +3623,9 @@ function MainModule()
             end})
 
 
---------------------------------------------------
------------------- Auto Farm Tab -----------------
---------------------------------------------------
+		--------------------------------------------------
+		------------------ Auto Farm Tab -----------------
+		--------------------------------------------------
         
         local autoFarmSection = autoFarmTab:CreateSection("Auto-Farm")
 
@@ -3962,7 +3914,59 @@ function MainModule()
             Callback = function(bool)
                 getgenv().UnitSellTog = bool
             end}) 
-    else -- When in a match
+		
+		local webhookSection = webhookTab:CreateSection("Webhooks")
+		
+		webhookTab:CreateLabel("Webhooks send notifications in Discord everytime a game is finished!")
+			
+		local webhookPlaceholder
+
+		if getgenv().webUrl == "" then
+			webhookPlaceholder = "Insert URL here!"
+		else
+			webhookPlaceholder = "Good to go!"
+		end
+		webhookTab:CreateInput({
+			Name = "Webhook URL {Press Enter}" , 
+			PlaceholderText = webhookPlaceholder, 
+			RemoveTextAfterFocusLost = false, 
+			Callback = function(web_url)
+				getgenv().webUrl = web_url
+				updatejson()
+		end})
+		
+		local sniperWebhookPlaceholder
+		if getgenv().sniperUrl == "" then
+			sniperWebhookPlaceholder = "Insert url here!"
+		else
+			sniperWebhookPlaceholder = "Good to go!"
+		end
+	
+		webhookTab:CreateInput({
+			Name = "Sniper Webhook URL {Press Enter}" , 
+			PlaceholderText = sniperWebhookPlaceholder, 
+			RemoveTextAfterFocusLost = false, 
+			Callback = function(sniper_url)
+				getgenv().sniperUrl = sniper_url
+				updatejson()
+		end})
+	
+		webhookTab:CreateButton({
+			Name = "Test Regular Webhooks", 
+			Callback = function()
+				Webhook()
+				BabyWebhook()
+			end})
+	
+		webhookTab:CreateButton({
+			Name = "Test Sniper Webhooks", 
+			Callback = function()
+				ShopSniperWebhook(true)
+				SpecialSummonSniperWebhook(true)
+				StandardSummonSniperWebhook(true)
+			end})
+
+	else -- When in a match
         game.Players.LocalPlayer.PlayerGui.MessageGui.Enabled = false
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error.Volume = 0
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error_old.Volume = 0
