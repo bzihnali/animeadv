@@ -3937,7 +3937,7 @@ function MainModule()
 		
 		local sniperWebhookPlaceholder
 		if getgenv().sniperUrl == "" then
-			sniperWebhookPlaceholder = "Insert url here!"
+			sniperWebhookPlaceholder = "Insert URL here!"
 		else
 			sniperWebhookPlaceholder = "Good to go!"
 		end
@@ -4461,7 +4461,7 @@ function MainModule()
     
         local sniperWebhookPlaceholder
 		if getgenv().sniperUrl == "" then
-			sniperWebhookPlaceholder = "Insert url here!"
+			sniperWebhookPlaceholder = "Insert URL here!"
 		else
 			sniperWebhookPlaceholder = "Good to go!"
 		end
@@ -5727,4 +5727,3 @@ end
 
 print("Successfully Loaded!!")
 ---------------------------------------------------------------------
-
