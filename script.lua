@@ -5051,7 +5051,7 @@ coroutine.resume(coroutine.create(function()
                 yOffset = 0.2
                 zOffset = 1
 
-				repeat task.wait until game:GetService("Workspace"):WaitForChild("_map")
+				repeat task.wait() until game:GetService("Workspace"):WaitForChild("_map")
 
                 if game.Workspace._map:FindFirstChild("namek mushroom model") then
                     print("Namak")
