@@ -4278,8 +4278,6 @@ function MainModule()
                         end
                         a:Destroy()
 
-						repeat task.wait until Workspace._map
-
                         if game.Workspace._map:FindFirstChild("namek mushroom model") then
                             print("Namak")
                             SpawnUnitPos["Namak"][UnitPos]["x"] = a.Position.X
