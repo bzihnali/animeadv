@@ -4278,6 +4278,8 @@ function MainModule()
                         end
                         a:Destroy()
 
+						repeat task.wait until Workspace._map
+
                         if game.Workspace._map:FindFirstChild("namek mushroom model") then
                             print("Namak")
                             SpawnUnitPos["Namak"][UnitPos]["x"] = a.Position.X
@@ -5050,6 +5052,8 @@ coroutine.resume(coroutine.create(function()
                 xOffset = 1
                 yOffset = 0.2
                 zOffset = 1
+
+				repeat task.wait until game:GetService("Workspace"):WaitForChild("_map")
 
                 if game.Workspace._map:FindFirstChild("namek mushroom model") then
                     print("Namak")
