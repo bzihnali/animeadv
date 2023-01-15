@@ -4348,7 +4348,7 @@ function MainModule()
                             SpawnUnitPos["jojo"][UnitPos]["x"] = a.Position.X
                             SpawnUnitPos["jojo"][UnitPos]["y"] = a.Position.Y
                             SpawnUnitPos["jojo"][UnitPos]["z"] = a.Position.Z
-						elseif game.Workspace._map:FindFirstChild("trash cans") then
+						elseif game.Workspace._map:FindFirstChild("Big_Stairs") then
 							print("Chainsaw Man")    
                             SpawnUnitPos["csm_event"][UnitPos]["x"] = a.Position.X
                             SpawnUnitPos["csm_event"][UnitPos]["y"] = a.Position.Y
@@ -5131,7 +5131,7 @@ coroutine.resume(coroutine.create(function()
                 elseif game.Workspace._map:FindFirstChild("SpaceCenter") then
                     print("Cape Canaveral")
                     PlaceUnits("jojo", _wave, xOffset, yOffset, zOffset)
-                elseif game.Workspace._map:FindFirstChild("trash cans") then
+                elseif game.Workspace._map:FindFirstChild("Big_Stairs") then
                     print("Chainsaw Man")
                     PlaceUnits("csm_event", _wave, xOffset, yOffset, zOffset)
                 else
