@@ -2480,7 +2480,7 @@ local RunService = game:GetService("RunService")
 local mouse = game.Players.LocalPlayer:GetMouse()
 local UserInputService = game:GetService("UserInputService")
 
-getgenv().saveFileName = "Anime-Adventures_UPD8"..game.Players.LocalPlayer.Name..".json"
+getgenv().saveFileName = "Anime-Adventures_UPD9"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
 
 local startTime = os.time(os.date("!*t"))
@@ -4348,8 +4348,12 @@ function MainModule()
                             SpawnUnitPos["jojo"][UnitPos]["x"] = a.Position.X
                             SpawnUnitPos["jojo"][UnitPos]["y"] = a.Position.Y
                             SpawnUnitPos["jojo"][UnitPos]["z"] = a.Position.Z
-                        end
-
+						elseif game.Workspace._map:FindFirstChild("trash can") then
+							print("Chainsaw Man")    
+                            SpawnUnitPos["csm_event"][UnitPos]["x"] = a.Position.X
+                            SpawnUnitPos["csm_event"][UnitPos]["y"] = a.Position.Y
+                            SpawnUnitPos["csm_event"][UnitPos]["z"] = a.Position.Z
+						end
                         updatejson()
                     end
                 end)
@@ -4502,7 +4506,39 @@ else
         currentstandardbannerunits = {},
     
         xspawnUnitPos  = {
-            black_clover  = {
+            csm_event  = {
+				UP1  = {
+				  y  = 1.4244641065597535,
+				  x  = -109.30056762695313,
+				  z  = -54.575347900390628
+			   },
+				UP3  = {
+				  y  = 1.4322717189788819,
+				  x  = -114.2433853149414,
+				  z  = -55.260982513427737
+			   },
+				UP2  = {
+				  y  = 1.7082736492156983,
+				  x  = -127.53932189941406,
+				  z  = -55.277626037597659
+			   },
+				UP6  = {
+				  y  = 1.4487617015838624,
+				  x  = -107.07078552246094,
+				  z  = -51.333045959472659
+			   },
+				UP5  = {
+				  y  = 1.8965977430343629,
+				  x  = -118.5692138671875,
+				  z  = -57.20484161376953
+			   },
+				UP4  = {
+				  y  = 1.4205386638641358,
+				  x  = -105.46223449707031,
+				  z  = -51.20615005493164
+			   }
+			 },
+			 black_clover  = {
               UP1  = {
                 y  = 1.4244641065597535,
                 x  = -109.30056762695313,
@@ -5095,6 +5131,9 @@ coroutine.resume(coroutine.create(function()
                 elseif game.Workspace._map:FindFirstChild("SpaceCenter") then
                     print("Cape Canaveral")
                     PlaceUnits("jojo", _wave, xOffset, yOffset, zOffset)
+                elseif game.Workspace._map:FindFirstChild("trash can") then
+                    print("Chainsaw Man")
+                    PlaceUnits("csm_event", _wave, xOffset, yOffset, zOffset)
                 else
                     print("Something bad happened")
                 end
