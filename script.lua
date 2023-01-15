@@ -3405,7 +3405,7 @@ function MainModule()
         local drop = autoFarmTab:CreateDropdown({
             Name = "Unit 1",
             Options = Units,
-            CurrentOption = getgenv().SelectedUnits["U1"],
+            CurrentOption = getgenv().SelectedUnits["U1"] or "nil",
             Callback = function(selectedUnit)
                 getgenv().SelectedUnits["U1"] = selectedUnit
                 Equip()
@@ -3416,7 +3416,7 @@ function MainModule()
         local drop2 = autoFarmTab:CreateDropdown({
             Name = "Unit 2",
             Options = Units,
-            CurrentOption = getgenv().SelectedUnits["U2"],
+            CurrentOption = getgenv().SelectedUnits["U2"] or "nil",
             Callback = function(selectedUnit)
                 getgenv().SelectedUnits["U2"] = selectedUnit
                 Equip()
@@ -3427,7 +3427,7 @@ function MainModule()
         local drop3 = autoFarmTab:CreateDropdown({
             Name = "Unit 3",
             Options = Units,
-            CurrentOption = getgenv().SelectedUnits["U3"],
+            CurrentOption = getgenv().SelectedUnits["U3"] or "nil",
             Callback = function(selectedUnit)
                 getgenv().SelectedUnits["U3"] = selectedUnit
                 Equip()
@@ -3438,7 +3438,7 @@ function MainModule()
         local drop4 = autoFarmTab:CreateDropdown({
             Name = "Unit 4",
             Options = Units,
-            CurrentOption = getgenv().SelectedUnits["U4"],
+            CurrentOption = getgenv().SelectedUnits["U4"] or "nil",
             Callback = function(selectedUnit)
                 getgenv().SelectedUnits["U4"] = selectedUnit
                 Equip()
@@ -3454,7 +3454,7 @@ function MainModule()
             _G.drop5 = autoFarmTab:CreateDropdown({
                 Name = "Unit 5",
                 Options = Units,
-                CurrentOption = getgenv().SelectedUnits["U5"],
+                CurrentOption = getgenv().SelectedUnits["U5"] or "nil",
                 Callback = function(selectedUnit)
                     getgenv().SelectedUnits["U5"] = selectedUnit
                     Equip()
@@ -3467,7 +3467,7 @@ function MainModule()
             _G.drop6 = autoFarmTab:CreateDropdown({
                 Name = "Unit 6",
                 Options = Units,
-                CurrentOption = getgenv().SelectedUnits["U6"],
+                CurrentOption = getgenv().SelectedUnits["U6"] or "nil",
                 Callback = function(selectedUnit)
                     getgenv().SelectedUnits["U6"] = selectedUnit
                     Equip()
@@ -4348,7 +4348,7 @@ function MainModule()
                             SpawnUnitPos["jojo"][UnitPos]["x"] = a.Position.X
                             SpawnUnitPos["jojo"][UnitPos]["y"] = a.Position.Y
                             SpawnUnitPos["jojo"][UnitPos]["z"] = a.Position.Z
-						elseif game.Workspace._map:FindFirstChild("trash can") then
+						elseif game.Workspace._map:FindFirstChild("trash cans") then
 							print("Chainsaw Man")    
                             SpawnUnitPos["csm_event"][UnitPos]["x"] = a.Position.X
                             SpawnUnitPos["csm_event"][UnitPos]["y"] = a.Position.Y
@@ -5131,7 +5131,7 @@ coroutine.resume(coroutine.create(function()
                 elseif game.Workspace._map:FindFirstChild("SpaceCenter") then
                     print("Cape Canaveral")
                     PlaceUnits("jojo", _wave, xOffset, yOffset, zOffset)
-                elseif game.Workspace._map:FindFirstChild("trash can") then
+                elseif game.Workspace._map:FindFirstChild("trash cans") then
                     print("Chainsaw Man")
                     PlaceUnits("csm_event", _wave, xOffset, yOffset, zOffset)
                 else
