@@ -259,7 +259,7 @@ local function SaveConfiguration()
 			Data[i] = v.CurrentValue or v.CurrentKeybind or v.CurrentOption or v.Color
 		end
 	end	
-	writefile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
+	writefile(ConfigurationFolder .. "\\" .. CFileName .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
 end
 
 local neon = (function() -- Open sourced neon module
@@ -2446,8 +2446,8 @@ end
 function RayfieldLibrary:LoadConfiguration()
 	if CEnabled then
 		pcall(function()
-			if isfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension) then
-				LoadConfiguration(readfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension))
+			if isfile(ConfigurationFolder .. "\\" .. CFileName .. ConfigurationExtension) then
+				LoadConfiguration(readfile(ConfigurationFolder .. "\\" .. CFileName .. ConfigurationExtension))
 				RayfieldLibrary:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
 			end
 		end)
@@ -2459,6 +2459,10 @@ end
 ---############################################---
 
 local scriptVersion = "1.6.4b"
+
+if not isfolder("AAMacros" .. scriptVersion) then
+	makefolder("AAMacros" .. scriptVersion)
+end
 
 ---### Loading Section ###---
 task.wait(2)
@@ -2485,6 +2489,245 @@ getgenv().door = "_lobbytemplategreen1"
 
 local startTime = os.time(os.date("!*t"))
 local startGems = game.Players.LocalPlayer._stats.gem_amount.Value
+
+local function writeMacroToFile(filename)
+	writefile("AAMacros" .. scriptVersion .. "\\" .. filename, "repeat task.wait() until game:GetService(\"Workspace\")[\"_waves_started\"].Value == true")
+
+	local mt = getrawmetatable(game)
+	local old = mt.__namecall
+	getgenv().timeOfLastCommand = os.clock()
+	getgenv().macroStartTime = os.clock()
+	setreadonly(mt,false)
+
+	local unitPositions = {}
+	local unitToUpgrade
+	local unitToActivate
+	local unitToSell
+	local positionToUpgrade = {}
+	local positionToSell = {}
+	local positionToActivate = {}
+	local expectedWave
+	local expectedMoney
+	local expectedTimeSinceLastCommand
+	local expectedTimeUntilNewCommand
+
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal expectedWave")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal expectedMoney")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal expectedTimeSinceLastCommand")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal deviation = 0")
+
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal unitPositions = {}")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal positionToUpgrade = {}")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal positionToSell = {}")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal positionToActivate = {}")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngetgenv().timeOfLastCommand = os.clock()")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngetgenv().macroStartTime = os.clock()")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal function getUpgradeCost(unitId, currentUpgrade)")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    return require((game.ReplicatedStorage.src.Data:FindFirstChild(\"Units\", true)))[unitId][\"upgrade\"][currentUpgrade][\"cost\"]")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal function getPlacementCost(unitId)")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    return require((game.ReplicatedStorage.src.Data:FindFirstChild(\"Units\", true)))[unitId][\"cost\"]")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+	local function getUpgradeCost(unitId, currentUpgrade)
+		return require((game.ReplicatedStorage.src.Data:FindFirstChild("Units", true)))[unitId]["upgrade"][currentUpgrade]["cost"]
+	end
+
+	local function getPlacementCost(unitId)
+		return require((game.ReplicatedStorage.src.Data:FindFirstChild("Units", true)))[unitId]["cost"]
+	end
+
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal function updateUnitPositions()")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    unitPositions = {}")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    ")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    for i, v in ipairs(game.Workspace[\"_UNITS\"]:GetChildren()) do")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        if v:FindFirstChild(\"_stats\") then")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            if tostring(v[\"_stats\"].player.Value) == game.Players.LocalPlayer.Name and v[\"_stats\"].xp.Value >= 0 then")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n                table.insert(unitPositions, {v, v.HumanoidRootPart.CFrame.X, v.HumanoidRootPart.CFrame.Z})")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            end")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        end")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nlocal function printValueDeviations()")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    print(\"Expected Wave:                    \" .. expectedWave .. \"(got \" .. game.Workspace[\"_wave_num\"].Value .. \")\")")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    print(\"Expected Money:                   \" .. expectedMoney .. \"(got \" .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. \")\")")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    print(\"Expected Time Since Last Command: \" .. expectedTimeSinceLastCommand .. \"(got \" .. tostring(os.clock() - getgenv().timeOfLastCommand) .. \")\")")
+
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    print(\"Deviation:                        \" .. deviation)")
+
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
+
+	mt.__namecall = newcclosure(function(remote,...)
+		local arguments = {...}
+		method = tostring(getnamecallmethod())
+
+		if method == "InvokeServer" or method == "FireServer" then
+			if tostring(remote) == "spawn_unit" then
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Spawn Command")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedTimeSinceLastCommand = " .. os.clock() - getgenv().timeOfLastCommand)
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+				
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprintValueDeviations()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprint(\"Attempting to spawn unit: \" .. unit[\"Name\"])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngame:GetService(\"ReplicatedStorage\").endpoints.client_to_server.spawn_unit:InvokeServer(\"" .. tostring(arguments[1]) .. "\",")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "CFrame.new(Vector3.new(" .. tostring(arguments[2].X) .. ", " .. tostring(arguments[2].Y) .. ", " .. tostring(arguments[2].Z) .. "), Vector3.new(0, 0, -1))")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, ")")
+				
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nupdateUnitPositions()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngetgenv().timeOfLastCommand = os.clock()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n--End Spawn Command\n")
+
+				getgenv().timeOfLastCommand = os.clock()
+			end
+
+			if tostring(remote) == "upgrade_unit_ingame" then
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Upgrade Command")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedTimeSinceLastCommand = " .. os.clock() - getgenv().timeOfLastCommand)
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+				
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprintValueDeviations()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nupdateUnitPositions()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToUpgrade = {" .. tostring(arguments[1].HumanoidRootPart.CFrame.X) .. ", " .. tostring(arguments[1].HumanoidRootPart.CFrame.Z) .. "}")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nfor _, unit in pairs(unitPositions) do")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    if math.abs(unit[2] - positionToUpgrade[1]) <= 0.01 and math.abs(unit[3] - positionToUpgrade[2]) <= 0.01 then")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to upgrade unit: \" .. unit[\"Name\"] .. \" from \" .. tostring(unit[\"_stats\"][\"upgrade\"].Value) ..  \" to \" .. tostring(unit[\"_stats\"][\"upgrade\"].Value + 1))")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        game:GetService(\"ReplicatedStorage\").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unit[1])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngetgenv().timeOfLastCommand = os.clock()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n--End Upgrade Command\n")
+
+				getgenv().timeOfLastCommand = os.clock()
+			end
+
+			if tostring(remote) == "sell_unit_ingame" then
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Sell Command")
+				
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation)")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))            
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedTimeSinceLastCommand = " .. os.clock() - getgenv().timeOfLastCommand)
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+				
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprintValueDeviations()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nupdateUnitPositions()")
+				
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToSell = {" .. tostring(arguments[1].HumanoidRootPart.CFrame.X) .. ", " .. tostring(arguments[1].HumanoidRootPart.CFrame.Z) .. "}")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nfor _, unit in pairs(unitPositions) do")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    if math.abs(unit[2] - positionToSell[1]) <= 0.01 and math.abs(unit[3] - positionToSell[2]) <= 0.01 then")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to sell unit: \" .. unit[\"Name\"])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        game:GetService(\"ReplicatedStorage\").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unit[1])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngetgenv().timeOfLastCommand = os.clock()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n--End Sell Command\n")
+
+				getgenv().timeOfLastCommand = os.clock()
+			end
+
+			if tostring(remote) == "use_active_attack" then
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Active Command")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation)")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedTimeSinceLastCommand = " .. os.clock() - getgenv().timeOfLastCommand)
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+				
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprintValueDeviations()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nupdateUnitPositions()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToActivate = {" .. tostring(arguments[1].HumanoidRootPart.CFrame.X) .. ", " .. tostring(arguments[1].HumanoidRootPart.CFrame.Z) .. "}")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nfor _, unit in pairs(unitPositions) do")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    if math.abs(unit[2] - positionToActivate[1]) <= 0.01 and math.abs(unit[3] - positionToActivate[2]) <= 0.01 then")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to active attack with unit: \" .. unit[\"Name\"])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        game:GetService(\"ReplicatedStorage\").endpoints.client_to_server.use_active_attack:InvokeServer(unit[1])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngetgenv().timeOfLastCommand = os.clock()")
+
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n--End Active Command\n")
+				
+				getgenv().timeOfLastCommand = os.clock()
+			end
+			
+		end
+
+		local true_args = {...}
+		return old(remote,unpack(true_args))
+	end)
+
+	setreadonly(mt,true)
+end
 
 local storyLevels = {
     ["1"] = {
@@ -3257,9 +3500,16 @@ function MainModule()
     getgenv().currentSpecialBannerUnits = data.currentspecialbannerunits
     getgenv().currentStandardBannerUnits = data.currentstandardbannerunits
 
+	getgenv().lockAutoFunctions = data.lockAutoFunctions
+
     getgenv().SpawnUnitPos = data.xspawnUnitPos
     getgenv().SelectedUnits = data.xselectedUnits
     getgenv().autoabilities = data.autoabilities
+
+	getgenv().recordingMacro = data.recordingmacro
+	getgenv().recordMacroOnTeleport = data.recordmacroonteleport
+	getgenv().replayMacroOnTeleport = data.replaymacroonteleport
+	getgenv().macroToReplay = data.macrotoreplay
 
     function updatejson()
         local xdata = {
@@ -3290,9 +3540,16 @@ function MainModule()
             currentstandardbannerunits = getgenv().currentStandardBannerUnits,
             --door = getgenv().door,
 
+			lockautofunctions = getgenv().lockAutoFunctions,
+
             xspawnUnitPos = getgenv().SpawnUnitPos,
             xselectedUnits = getgenv().SelectedUnits,
-            autoabilities = getgenv().autoabilities
+            autoabilities = getgenv().autoabilities,
+
+			recordingmacro = getgenv().recordingMacro,
+			recordmacroonteleport = getgenv().recordMacroOnTeleport,
+			replaymacroonteleport = getgenv().replayMacroOnTeleport,
+			macrotoreplay = getgenv().macroToReplay
         }
 
         local json = HttpService:JSONEncode(xdata)
@@ -3312,22 +3569,44 @@ function MainModule()
     })
 
     local autoFarmTab = mainWindow:CreateTab("Auto Farm")
+	local autoMacroTab = mainWindow:CreateTab("Auto Macro")
     local webhookTab = mainWindow:CreateTab("Webhooks")
     local creditsTab = mainWindow:CreateTab("Credits")
 
-    
-
-            
-    
-
     if game.PlaceId == 8304191830 then
+		getgenv().recordingMacro = false
+		autoMacroTab:CreateToggle({
+			Name = "Record Macro on Map Join",
+			CurrentValue = getgenv().recordMacroOnTeleport,
+			Callback = function(bool)
+				getgenv().recordMacroOnTeleport = bool
+				updatejson()
+			end})
+
+		autoMacroTab:CreateToggle({
+			Name = "Replay Macro on Map Join (DISABLE RECORD MACRO WHILE THIS IS ACTIVE)",
+			CurrentValue = getgenv().replayMacroOnTeleport,
+			Callback = function(bool)
+				getgenv().replayMacroOnTeleport = bool
+				updatejson()
+			end})
+
+		autoMacroTab:CreateDropdown({
+			Name = "Macro To Replay on Map Join",
+			Options = listfiles("AAMacros" .. scriptVersion),
+			CurrentOption = getgenv().macroToReplay or "nil",
+			Callback = function(selectedFile)
+				getgenv().macroToReplay = tostring(selectedFile)
+				updatejson()
+			end})
         
-        local unitSelectSection = autoFarmTab:CreateSection("Select Units")
 
         --------------------------------------------------
         --------------- Select Units Tab -----------------
         --------------------------------------------------
-        local Units = {}
+		local unitSelectSection = autoFarmTab:CreateSection("Select Units")
+
+		local Units = {}
 
         local function LoadUnits()
             repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
@@ -3492,14 +3771,14 @@ function MainModule()
 
         local worlddrop = autoFarmTab:CreateDropdown({
             Name = "Select World", 
-            Options = {"Plannet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
+            Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
         "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral"},
         CurrentOption = getgenv().world, 
         Callback = function(world)
             getgenv().world = world
             updatejson()
 
-            if world == "Plannet Namak" then
+            if world == "Planet Namak" then
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"namek_infinite", "namek_level_1", "namek_level_2", "namek_level_3",
@@ -3748,10 +4027,10 @@ function MainModule()
                 getgenv().AutoLoadTP = bool
                 updatejson()
                 if exec == "Synapse X" and getgenv().AutoLoadTP then
-                    syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                    syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
 
                     if exec == "Synapse X" then
-                        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
                         RayfieldLib:Notify({
                             Title = "Queued to Auto-Attach on Teleport!",
                             Content =  "Success",
@@ -3768,7 +4047,7 @@ function MainModule()
                     end
 
                 elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
-                    queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                    queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
                 end
 
         end})
@@ -3967,12 +4246,31 @@ function MainModule()
 			end})
 
 	else -- When in a match
+		if getgenv().recordMacroOnTeleport then
+			getgenv().recordMacroOnTeleport = false
+			getgenv().recordingMacro = true
+			updatejson()
+		else
+			getgenv().recordingMacro = false
+			updatejson()
+		end
+
+		if getgenv().recordingMacro then
+			writeMacroToFile(tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"])..tostring(os.date('%Y%m%d-%H%M%S'))..".lua")
+			RayfieldLib:Notify({
+				Title = "Recording Macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"])..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua",
+				Content = "Starting Recording",
+				Duration = 6.5
+			})
+			autoMacroTab:CreateLabel("Recording Macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"])..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua")
+		end
+		
         game.Players.LocalPlayer.PlayerGui.MessageGui.Enabled = false
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error.Volume = 0
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error_old.Volume = 0
     
         local autoLoadSection = autoFarmTab:CreateSection("Auto Load Script")
-		autoFarmTab:CreateLabel("This Automatically executes script when you teleport to the main area.")
+		autoFarmTab:CreateLabel("This automatically executes script when you teleport to the main area.")
         autoFarmTab:CreateLabel("You don't need to put the script in your autoexec folder!")
         autoFarmTab:CreateToggle({
             Name = "Auto Load Script", 
@@ -3981,34 +4279,24 @@ function MainModule()
                 getgenv().AutoLoadTP = bool
                 updatejson()
                 if exec == "Synapse X" and getgenv().AutoLoadTP then
-                    syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
-
+                    syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
                     if exec == "Synapse X" then
-                        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
                         RayfieldLib:Notify({
                             Title = "Queued to Auto-Attach on Teleport!",
                             Content =  "Success",
-                            Duration = 6.5,
-                            Actions = { -- Notification Buttons
-                                Ignore = {
-                                    Name = "Okay!",
-                                    Callback = function()
-                                        print("The user tapped Okay!")
-                                    end
-                                }
-                            }
+                            Duration = 6.5
                         })
                     end
 
                 elseif exec ~= "Synapse X" and getgenv().AutoLoadTP then
-                    queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+                    queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
                 end
             end})
 
         autoFarmTab:CreateLabel("If it doesn't work properly, then put the script in the autoexec folder!")
 
         local autoFarmSection = autoFarmTab:CreateSection("Auto Farm")
-
 
         --#region Auto Farm Tab
         autoFarmTab:CreateToggle({
@@ -4485,6 +4773,7 @@ else
         selectedreward = "star_fruit_random",
         AutoChallengeAll = false,
         autoabilities = false,
+		lockautofunctions = false,
         autofarmtp = false,
         webhook = "",
         sniperwebhook = "",
@@ -4504,6 +4793,10 @@ else
         currentmerchantitems = {},
         currentspecialbannerunits = {},
         currentstandardbannerunits = {},
+		recordingmacro = false,
+		recordmacroonteleport = false,
+		replaymacroonteleport = false,
+		macrotoreplay = "",
     
         xspawnUnitPos  = {
             csm_event  = {
@@ -5080,7 +5373,7 @@ coroutine.resume(coroutine.create(function()
             pcall(function() BabyWebhook() end)
         end
 
-        if getgenv().AutoFarm and not getgenv().disableAutoFarm then
+        if getgenv().AutoFarm and not getgenv().disableAutoFarm and not getgenv().lockAutoFunctions then
             if game.PlaceId ~= 8304191830 then
                 --print("AutoFarming")
                 xOffset = 1
@@ -5250,6 +5543,8 @@ coroutine.resume(coroutine.create(function()
     GameFinished:GetPropertyChangedSignal("Value"):Connect(function()
         print("Changed", GameFinished.Value == true)
         if GameFinished.Value == true then
+			getgenv().recordingMacro = false
+			updatejson()
             repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
             task.wait()
             pcall(function() Webhook() end)
@@ -5337,37 +5632,38 @@ getgenv().autoUpgrader = false
 
 function autoUpgradefunc()
     local success, err = pcall(function() --///
+		if not getgenv().lockautofunctions then
 
-        repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
+			repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
 
-        unitList = {}
+			unitList = {}
 
-        for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
-            if v:FindFirstChild("_stats") then
-                if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
-                    table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["upgrade"].Value, v})
-                end
-            end
+			for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
+				if v:FindFirstChild("_stats") then
+					if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
+						table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["upgrade"].Value, v})
+					end
+				end
+			end
+			
+			-- Sort By Upgrade (prioritize Bulma/Speedwagon)
+			table.sort(unitList, function (a, b)
+				if (a[1] == "bulma" and b[1] == "speedwagon") or (b[1] == "bulma" and a[1] == "speedwagon") or (a[1] == "bulma" and b[1] == "bulma") or (a[1] == "speedwagon" and b[1] == "speedwagon") then
+					return a[2] > b[2]
+				end
+				if a[1] == "bulma" or a[1] == "speedwagon" then
+					return true
+				end
+				if b[1] == "bulma" or b[1] == "speedwagon" then
+					return false
+				end
+				return a[2] > b[2]
+			end)
+
+			for _, unitEntry in pairs(unitList) do
+				game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
+			end
         end
-        
-        -- Sort By Upgrade (prioritize Bulma/Speedwagon)
-        table.sort(unitList, function (a, b)
-            if (a[1] == "bulma" and b[1] == "speedwagon") or (b[1] == "bulma" and a[1] == "speedwagon") or (a[1] == "bulma" and b[1] == "bulma") or (a[1] == "speedwagon" and b[1] == "speedwagon") then
-                return a[2] > b[2]
-            end
-            if a[1] == "bulma" or a[1] == "speedwagon" then
-                return true
-            end
-            if b[1] == "bulma" or b[1] == "speedwagon" then
-                return false
-            end
-            return a[2] > b[2]
-        end)
-
-        for _, unitEntry in pairs(unitList) do
-            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
-        end
-        
     end)
 
     if err then
@@ -5384,29 +5680,31 @@ end
 ------// Auto Sell/Quit \\------
 --#region Auto Sell/Quit loop
 coroutine.resume(coroutine.create(function()
-    while task.wait() do
-        local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
-        if getgenv().autoQuit and tonumber(getgenv().quitAtWave) <= _wave.Value then
-            Teleport()
-        end
-        if getgenv().autoSell and tonumber(getgenv().sellatwave) <= _wave.Value then
-            getgenv().disableAutoFarm = true
-            if game.PlaceId ~= 8304191830 then
-                repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
-                for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
-                    repeat
-                        task.wait()
-                    until v:WaitForChild("_stats")
-                    if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name then
-                        repeat
-                            task.wait()
-                        until v:WaitForChild("_stats"):WaitForChild("upgrade")
-            
-                        game:GetService("ReplicatedStorage").endpoints.client_to_server.sell_unit_ingame:InvokeServer(v)
-                    end
-                end
-            end
-        end
+    while task.wait(1.5) do
+		if not getgenv().lockAutoFunctions then
+			local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
+			if getgenv().autoQuit and tonumber(getgenv().quitAtWave) <= _wave.Value then
+				Teleport()
+			end
+			if getgenv().autoSell and tonumber(getgenv().sellatwave) <= _wave.Value then
+				getgenv().disableAutoFarm = true
+				if game.PlaceId ~= 8304191830 then
+					repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
+					for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
+						repeat
+							task.wait()
+						until v:WaitForChild("_stats")
+						if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name then
+							repeat
+								task.wait()
+							until v:WaitForChild("_stats"):WaitForChild("upgrade")
+				
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.sell_unit_ingame:InvokeServer(v)
+						end
+					end
+				end
+			end
+		end
     end
 end))
 --#endregion
@@ -5416,26 +5714,28 @@ end))
 getgenv().autoabilityerr = false
 
 function autoabilityfunc()
-    local success, err = pcall(function() --///
-        repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
-        for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
-            if v:FindFirstChild("_stats") then
-                if v._stats:FindFirstChild("player") and v._stats:FindFirstChild("xp") then
-                    if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value > 0 then
-                        game:GetService("ReplicatedStorage").endpoints.client_to_server.use_active_attack:InvokeServer(v)
-                    end
-                end
-            end
-        end
-    end)
-     
-     if err then
-         warn("//////////////////////////////////////////////////")
-         warn("//////////////////////////////////////////////////")
-         getgenv().autoabilityerr = true
-         error(err)
-     end
-
+	local success, err = pcall(function() --///
+		if not getgenv().lockAutoFunctions then
+			repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
+			for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
+				if v:FindFirstChild("_stats") then
+					if v._stats:FindFirstChild("player") and v._stats:FindFirstChild("xp") then
+						if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value > 0 then
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.use_active_attack:InvokeServer(v)
+						end
+					end
+				end
+			end
+		end
+	end)
+		
+	if err then
+		warn("//////////////////////////////////////////////////")
+		warn("//////////////////////////////////////////////////")
+		getgenv().autoabilityerr = true
+		error(err)
+	end
+	
 end
 
 coroutine.resume(coroutine.create(function()
@@ -5674,19 +5974,14 @@ if getgenv().AutoLoadTP == true then
     local exec = tostring(identifyexecutor())
 
     if exec == "Synapse X" then
-        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+        syn.queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
         RayfieldLib:Notify({
             Title = "Queued to Auto-Attach on Teleport!",
             Content = "Success",
-            Duration = 6.5,
-            Actions = { -- Notification Buttons
-                Ignore = {
-                    Name = "Okay!"
-                }
-            }
+            Duration = 6.5
         })
     else
-        queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/main/script.lua'))()")
+        queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Tesseract1234567890/animeadv/test/script.lua'))()")
     end
 
 end
