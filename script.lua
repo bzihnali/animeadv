@@ -2585,7 +2585,7 @@ local function writeMacroToFile(filename)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprintValueDeviations()")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprint(\"Attempting to spawn unit: \" .. unit[\"Name\"])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprint(\"Attempting to spawn unit: \" .. " .. tostring(arguments[1])")")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngame:GetService(\"ReplicatedStorage\").endpoints.client_to_server.spawn_unit:InvokeServer(\"" .. tostring(arguments[1]) .. "\",")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "CFrame.new(Vector3.new(" .. tostring(arguments[2].X) .. ", " .. tostring(arguments[2].Y) .. ", " .. tostring(arguments[2].Z) .. "), Vector3.new(0, 0, -1))")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, ")")
@@ -3493,7 +3493,9 @@ function MainModule()
     getgenv().autoUpgrade = data.autoUpgrade
     getgenv().difficulty = data.difficulty
     getgenv().world = data.world
+	getgenv().macroWorld = data.macroworld
     getgenv().level = data.level
+	getgenv().macroLevel = data.macrolevel
     getgenv().AutoContinue = data.autocontinue
     getgenv().nextLevel = data.nextlevel
     getgenv().currentMerchantItems = data.currentmerchantitems
@@ -3510,6 +3512,7 @@ function MainModule()
 	getgenv().recordMacroOnTeleport = data.recordmacroonteleport
 	getgenv().replayMacroOnTeleport = data.replaymacroonteleport
 	getgenv().macroToReplay = data.macrotoreplay
+	getgenv().levelMacros = data.levelmacros
 
     function updatejson()
         local xdata = {
@@ -3532,7 +3535,9 @@ function MainModule()
             autoUpgrade = getgenv().autoUpgrade,
             difficulty = getgenv().difficulty,
             world = getgenv().world,
+			macroworld = getgenv().macroWorld,
             level = getgenv().level,
+			macrolevel = getgenv().macroLevel,
             autocontinue = getgenv().AutoContinue,
             nextlevel = getgenv().nextLevel,
             currentmerchantitems = getgenv().currentMerchantItems,
@@ -3549,7 +3554,8 @@ function MainModule()
 			recordingmacro = getgenv().recordingMacro,
 			recordmacroonteleport = getgenv().recordMacroOnTeleport,
 			replaymacroonteleport = getgenv().replayMacroOnTeleport,
-			macrotoreplay = getgenv().macroToReplay
+			macrotoreplay = getgenv().macroToReplay,
+			levelmacros = getgenv().levelMacros
         }
 
         local json = HttpService:JSONEncode(xdata)
@@ -3590,15 +3596,265 @@ function MainModule()
 				getgenv().replayMacroOnTeleport = bool
 				updatejson()
 			end})
+		
+		
+		getgenv().macroLevels = {"nil"}
+		--Level dropdown here
+		local macroWorldDrop = autoMacroTab:CreateDropdown({
+            Name = "Select Macro World", 
+            Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
+        				"Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", 
+						"Cape Canaveral", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]"},
+        CurrentOption = getgenv().macroWorld, 
+        Callback = function(world)
+            getgenv().macroWorld = world
+            updatejson()
 
+            if world == "Planet Namak" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"namek_infinite", "namek_level_1", "namek_level_2", "namek_level_3",
+                                    	 "namek_level_4", "namek_level_5", "namek_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Shiganshinu District" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"aot_infinite", "aot_level_1", "aot_level_2", "aot_level_3", "aot_level_4",
+                                    "aot_level_5", "aot_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Snowy Town" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"demonslayer_infinite", "demonslayer_level_1", "demonslayer_level_2",
+                                    "demonslayer_level_3", "demonslayer_level_4", "demonslayer_level_5",
+                                    "demonslayer_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Hidden Sand Village" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"naruto_infinite", "naruto_level_1", "naruto_level_2", "naruto_level_3",
+                                    "naruto_level_4", "naruto_level_5", "naruto_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Marine's Ford" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"marineford_infinite","marineford_level_1","marineford_level_2","marineford_level_3",
+                						 "marineford_level_4","marineford_level_5","marineford_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Ghoul City" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"tokyoghoul_infinite","tokyoghoul_level_1","tokyoghoul_level_2","tokyoghoul_level_3",
+                                    "tokyoghoul_level_4","tokyoghoul_level_5","tokyoghoul_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Hollow World" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"hueco_infinite","hueco_level_1","hueco_level_2","hueco_level_3",
+                                    "hueco_level_4","hueco_level_5","hueco_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Ant Kingdom" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"hxhant_infinite","hxhant_level_1","hxhant_level_2","hxhant_level_3",
+                                    "hxhant_level_4","hxhant_level_5","hxhant_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+				end
+            elseif world == "Magic Town" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"magnolia_infinite","magnolia_level_1","magnolia_level_2","magnolia_level_3",
+                                    "magnolia_level_4","magnolia_level_5","magnolia_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Cursed Academy" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"jjk_infinite","jjk_level_1","jjk_level_2","jjk_level_3",
+                                    "jjk_level_4","jjk_level_5","jjk_level_6",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Clover Kingdom" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"clover_infinite","clover_level_1","clover_level_2","clover_level_3",
+                                    	 "clover_level_4","clover_level_5","clover_level_6",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Cape Canaveral" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"jojo_infinite","jojo_level_1","jojo_level_2","jojo_level_3","jojo_level_4","jojo_level_5","jojo_level_6",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Clover Kingdom [Elf Invasion]" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"clover_legend_1","clover_legend_2","clover_legend_3",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Hollow Invasion" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"bleach_legend_1","bleach_legend_2","bleach_legend_3","bleach_legend_4","bleach_legend_5",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Cape Canaveral [Legend]" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"jojo_legend_1","jojo_legend_2","jojo_legend_3","jojo_portal_pucci"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Planet Namak - Frozen" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"namek_winter_1", "namek_winter_2", "namek_winter_3",
+                                    	 "namek_winter_4", "namek_winter_5", "namek_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Shiganshinu District - Frozen" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = { "aot_winter_1", "aot_winter_2", "aot_winter_3", "aot_winter_4",
+                                    "aot_winter_5", "aot_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Snowy Town" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = { "demonslayer_winter_1", "demonslayer_winter_2",
+                                    "demonslayer_winter_3", "demonslayer_winter_4", "demonslayer_winter_5",
+                                    "demonslayer_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Hidden Sand Village" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"naruto_winter_1", "naruto_winter_2", "naruto_winter_3",
+                                    "naruto_winter_4", "naruto_winter_5", "naruto_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Marine's Ford" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"marineford_winter_1","marineford_winter_2","marineford_winter_3",
+                						 "marineford_winter_4","marineford_winter_5","marineford_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Ghoul City" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"tokyoghoul_winter_1","tokyoghoul_winter_2","tokyoghoul_winter_3",
+                                    "tokyoghoul_winter_4","tokyoghoul_winter_5","tokyoghoul_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Hollow World" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"hueco_winter_1","hueco_winter_2","hueco_winter_3",
+                                    "hueco_winter_4","hueco_winter_5","hueco_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Ant Kingdom" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"hxhant_winter_1","hxhant_winter_2","hxhant_winter_3",
+                                    "hxhant_winter_4","hxhant_winter_5","hxhant_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+				end
+            elseif world == "Magic Town" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"magnolia_winter_1","magnolia_winter_2","magnolia_winter_3",
+                                    "magnolia_winter_4","magnolia_winter_5","magnolia_winter_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Cursed Academy" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"jjk_winter_1","jjk_winter_2","jjk_winter_3",
+                                    "jjk_winter_4","jjk_winter_5","jjk_winter_6",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Clover Kingdom" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"clover_winter_1","clover_winter_2","clover_winter_3",
+                                    	 "clover_winter_4","clover_winter_5","clover_winter_6",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Cape Canaveral" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"jojo_winter_1","jojo_winter_2","jojo_winter_3","jojo_winter_4","jojo_winter_5","jojo_winter_6",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+            elseif world == "Chainsaw Man Contract" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"csm_level_1","csm_level_2","csm_level_3","csm_level_3","csm_level_4","csm_level_5","csm_level_6","csm_level_secret"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			end
+        end})
+        
+        getgenv().macroLevelDrop = autoMacroTab:CreateDropdown({
+            Name = "Select Macro Level", 
+            Options = getgenv().macroLevels, 
+            CurrentOption = getgenv().macroLevel, 
+            Callback = function(level)
+                getgenv().macroLevel = level
+                updatejson()
+            end})
+
+		--macro bound to level dropdown here
 		autoMacroTab:CreateDropdown({
-			Name = "Macro To Replay on Map Join",
+			Name = "Macro to Run on Above Level",
 			Options = listfiles("AAMacros" .. scriptVersion),
 			CurrentOption = getgenv().macroToReplay or "nil",
 			Callback = function(selectedFile)
-				getgenv().macroToReplay = tostring(selectedFile)
+				getgenv().levelMacros[getgenv().macroLevel] = tostring(selectedFile)
 				updatejson()
 			end})
+
+		--confirmation button here
+
+		
         
 
         --------------------------------------------------
@@ -4245,6 +4501,8 @@ function MainModule()
 				StandardSummonSniperWebhook(true)
 			end})
 
+		getgenv().lockAutoFunctions = false
+
 	else -- When in a match
 		if getgenv().recordMacroOnTeleport then
 			getgenv().recordMacroOnTeleport = false
@@ -4255,14 +4513,28 @@ function MainModule()
 			updatejson()
 		end
 
+		if getgenv().replayMacroOnTeleport then
+			if getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])] then
+				getgenv().lockAutoFunctions = true
+				loadfile("AAMacros" .. scriptVersion .. "\\" ..getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])])
+			else
+				RayfieldLib:Notify({
+					Title = "No macro for level " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]),
+					Content = "No macro for this level!",
+					Duration = 6.5
+				})
+			end
+		end
+
 		if getgenv().recordingMacro then
-			writeMacroToFile(tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"])..tostring(os.date('%Y%m%d-%H%M%S'))..".lua")
+			getgenv().lockAutoFunctions = true
+			writeMacroToFile(tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]).."-"..tostring(os.date('%Y%m%d-%H%M%S'))..".lua")
 			RayfieldLib:Notify({
-				Title = "Recording Macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"])..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua",
+				Title = "Recording macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"]).."-"..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua",
 				Content = "Starting Recording",
 				Duration = 6.5
 			})
-			autoMacroTab:CreateLabel("Recording Macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"])..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua")
+			autoMacroTab:CreateLabel("Recording Macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"]).."-"..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua")
 		end
 		
         game.Players.LocalPlayer.PlayerGui.MessageGui.Enabled = false
@@ -4788,7 +5060,9 @@ else
         autocontinue = false,
         difficulty = "nil",
         world = "nil",
+		macroworld = "nil",
         level = "nil",
+		macrolevel = "nil",
         door = "nil",
         currentmerchantitems = {},
         currentspecialbannerunits = {},
