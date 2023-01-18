@@ -4171,6 +4171,7 @@ function MainModule()
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
+			end
         end})
         
         getgenv().leveldrop = autoFarmTab:CreateDropdown({
