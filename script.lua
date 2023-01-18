@@ -2572,11 +2572,11 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "spawn_unit" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Spawn Command")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation = tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedTimeSinceLastCommand = " .. os.clock() - getgenv().timeOfLastCommand)
@@ -2586,7 +2586,7 @@ local function writeMacroToFile(filename)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprintValueDeviations()")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprint(\"Attempting to spawn unit!\")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprint(\"Attempting to spawn unit: " .. tostring(arguments[1]) .. "\")")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngame:GetService(\"ReplicatedStorage\").endpoints.client_to_server.spawn_unit:InvokeServer(\"" .. tostring(arguments[1]) .. "\",")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "CFrame.new(Vector3.new(" .. tostring(arguments[2].X) .. ", " .. tostring(arguments[2].Y) .. ", " .. tostring(arguments[2].Z) .. "), Vector3.new(0, 0, -1))")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, ")")
@@ -2603,11 +2603,11 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "upgrade_unit_ingame" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Upgrade Command")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation = tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
@@ -2629,7 +2629,7 @@ local function writeMacroToFile(filename)
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nfor _, unit in pairs(unitPositions) do")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    if math.abs(unit[2] - positionToUpgrade[1]) <= 0.01 and math.abs(unit[3] - positionToUpgrade[2]) <= 0.01 then")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to upgrade unit: \" .. unit[\"Name\"] .. \" from \" .. tostring(unit[\"_stats\"][\"upgrade\"].Value) ..  \" to \" .. tostring(unit[\"_stats\"][\"upgrade\"].Value + 1))")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to upgrade unit: \" .. unit[1][\"Name\"] .. \" from \" .. tostring(unit[1][\"_stats\"][\"upgrade\"].Value) ..  \" to \" .. tostring(unit[1][\"_stats\"][\"upgrade\"].Value + 1))")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        game:GetService(\"ReplicatedStorage\").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unit[1])")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
@@ -2644,11 +2644,11 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "sell_unit_ingame" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Sell Command")
 				
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation)")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))            
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation = tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))            
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedTimeSinceLastCommand = " .. os.clock() - getgenv().timeOfLastCommand)
@@ -2669,7 +2669,7 @@ local function writeMacroToFile(filename)
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nfor _, unit in pairs(unitPositions) do")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    if math.abs(unit[2] - positionToSell[1]) <= 0.01 and math.abs(unit[3] - positionToSell[2]) <= 0.01 then")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to sell unit: \" .. unit[\"Name\"])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to sell unit: \" .. unit[1][\"Name\"])")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        game:GetService(\"ReplicatedStorage\").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unit[1])")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
@@ -2684,11 +2684,11 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "use_active_attack" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Active Command")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and (os.clock() - getgenv().timeOfLastCommand) >= " .. tostring(os.clock() - getgenv().timeOfLastCommand) .. " - deviation)")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation += tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ndeviation = tostring(os.clock() - getgenv().macroStartTime) - " .. tostring(os.clock() - getgenv().macroStartTime))
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedWave = " .. game.Workspace["_wave_num"].Value)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedMoney = " .. game.Players.LocalPlayer._stats.resource.Value)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nexpectedTimeSinceLastCommand = " .. os.clock() - getgenv().timeOfLastCommand)
@@ -2709,7 +2709,7 @@ local function writeMacroToFile(filename)
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nfor _, unit in pairs(unitPositions) do")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    if math.abs(unit[2] - positionToActivate[1]) <= 0.01 and math.abs(unit[3] - positionToActivate[2]) <= 0.01 then")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to active attack with unit: \" .. unit[\"Name\"])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to active attack with unit: \" .. unit[1][\"Name\"])")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        game:GetService(\"ReplicatedStorage\").endpoints.client_to_server.use_active_attack:InvokeServer(unit[1])")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
@@ -3745,7 +3745,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Snowy Town" then
+            elseif world == "Snowy Town - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = { "demonslayer_winter_1", "demonslayer_winter_2",
@@ -3754,7 +3754,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Hidden Sand Village" then
+            elseif world == "Hidden Sand Village - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"naruto_winter_1", "naruto_winter_2", "naruto_winter_3",
@@ -3762,7 +3762,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Marine's Ford" then
+            elseif world == "Marine's Ford - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"marineford_winter_1","marineford_winter_2","marineford_winter_3",
@@ -3770,7 +3770,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Ghoul City" then
+            elseif world == "Ghoul City - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"tokyoghoul_winter_1","tokyoghoul_winter_2","tokyoghoul_winter_3",
@@ -3778,7 +3778,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Hollow World" then
+            elseif world == "Hollow World - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"hueco_winter_1","hueco_winter_2","hueco_winter_3",
@@ -3786,7 +3786,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Ant Kingdom" then
+            elseif world == "Ant Kingdom - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"hxhant_winter_1","hxhant_winter_2","hxhant_winter_3",
@@ -3794,7 +3794,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
 				end
-            elseif world == "Magic Town" then
+            elseif world == "Magic Town - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"magnolia_winter_1","magnolia_winter_2","magnolia_winter_3",
@@ -3802,7 +3802,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Cursed Academy" then
+            elseif world == "Cursed Academy - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"jjk_winter_1","jjk_winter_2","jjk_winter_3",
@@ -3810,7 +3810,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-            elseif world == "Clover Kingdom" then
+            elseif world == "Clover Kingdom - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"clover_winter_1","clover_winter_2","clover_winter_3",
@@ -3818,7 +3818,7 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
-			elseif world == "Cape Canaveral" then
+			elseif world == "Cape Canaveral - Frozen" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"jojo_winter_1","jojo_winter_2","jojo_winter_3","jojo_winter_4","jojo_winter_5","jojo_winter_6",}
@@ -4150,7 +4150,27 @@ function MainModule()
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
-            end
+            elseif world == "Clover Kingdom [Elf Invasion]" then
+                getgenv().leveldrop:Clear()
+                table.clear(levels)
+                getgenv().levels = {"clover_legend_1","clover_legend_2","clover_legend_3",}
+                for i, v in ipairs(levels) do
+                    getgenv().leveldrop:Add(v)
+                end
+            elseif world == "Hollow Invasion" then
+                getgenv().leveldrop:Clear()
+                table.clear(levels)
+                getgenv().levels = {"bleach_legend_1","bleach_legend_2","bleach_legend_3","bleach_legend_4","bleach_legend_5",}
+                for i, v in ipairs(levels) do
+                    getgenv().leveldrop:Add(v)
+                end
+            elseif world == "Cape Canaveral [Legend]" then
+                getgenv().leveldrop:Clear()
+                table.clear(levels)
+                getgenv().levels = {"jojo_legend_1","jojo_legend_2","jojo_legend_3","jojo_portal_pucci"}
+                for i, v in ipairs(levels) do
+                    getgenv().leveldrop:Add(v)
+                end
         end})
         
         getgenv().leveldrop = autoFarmTab:CreateDropdown({
