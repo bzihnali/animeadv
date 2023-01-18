@@ -2486,6 +2486,7 @@ local UserInputService = game:GetService("UserInputService")
 
 getgenv().saveFileName = "Anime-Adventures_UPD9"..game.Players.LocalPlayer.Name..".json"
 getgenv().door = "_lobbytemplategreen1"
+getgenv().selectedMacroFile = "nil"
 
 local startTime = os.time(os.date("!*t"))
 local startGems = game.Players.LocalPlayer._stats.gem_amount.Value
@@ -3846,16 +3847,19 @@ function MainModule()
 		autoMacroTab:CreateDropdown({
 			Name = "Macro to Run on Above Level",
 			Options = listfiles("AAMacros" .. scriptVersion),
-			CurrentOption = getgenv().macroToReplay or "nil",
+			CurrentOption = "nil",
 			Callback = function(selectedFile)
-				getgenv().levelMacros[getgenv().macroLevel] = tostring(selectedFile)
+				getgenv().selectedMacroFile = selectedFile
 				updatejson()
 			end})
 
 		--confirmation button here
-
-		
-        
+		autoMacroTab:CreateButton({
+			Name = "Confirm Selection",
+			Callback = function()
+				getgenv().levelMacros[getgenv().macroLevel] = tostring(getgenv().selectedMacroFile)
+				updatejson()
+			end})
 
         --------------------------------------------------
         --------------- Select Units Tab -----------------
@@ -4516,7 +4520,7 @@ function MainModule()
 		if getgenv().replayMacroOnTeleport then
 			if getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])] then
 				getgenv().lockAutoFunctions = true
-				loadfile("AAMacros" .. scriptVersion .. "\\" ..getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])])
+				loadfile(getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])])
 			else
 				RayfieldLib:Notify({
 					Title = "No macro for level " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]),
