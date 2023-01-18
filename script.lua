@@ -3600,6 +3600,7 @@ function MainModule()
 		
 		
 		getgenv().macroLevels = {"nil"}
+
 		--Level dropdown here
 		local macroWorldDrop = autoMacroTab:CreateDropdown({
             Name = "Select Macro World", 
@@ -3834,7 +3835,7 @@ function MainModule()
 			end
         end})
         
-        getgenv().macroLlevelMacrosevelDrop = autoMacroTab:CreateDropdown({
+        getgenv().macroLevelDrop = autoMacroTab:CreateDropdown({
             Name = "Select Macro Level", 
             Options = getgenv().macroLevels, 
             CurrentOption = getgenv().macroLevel, 
