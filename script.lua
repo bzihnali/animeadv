@@ -3850,7 +3850,7 @@ function MainModule()
 			Options = listfiles("AAMacros" .. scriptVersion),
 			CurrentOption = "nil",
 			Callback = function(selectedFile)
-				getgenv().selectedMacroFile = selectedFile
+				getgenv().selectedMacroFile = tostring(selectedFile)
 				updatejson()
 			end})
 
@@ -3858,7 +3858,7 @@ function MainModule()
 		autoMacroTab:CreateButton({
 			Name = "Confirm Selection",
 			Callback = function()
-				getgenv().levelMacros[getgenv().macroLevel] = tostring(getgenv().selectedMacroFile)
+				getgenv().levelMacros[getgenv().macroLevel] = tostring(getgenv().selectedMacroFile):gsub("\\", [[/]])
 				updatejson()
 			end})
 
