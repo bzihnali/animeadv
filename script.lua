@@ -2458,7 +2458,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "1.6.4b"
+local scriptVersion = "1.6.5b"
 
 if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
@@ -2484,7 +2484,7 @@ local RunService = game:GetService("RunService")
 local mouse = game.Players.LocalPlayer:GetMouse()
 local UserInputService = game:GetService("UserInputService")
 
-getgenv().saveFileName = "Anime-Adventures_UPD9"..game.Players.LocalPlayer.Name..".json"
+getgenv().saveFileName = "Anime-Adventures_UPD9"..game.Players.LocalPlayer.Name.."-"..scriptVersion..".json"
 getgenv().door = "_lobbytemplategreen1"
 getgenv().selectedMacroFile = "nil"
 
