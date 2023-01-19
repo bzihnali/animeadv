@@ -4557,7 +4557,7 @@ function MainModule()
 			updatejson()
 			writeMacroToFile(tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]).."-"..tostring(os.date('%Y%m%d-%H%M%S'))..".lua")
 			RayfieldLib:Notify({
-				Title = "Recording macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"]).."-"..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua",
+				Title = "Recording macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]).."-"..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua",
 				Content = "Starting Recording",
 				Duration = 6.5
 			})
