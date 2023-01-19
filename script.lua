@@ -2548,7 +2548,7 @@ local function writeMacroToFile(filename)
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    for i, v in ipairs(game.Workspace[\"_UNITS\"]:GetChildren()) do")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        if v:FindFirstChild(\"_stats\") then")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            if tostring(v[\"_stats\"].player.Value) == game.Players.LocalPlayer.Name and v[\"_stats\"].xp.Value >= 0 then")
-	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n                table.insert(unitPositions, {v, v.HumanoidRootPart.CFrame.X, v.HumanoidRootPart.CFrame.Z})")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n                table.insert(unitPositions, {v, v._hitbox.CFrame.X, v._hitbox.CFrame.Z})")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            end")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        end")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
@@ -2623,7 +2623,7 @@ local function writeMacroToFile(filename)
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToUpgrade = {" .. tostring(arguments[1].HumanoidRootPart.CFrame.X) .. ", " .. tostring(arguments[1].HumanoidRootPart.CFrame.Z) .. "}")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToUpgrade = {" .. tostring(arguments[1]._hitbox.CFrame.X) .. ", " .. tostring(arguments[1]._hitbox.CFrame.Z) .. "}")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2663,7 +2663,7 @@ local function writeMacroToFile(filename)
 				
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToSell = {" .. tostring(arguments[1].HumanoidRootPart.CFrame.X) .. ", " .. tostring(arguments[1].HumanoidRootPart.CFrame.Z) .. "}")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToSell = {" .. tostring(arguments[1]._hitbox.CFrame.X) .. ", " .. tostring(arguments[1]._hitbox.CFrame.Z) .. "}")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2703,7 +2703,7 @@ local function writeMacroToFile(filename)
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToActivate = {" .. tostring(arguments[1].HumanoidRootPart.CFrame.X) .. ", " .. tostring(arguments[1].HumanoidRootPart.CFrame.Z) .. "}")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\npositionToActivate = {" .. tostring(arguments[1]._hitbox.CFrame.X) .. ", " .. tostring(arguments[1]._hitbox.CFrame.Z) .. "}")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
