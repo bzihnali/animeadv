@@ -4827,7 +4827,7 @@ function MainModule()
             PlaceholderText = tostring(getgenv().quitAtWave), 
             RemoveTextAfterFocusLost = false,
             Callback = function(t)
-                getgenv().sellatwave = tonumber(t)
+                getgenv().quitatwave = tonumber(t)
                 updatejson()
             end})
 
