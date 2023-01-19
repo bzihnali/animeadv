@@ -4554,6 +4554,7 @@ function MainModule()
 
 		if getgenv().recordingMacro then
 			getgenv().lockAutoFunctions = true
+			updatejson()
 			writeMacroToFile(tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]).."-"..tostring(os.date('%Y%m%d-%H%M%S'))..".lua")
 			RayfieldLib:Notify({
 				Title = "Recording macro to file: " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["map"]).."-"..tostring(os.date('%Y-%m-%d %H:%M:%S'))..".lua",
@@ -5934,7 +5935,6 @@ getgenv().autoUpgrader = false
 function autoUpgradefunc()
     local success, err = pcall(function() --///
 		if not getgenv().lockautofunctions then
-
 			repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
 
 			unitList = {}
