@@ -3606,7 +3606,7 @@ function MainModule()
             Name = "Select Macro World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
         				"Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", 
-						"Cape Canaveral", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]"},
+						"Cape Canaveral", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend], Chainsaw Man Contract"},
         CurrentOption = getgenv().macroWorld, 
         Callback = function(world)
             getgenv().macroWorld = world
