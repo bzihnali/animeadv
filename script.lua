@@ -6117,7 +6117,7 @@ local function startfarming()
                            and getgenv().AutoFarmTP == false and getgenv().AutoFarmIC == false then
         if game.PlaceId == 8304191830 then
             local cpos = player.Character.HumanoidRootPart.CFrame
-			if not getgenv().isAlt then
+			if getgenv().isAlt ~= true then
 				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
 					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
 						if v.Name == "Owner" and v.Value == nil then
@@ -6172,22 +6172,26 @@ local function startfarming()
 							break
 						end
 					end
-				else
-					local inMainLobby = false
-					repeat
-						for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
-							print(tostring(v.Value))
-							if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
-								local args = {
-									[1] = tostring(v.Parent.Name)
-								}
-								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
-								inMainLobby = true
+				end
+			else
+				local inMainLobby = false
+				repeat
+					print("WAITING ON MAIN TO SET LEVEL")
+					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
+						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
+							for _, val in pairs(v.Parent:GetDescendants()) do
+								if val.Name == "TouchInterest" and val.Parent then
+									firetouchinterest(game.Players.LocalPlayer.Character.Head, val.Parent, 0)
+									task.wait(0.1)
+									firetouchinterest(game.Players.LocalPlayer.Character.Head, val.Parent, 1)
+									task.wait(0.1)
+								end
 							end
 						end
-						task.wait(0.5)
-					until (inMainLobby == true)
-				end
+					end
+					task.wait(0.5)
+				until (inMainLobby == true)
+				
             end
 
             task.wait()
