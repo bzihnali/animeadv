@@ -3588,6 +3588,10 @@ function MainModule()
 
 	print(getgenv().isAlt)
 
+	if getgenv().isAlt then
+		setfpscap(15)
+	end
+
 
     mainWindow = RayfieldLibrary:CreateWindow({
         Name = "Anime Adventures " .. scriptVersion .. " - " .. exec .. " (ALT: " .. tostring(getgenv().isAlt) .. ")",
@@ -5886,7 +5890,7 @@ coroutine.resume(coroutine.create(function()
 
             if getgenv().AutoContinue then
                 if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win ~= nil then
-                    getgenv().level = GetNextLevel(GetCurrentLevel())
+                    getgenv().level = GetNextLevel(GetCurrentLevelId())
                     updatejson()
                     if getgenv().isAlt ~= true then
 						for i = 1, 5 do
@@ -5900,7 +5904,7 @@ coroutine.resume(coroutine.create(function()
 						loadfile("TeleportTo.lua")()
 					end
                 else
-                    getgenv().level = GetCurrentLevel()
+                    getgenv().level = GetCurrentLevelId()
                     updatejson()
                     for i = 1, 25 do
                         local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
