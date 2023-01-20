@@ -5810,7 +5810,7 @@ function TPReturner()
    end
    local num = 0;
    local extranum = 0
-   for i,v in pairs(Site.data) do
+   for i, v in pairs(Site.data) do
        extranum += 1
        local Possible = true
        ID = tostring(v.id)
@@ -5842,7 +5842,8 @@ function TPReturner()
                pcall(function()
                    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
                    wait()
-                   game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
+				   writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",".. ID..", game.Players.LocalPlayer)")
+                   loadfile("TeleportTo.lua")()
                end)
                wait(4)
            end
@@ -5912,13 +5913,17 @@ coroutine.resume(coroutine.create(function()
                 end
             elseif getgenv().AutoLeave then
                 --
-                for i = 1, 5 do
-                    Teleport()
-                    Teleport()
-                    Teleport()
-                    task.wait(5)
-                end
-                -- game:GetService("TeleportService"):Teleport(8304191830, game.Players.LocalPlayer)
+				if getgenv().isAlt ~= true
+					for i = 1, 5 do
+						Teleport()
+						Teleport()
+						Teleport()
+						task.wait(5)
+					end
+				else
+					task.wait(4)
+					loadfile("TeleportTo.lua")()
+				end
             end
         end
 	end)
@@ -6007,7 +6012,17 @@ coroutine.resume(coroutine.create(function()
 		if not getgenv().lockAutoFunctions then
 			local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
 			if getgenv().autoQuit and tonumber(getgenv().quitAtWave) <= _wave.Value then
-				Teleport()
+				if getgenv().isAlt ~= true
+					for i = 1, 5 do
+						Teleport()
+						Teleport()
+						Teleport()
+						task.wait(5)
+					end
+				else
+					task.wait(4)
+					loadfile("TeleportTo.lua")()
+				end
 			end
 			if getgenv().autoSell and tonumber(getgenv().sellatwave) <= _wave.Value then
 				getgenv().disableAutoFarm = true
