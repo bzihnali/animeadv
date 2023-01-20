@@ -3589,7 +3589,8 @@ function MainModule()
 	print(getgenv().isAlt)
 
 	if getgenv().isAlt then
-		setfpscap(15)
+		game:GetService("RunService"):Set3dRenderingEnabled(false)
+		setfpscap(20)
 	end
 
 
@@ -6172,10 +6173,10 @@ local function startfarming()
 
 							local altsInGame = false
 
-							for _, v in pairs(game.Players:GetPlayers()) do
-								print(v.Name)
+							for _, val in pairs(game.Players:GetPlayers()) do
+								print(val.Name)
 								for i, alt in pairs(getgenv().altList) do
-									if tostring(v.Name) == tostring(alt) then
+									if tostring(val.Name) == tostring(alt) then
 										altsInGame = true
 										break
 									end
@@ -6183,7 +6184,7 @@ local function startfarming()
 							end
 							
 							if altsInGame then
-								task.wait(10)
+								repeat task.wait() until #v.Parent.Players:GetChildren() == 4
 							end
 
 							local args = { 
