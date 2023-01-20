@@ -2458,7 +2458,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "1.6.5b"
+local scriptVersion = "1.6.6b"
 
 if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
@@ -2475,6 +2475,7 @@ else
     game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
     repeat task.wait() until game:GetService("Workspace")["_waves_started"].Value == true
 end
+	
 ---### Loading Section End ###---
 
 local HttpService = game:GetService("HttpService")
@@ -3516,6 +3517,7 @@ function MainModule()
 	getgenv().levelMacros = data.levelmacros
 
 	getgenv().altList = data.altlist
+	getgenv().mainAccount = data.mainaccount
 
     function updatejson()
         local xdata = {
@@ -3560,7 +3562,8 @@ function MainModule()
 			macrotoreplay = getgenv().macroToReplay,
 			levelmacros = getgenv().levelMacros,
 
-			altlist = getgenv().altList
+			altlist = getgenv().altList,
+			mainaccount = getgenv().mainAccount
         }
 
         local json = HttpService:JSONEncode(xdata)
@@ -3573,8 +3576,28 @@ function MainModule()
     local exec = tostring(identifyexecutor())
     RayfieldLib = RayfieldLibrary
 
+	getgenv().isAlt = false
+
+	if not tostring(game.Players.LocalPlayer.Name) == getgenv().mainAccount then
+		for _, v in pairs(getgenv().altList) do
+			print(v)
+			if tostring(game.Players.LocalPlayer.Name) == v then
+				print(v .. "IS ALT")
+				getgenv().isAlt = true
+				break
+			end
+		end
+
+		print(getgenv().isAlt)
+
+		if not getgenv().isAlt then
+			getgenv().mainAccount = tostring(game.Players.LocalPlayer.Name)
+			updatejson()
+		end
+	end
+
     mainWindow = RayfieldLibrary:CreateWindow({
-        Name = "Anime Adventures " .. scriptVersion .. " - " .. exec,
+        Name = "Anime Adventures " .. scriptVersion .. " - " .. exec .. " (ALT: " .. tostring(getgenv().isAlt) .. ")",
         LoadingTitle = "Anime Adventures " .. scriptVersion,
         LoadingSubtitle = "rewritten by Defrag"
     })
@@ -5104,6 +5127,7 @@ else
 		replaymacroonteleport = false,
 		macrotoreplay = "",
 		altlist = {},
+		mainaccount = "nil",
     
         xspawnUnitPos  = {
             csm_event  = {
@@ -6100,45 +6124,71 @@ local function startfarming()
                            and getgenv().AutoFarmTP == false and getgenv().AutoFarmIC == false then
         if game.PlaceId == 8304191830 then
             local cpos = player.Character.HumanoidRootPart.CFrame
+			if not getgenv().isAlt then
+				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
+					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
+						if v.Name == "Owner" and v.Value == nil then
+							local args = {
+								[1] = tostring(v.Parent.Name)
+							}
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+						
+							task.wait()
+						
+							if getgenv().level:match("infinite") then
+								local args = {
+									[1] = tostring(v.Parent.Name), -- Lobby 
+									[2] = getgenv().level, -- World
+									[3] = true, -- Friends Only or not
+									[4] = "Hard"
+								}
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+							else
+								local args = {
+									[1] = tostring(v.Parent.Name), -- Lobby 
+									[2] = getgenv().level, -- World
+									[3] = true, -- Friends Only or not
+									[4] = getgenv().difficulty
+								}
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+							end
 
-            if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
-                for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
-                    if v.Name == "Owner" and v.Value == nil then
-                        local args = {
-                            [1] = tostring(v.Parent.Name)
-                        }
-                        game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
-                    
-                        task.wait()
-                    
-                        if getgenv().level:match("infinite") then
-                            local args = {
-                                [1] = tostring(v.Parent.Name), -- Lobby 
-                                [2] = getgenv().level, -- World
-                                [3] = true, -- Friends Only or not
-                                [4] = "Hard"
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-                        else
-                            local args = {
-                                [1] = tostring(v.Parent.Name), -- Lobby 
-                                [2] = getgenv().level, -- World
-                                [3] = true, -- Friends Only or not
-                                [4] = getgenv().difficulty
-                            }
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-                        end
+							local altsInGame = false
 
-                        local args = { 
-                            [1] =tostring(v.Parent.Name)
-                        }
-                        
-                        game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
-                        getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
-                        player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
-                        break
-                    end
-                end
+							for _, v in pairs(game.Players:GetPlayers()) do
+								print(v.Name)
+								for i, alt in pairs(getgenv().altList) do
+									if tostring(v.Name) == alt then
+										altsInGame = true
+										break
+									end
+								end
+							end
+							
+							if altsInGame then
+								task.wait(10)
+							end
+
+							local args = { 
+								[1] = tostring(v.Parent.Name)
+							}
+							
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+							getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+							player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+							break
+						end
+					end
+				else
+					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
+						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
+							local args = {
+								[1] = tostring(v.Parent.Name)
+							}
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+						end
+					end
+				end
             end
 
             task.wait()
