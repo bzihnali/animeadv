@@ -3589,7 +3589,8 @@ function MainModule()
 	print(getgenv().isAlt)
 
 	if getgenv().isAlt then
-		setfpscap(5)
+		game:GetService("RunService"):Set3dRenderingEnabled(false)
+		setfpscap(20)
 	end
 
 
