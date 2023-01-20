@@ -5885,7 +5885,7 @@ coroutine.resume(coroutine.create(function()
             end
 
             if getgenv().AutoContinue then
-                if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
+                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win ~= nil then
                     getgenv().level = GetNextLevel(GetCurrentLevel())
                     updatejson()
                     if getgenv().isAlt ~= true then
