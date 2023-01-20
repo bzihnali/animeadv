@@ -3065,7 +3065,7 @@ local function GetNextLevel(currentLevel)
                 if j ~= "6" then --assuming 6 levels per map
                     return v.levels[tostring(tonumber(j) + 1)]["id"]
                 else
-                    if levels[tostring(i + 1)] then
+                    if storyLevels[tostring(i + 1)] then
                         return storyLevels[tostring(i + 1)]["levels"][tostring(1)]["id"]
                     else
                         return currentLevel
