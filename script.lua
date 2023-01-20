@@ -3515,6 +3515,8 @@ function MainModule()
 	getgenv().macroToReplay = data.macrotoreplay
 	getgenv().levelMacros = data.levelmacros
 
+	getgenv().altList = data.altlist
+
     function updatejson()
         local xdata = {
             autoloadtp = getgenv().AutoLoadTP,
@@ -3556,7 +3558,9 @@ function MainModule()
 			recordmacroonteleport = getgenv().recordMacroOnTeleport,
 			replaymacroonteleport = getgenv().replayMacroOnTeleport,
 			macrotoreplay = getgenv().macroToReplay,
-			levelmacros = getgenv().levelMacros
+			levelmacros = getgenv().levelMacros,
+
+			altlist = getgenv().altList
         }
 
         local json = HttpService:JSONEncode(xdata)
@@ -5099,6 +5103,7 @@ else
 		recordmacroonteleport = false,
 		replaymacroonteleport = false,
 		macrotoreplay = "",
+		altlist = {},
     
         xspawnUnitPos  = {
             csm_event  = {
