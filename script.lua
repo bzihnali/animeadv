@@ -5843,7 +5843,8 @@ function TPReturner()
                    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
                    wait()
 				   writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
-                   loadfile("TeleportTo.lua")()
+                   task.wait(2)
+				   loadfile("TeleportTo.lua")()
                end)
                wait(4)
            end
@@ -5887,12 +5888,17 @@ coroutine.resume(coroutine.create(function()
                 if (game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win) then
                     getgenv().level = GetNextLevel(GetCurrentLevel())
                     updatejson()
-                    for i = 1, 25 do
-                        Teleport()
-                        Teleport()
-                        Teleport()
-                        task.wait(1)
-                    end
+                    if getgenv().isAlt ~= true then
+						for i = 1, 5 do
+							Teleport()
+							Teleport()
+							Teleport()
+							task.wait(5)
+						end
+					else
+						task.wait(4)
+						loadfile("TeleportTo.lua")()
+					end
                 else
                     getgenv().level = GetCurrentLevel()
                     updatejson()
@@ -5912,7 +5918,6 @@ coroutine.resume(coroutine.create(function()
                     task.wait(1)
                 end
             elseif getgenv().AutoLeave then
-                --
 				if getgenv().isAlt ~= true then
 					for i = 1, 5 do
 						Teleport()
