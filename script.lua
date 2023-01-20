@@ -5913,7 +5913,7 @@ coroutine.resume(coroutine.create(function()
                 end
             elseif getgenv().AutoLeave then
                 --
-				if getgenv().isAlt ~= true
+				if getgenv().isAlt ~= true then
 					for i = 1, 5 do
 						Teleport()
 						Teleport()
@@ -6012,7 +6012,7 @@ coroutine.resume(coroutine.create(function()
 		if not getgenv().lockAutoFunctions then
 			local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
 			if getgenv().autoQuit and tonumber(getgenv().quitAtWave) <= _wave.Value then
-				if getgenv().isAlt ~= true
+				if getgenv().isAlt ~= true then
 					for i = 1, 5 do
 						Teleport()
 						Teleport()
