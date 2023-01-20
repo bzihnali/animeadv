@@ -3504,7 +3504,7 @@ function MainModule()
     getgenv().currentSpecialBannerUnits = data.currentspecialbannerunits
     getgenv().currentStandardBannerUnits = data.currentstandardbannerunits
 
-	getgenv().lockAutoFunctions = data.lockAutoFunctions
+	getgenv().lockAutoFunctions = data.lockautofunctions
 
     getgenv().SpawnUnitPos = data.xspawnUnitPos
     getgenv().SelectedUnits = data.xselectedUnits
@@ -4315,7 +4315,7 @@ function MainModule()
             PlaceholderText = tostring(getgenv().quitAtWave), 
             RemoveTextAfterFocusLost = false,
             Callback = function(t)
-                getgenv().quitatwave = tonumber(t)
+                getgenv().quitAtWave = tonumber(t)
                 updatejson()
             end})
 
@@ -4848,7 +4848,7 @@ function MainModule()
             PlaceholderText = tostring(getgenv().quitAtWave), 
             RemoveTextAfterFocusLost = false,
             Callback = function(t)
-                getgenv().quitatwave = tonumber(t)
+                getgenv().quitAtWave = tonumber(t)
                 updatejson()
             end})
 
