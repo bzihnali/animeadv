@@ -3828,7 +3828,7 @@ function MainModule()
             elseif world == "Chainsaw Man Contract" then
 				getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
-                getgenv().macroLevels = {"csm_level_1","csm_level_2","csm_level_3","csm_level_3","csm_level_4","csm_level_5","csm_level_6","csm_level_secret"}
+                getgenv().macroLevels = {"csm_portal_1","csm_portal_2","csm_portal_3","csm_portal_4","csm_portal_5","csm_portal_6","csm_portal_secret"}
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
