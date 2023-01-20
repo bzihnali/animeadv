@@ -6173,14 +6173,19 @@ local function startfarming()
 						end
 					end
 				else
-					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
-						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
-							local args = {
-								[1] = tostring(v.Parent.Name)
-							}
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+					local inMainLobby = false
+					repeat
+						for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
+							if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
+								local args = {
+									[1] = tostring(v.Parent.Name)
+								}
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+								inMainLobby = true
+							end
 						end
-					end
+						task.wait(0.5)
+					until (inMainLobby == true)
 				end
             end
 
@@ -6188,13 +6193,23 @@ local function startfarming()
 
             player.Character.HumanoidRootPart.CFrame = cpos
 
-            if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name then
-                if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
-                    getgenv().teleporting = false
-                else
-                    getgenv().teleporting = true
-                end
-            end
+			if not getgenv().isAlt then
+				if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name then
+					if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
+						getgenv().teleporting = false
+					else
+						getgenv().teleporting = true
+					end
+				end
+			else
+				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner) == getgenv().mainAccount then
+					if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
+						getgenv().teleporting = false
+					else
+						getgenv().teleporting = true
+					end
+				end
+			end
 
             warn("farming")
             task.wait(3)
