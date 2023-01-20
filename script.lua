@@ -6176,6 +6176,7 @@ local function startfarming()
 					local inMainLobby = false
 					repeat
 						for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
+							print(tostring(v.Value))
 							if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
 								local args = {
 									[1] = tostring(v.Parent.Name)
