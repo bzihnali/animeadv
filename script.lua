@@ -3578,23 +3578,16 @@ function MainModule()
 
 	getgenv().isAlt = false
 
-	if not tostring(game.Players.LocalPlayer.Name) == getgenv().mainAccount then
-		for _, v in pairs(getgenv().altList) do
-			print(v)
-			if tostring(game.Players.LocalPlayer.Name) == v then
-				print(v .. "IS ALT")
-				getgenv().isAlt = true
-				break
-			end
-		end
+	print(tostring(game.Players.LocalPlayer.Name))
+	print(getgenv().mainAccount)
 
-		print(getgenv().isAlt)
-
-		if not getgenv().isAlt then
-			getgenv().mainAccount = tostring(game.Players.LocalPlayer.Name)
-			updatejson()
-		end
+	if tostring(game.Players.LocalPlayer.Name) ~= getgenv().mainAccount then
+		print(tostring(game.Players.LocalPlayer.Name) .. " IS ALT")
+		getgenv().isAlt = true
 	end
+
+	print(getgenv().isAlt)
+
 
     mainWindow = RayfieldLibrary:CreateWindow({
         Name = "Anime Adventures " .. scriptVersion .. " - " .. exec .. " (ALT: " .. tostring(getgenv().isAlt) .. ")",
@@ -6158,7 +6151,7 @@ local function startfarming()
 							for _, v in pairs(game.Players:GetPlayers()) do
 								print(v.Name)
 								for i, alt in pairs(getgenv().altList) do
-									if tostring(v.Name) == alt then
+									if tostring(v.Name) == tostring(alt) then
 										altsInGame = true
 										break
 									end
