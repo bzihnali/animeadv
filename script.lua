@@ -3588,10 +3588,17 @@ function MainModule()
 
 	print(getgenv().isAlt)
 
-	if getgenv().isAlt then
-		game:GetService("RunService"):Set3dRenderingEnabled(false)
-		setfpscap(20)
-	end
+	coroutine.resume(coroutine.create(function()
+		while task.wait(0.5) do
+			if isrbxactive() ~= true then
+				setfpscap(10)
+				game:GetService("RunService"):Set3dRenderingEnabled(false)
+			else
+				setfpscap(100)
+				game:GetService("RunService"):Set3dRenderingEnabled(true)
+			end
+		end
+	end))
 
 
     mainWindow = RayfieldLibrary:CreateWindow({
