@@ -5852,11 +5852,16 @@ function TPReturner()
                table.insert(AllIDs, ID)
                wait()
                pcall(function()
-                   writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
-                   wait()
-				   writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
-                   task.wait(9)
-				   loadfile("TeleportTo.lua")()
+					if getgenv().isAlt ~= true
+						writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+						wait()
+						writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
+						task.wait(7)
+						loadfile("TeleportTo.lua")()
+			   		else
+						repeat task.wait() until game:GetService("Players")[game.Players.LocalPlayer.Name] == nil
+						loadfile("TeleportTo.lua")()
+					end
                end)
                wait(4)
            end
@@ -5901,15 +5906,7 @@ coroutine.resume(coroutine.create(function()
                     getgenv().level = GetNextLevel(GetCurrentLevelId())
                     updatejson()
                     if getgenv().isAlt ~= true then
-						for i = 1, 5 do
-							Teleport()
-							Teleport()
-							Teleport()
-							task.wait(5)
-						end
-					else
-						task.wait(4)
-						loadfile("TeleportTo.lua")()
+						Teleport()
 					end
                 else
                     getgenv().level = GetCurrentLevelId()
@@ -5931,15 +5928,7 @@ coroutine.resume(coroutine.create(function()
                 end
             elseif getgenv().AutoLeave then
 				if getgenv().isAlt ~= true then
-					for i = 1, 5 do
-						Teleport()
-						Teleport()
-						Teleport()
-						task.wait(5)
-					end
-				else
-					task.wait(4)
-					loadfile("TeleportTo.lua")()
+					Teleport()
 				end
             end
         end
@@ -6029,18 +6018,9 @@ coroutine.resume(coroutine.create(function()
 		if not getgenv().lockAutoFunctions then
 			local _wave = game:GetService("Workspace"):WaitForChild("_wave_num")
 			if getgenv().autoQuit and tonumber(getgenv().quitAtWave) <= _wave.Value then
-				if getgenv().isAlt ~= true then
-					for i = 1, 5 do
-						Teleport()
-						Teleport()
-						Teleport()
-						task.wait(5)
-					end
-				else
-					task.wait(7)
-					loadfile("TeleportTo.lua")()
-				end
+				Teleport()
 			end
+
 			if getgenv().autoSell and tonumber(getgenv().sellatwave) <= _wave.Value then
 				getgenv().disableAutoFarm = true
 				if game.PlaceId ~= 8304191830 then
