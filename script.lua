@@ -6050,10 +6050,7 @@ coroutine.resume(coroutine.create(function()
 							task.wait()
 						until v:WaitForChild("_stats")
 						if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name then
-							repeat
-								task.wait()
-							until v:WaitForChild("_stats"):WaitForChild("upgrade")
-				
+							repeat task.wait() until v:WaitForChild("_stats"):WaitForChild("upgrade")
 							game:GetService("ReplicatedStorage").endpoints.client_to_server.sell_unit_ingame:InvokeServer(v)
 						end
 					end
@@ -6221,9 +6218,16 @@ local function startfarming()
 							end
 						end
 					end
+					for i, v in pairs(game:GetService("Workspace")["_PORTALS"].Lobbies:GetDescendants()) do
+						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
+							local args = {
+								[1] = v.Parent.Name
+							}
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+						end
+					end
 					task.wait(0.5)
 				until (inMainLobby == true)
-				
             end
 
             task.wait()
