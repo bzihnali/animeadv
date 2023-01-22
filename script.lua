@@ -5852,7 +5852,7 @@ function TPReturner()
                table.insert(AllIDs, ID)
                wait()
                pcall(function()
-					if getgenv().isAlt ~= true
+					if getgenv().isAlt ~= true then
 						writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
 						wait()
 						writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
