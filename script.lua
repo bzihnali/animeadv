@@ -5935,9 +5935,7 @@ coroutine.resume(coroutine.create(function()
                     task.wait(1)
                 end
             elseif getgenv().AutoLeave then
-				if getgenv().isAlt ~= true then
-					Teleport()
-				end
+				Teleport()
             end
         end
 	end)
