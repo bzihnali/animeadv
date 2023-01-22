@@ -3591,7 +3591,7 @@ function MainModule()
 	coroutine.resume(coroutine.create(function()
 		while task.wait(0.5) do
 			if isrbxactive() ~= true then
-				setfpscap(10)
+				setfpscap(3)
 				game:GetService("RunService"):Set3dRenderingEnabled(false)
 			else
 				setfpscap(100)
