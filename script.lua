@@ -5859,7 +5859,19 @@ function TPReturner()
 						task.wait(7)
 						loadfile("TeleportTo.lua")()
 			   		else
-						repeat task.wait() until game:GetService("Players")[getgenv().mainAccount] == nil
+						repeat
+							local mainAccountFound = false
+							for _, v in pairs(game.Players:GetPlayers()) do
+								if v.UserId == getgenv().mainAccount then
+									mainAccountFound = true
+								end
+							end
+						until mainAccountFound == false
+
+						loadfile("TeleportTo.lua")()
+							
+
+						repeat task.wait() until game.Players:GetPlayers()[getgenv().mainAccount] == nil
 						loadfile("TeleportTo.lua")()
 					end
                end)
