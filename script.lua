@@ -5859,7 +5859,7 @@ function TPReturner()
 						loadfile("TeleportTo.lua")()
 					end
                end)
-               wait(4)
+               wait(400)
            end
        end
    end
