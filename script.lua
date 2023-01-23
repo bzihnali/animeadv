@@ -5856,7 +5856,6 @@ function TPReturner()
 						writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
 						wait()
 						writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
-						task.wait(7)
 						loadfile("TeleportTo.lua")()
 					end
                end)
