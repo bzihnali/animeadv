@@ -5858,17 +5858,6 @@ function TPReturner()
 						writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
 						task.wait(7)
 						loadfile("TeleportTo.lua")()
-			   		else
-						repeat
-							local mainAccountFound = false
-							for _, v in pairs(game.Players:GetPlayers()) do
-								if v.UserId == getgenv().mainAccount then
-									mainAccountFound = true
-								end
-							end
-						until mainAccountFound == false
-						wait(1)
-						loadfile("TeleportTo.lua")()
 					end
                end)
                wait(4)
@@ -5878,14 +5867,27 @@ function TPReturner()
 end
 
 function Teleport()
-   while wait() do
-       pcall(function()
-           TPReturner()
-           if foundAnything ~= "" then
-               TPReturner()
-           end
-       end)
-   end
+	if getgenv().isAlt ~= true then
+		while wait() do
+			pcall(function()
+				TPReturner()
+				if foundAnything ~= "" then
+					TPReturner()
+				end
+			end)
+		end
+	else
+		repeat
+			local mainAccountFound = false
+			for _, v in pairs(game.Players:GetPlayers()) do
+				if v.UserId == getgenv().mainAccount then
+					mainAccountFound = true
+				end
+			end
+		until mainAccountFound == false
+		wait(1)
+		loadfile("TeleportTo.lua")()
+	end
 end
 -------------------------------------------
 
