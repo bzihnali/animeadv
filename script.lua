@@ -5884,7 +5884,7 @@ function Teleport()
 				end
 			end
 		until mainAccountFound == false
-		wait(1)
+		wait(5)
 		loadfile("TeleportTo.lua")()
 	end
 end
