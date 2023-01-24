@@ -6307,7 +6307,7 @@ local function startfarming()
 							end
 						end
 					end
-					for i, v in pairs(game:GetService("Workspace")["_EVENT_CHALLENGES"].Story:GetDescendants()) do
+					for i, v in pairs(game:GetService("Workspace")["_EVENT_CHALLENGES"].Lobbies:GetDescendants()) do
 						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
 							for _, val in pairs(v.Parent:GetDescendants()) do
 								if val.Name == "TouchInterest" and val.Parent then
