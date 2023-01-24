@@ -2492,6 +2492,93 @@ getgenv().selectedMacroFile = "nil"
 local startTime = os.time(os.date("!*t"))
 local startGems = game.Players.LocalPlayer._stats.gem_amount.Value
 
+function getNormalItems()
+    local reg = getreg() --> returns Roblox's registry in a table
+
+    for i,v in next, reg do
+        if type(v) == 'function' then --> Checks if the current iteration is a function
+            if getfenv(v).script then --> Checks if the function's environment is in a script
+                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                    for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+                        if type(v) == 'table' then
+                            if v["session"] then
+                                return v["session"]["inventory"]['inventory_profile_data']['normal_items']
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+function printItemChangesNormal(preGameTable, currentTable)
+    local itemChanges = {}
+    
+    for item, amount in pairs(currentTable) do
+        if preGameTable[item] == nil then
+            print(item .. ": +" .. amount)
+            itemChanges[item] = ": +" .. amount
+        else
+            if preGameTable[item] > amount then
+                print(item .. ": -" .. preGameTable[item] - amount)
+                itemChanges[item] = ": -" .. preGameTable[item] - amount
+            elseif preGameTable[item] < amount then
+                print(item .. ": +" .. amount - preGameTable[item])
+                itemChanges[item] = ": +" .. amount - preGameTable[item]
+            end
+        end
+        
+    end
+end
+
+function getUniqueItems()
+    local reg = getreg() --> returns Roblox's registry in a table
+
+    for i,v in next, reg do
+        if type(v) == 'function' then --> Checks if the current iteration is a function
+            if getfenv(v).script then --> Checks if the function's environment is in a script
+                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                    for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+                        if type(v) == 'table' then
+                            if v["session"] then
+                                return v["session"]["inventory"]['inventory_profile_data']['unique_items']
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+function printItemChangesUnique(preGameTable, postGameTable)
+    local itemAdditions = {}
+    
+    for _, item in pairs(currentTable) do
+        currentItemUUID = item['uuid']
+        currentItemIsNew = true
+        for i, itemToCompare in pairs(preGameTable) do
+            if itemToCompare['uuid'] == currentItemUUID then
+                currentItemIsNew = false
+            end
+        end
+        if currentItemIsNew then
+            print("New Unique Item: " .. item["item_id"])
+            table.insert(itemAdditions, item["item_id"])
+        end
+    end
+end
+
+
+function shallowCopy(original)
+    local copy = {}
+    for key, value in pairs(original) do
+        copy[key] = value
+    end
+    return copy
+end
+
 local function writeMacroToFile(filename)
 	writefile("AAMacros" .. scriptVersion .. "\\" .. filename, "repeat task.wait() until game:GetService(\"Workspace\")[\"_waves_started\"].Value == true")
 
@@ -3146,6 +3233,10 @@ local function Webhook()
                             ["name"] = "Current Level:",
                             ["value"] = tostring(game.Players.LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text).. " ✨",
                             ["inline"] = true
+                        }, {
+                            ["name"] = "Items Acquired:",
+                            ["value"] = tostring(game.Players.LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text).. " ✨",
+                            ["inline"] = false
                         }
 					}
 				}
@@ -5851,15 +5942,14 @@ function TPReturner()
            if Possible == true then
                table.insert(AllIDs, ID)
                wait()
-               pcall(function()
-					if getgenv().isAlt ~= true then
-						writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
-						wait()
-						writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
-						loadfile("TeleportTo.lua")()
-					end
-               end)
-               wait(400)
+				if getgenv().isAlt ~= true then
+					writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+					wait()
+					writefile("TeleportTo.lua", "game:GetService(\"TeleportService\"):TeleportToPlaceInstance(" .. PlaceID ..",\"".. ID.."\", game.Players.LocalPlayer)")
+					task.wait(5)
+					loadfile("TeleportTo.lua")()
+				end
+               task.wait(400)
            end
        end
    end
@@ -5884,7 +5974,6 @@ function Teleport()
 				end
 			end
 		until mainAccountFound == false
-		wait(5)
 		loadfile("TeleportTo.lua")()
 	end
 end
@@ -6175,17 +6264,30 @@ local function startfarming()
 							end
 							
 							if altsInGame then
-								repeat task.wait() until #v.Parent.Players:GetChildren() == 4
+								repeat 
+									task.wait(1)
+									print(v.Parent.Timer.Value)
+									if v.Parent.Timer.Value <= 50 then
+										local leave_args = {
+											[1] = v.Parent.Name
+										}
+
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
+										break
+									end
+								until #v.Parent.Players:GetChildren() == 4
+							else
+								local args = { 
+									[1] = tostring(v.Parent.Name)
+								}
+								
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+								getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+								player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+								break
 							end
 
-							local args = { 
-								[1] = tostring(v.Parent.Name)
-							}
 							
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
-							getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
-							player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
-							break
 						end
 					end
 				end
@@ -6194,6 +6296,18 @@ local function startfarming()
 				repeat
 					print("WAITING ON MAIN TO SET LEVEL")
 					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
+						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
+							for _, val in pairs(v.Parent:GetDescendants()) do
+								if val.Name == "TouchInterest" and val.Parent then
+									firetouchinterest(game.Players.LocalPlayer.Character.Head, val.Parent, 0)
+									task.wait(0.1)
+									firetouchinterest(game.Players.LocalPlayer.Character.Head, val.Parent, 1)
+									task.wait(0.1)
+								end
+							end
+						end
+					end
+					for i, v in pairs(game:GetService("Workspace")["_EVENT_CHALLENGES"].Story:GetDescendants()) do
 						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
 							for _, val in pairs(v.Parent:GetDescendants()) do
 								if val.Name == "TouchInterest" and val.Parent then
