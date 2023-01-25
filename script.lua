@@ -6077,11 +6077,12 @@ function Teleport()
 		repeat
 			local mainAccountFound = false
 			for _, v in pairs(game.Players:GetPlayers()) do
-				if v.UserId == getgenv().mainAccount then
+				if tostring(v.UserId) == getgenv().mainAccount then
 					mainAccountFound = true
 				end
 			end
 		until mainAccountFound == false
+		task.wait(5)
 		loadfile("TeleportTo.lua")()
 	end
 end
