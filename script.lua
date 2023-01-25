@@ -2498,7 +2498,7 @@ function getNormalItems()
     for i,v in next, reg do
         if type(v) == 'function' then --> Checks if the current iteration is a function
             if getfenv(v).script then --> Checks if the function's environment is in a script
-                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                --if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
                     for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
                         if type(v) == 'table' then
                             if v["session"] then
@@ -2506,7 +2506,7 @@ function getNormalItems()
                             end
                         end
                     end
-                end
+                --end
             end
         end
     end
@@ -2539,7 +2539,7 @@ function getUniqueItems()
     for i,v in next, reg do
         if type(v) == 'function' then --> Checks if the current iteration is a function
             if getfenv(v).script then --> Checks if the function's environment is in a script
-                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                --if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
                     for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
                         if type(v) == 'table' then
                             if v["session"] then
@@ -2547,7 +2547,7 @@ function getUniqueItems()
                             end
                         end
                     end
-                end
+                --end
             end
         end
     end
@@ -2580,6 +2580,10 @@ function shallowCopy(original)
     end
     return copy
 end
+
+repeat
+	local testItemGet = getNormalItems()
+until testItemGet ~= nil
 
 getgenv().startingInventoryNormalItems = shallowCopy(getNormalItems())
 getgenv().startingInventoryUniqueItems = shallowCopy(getUniqueItems())
@@ -3239,10 +3243,6 @@ local function Webhook()
                             ["name"] = "Current Level:",
                             ["value"] = tostring(game.Players.LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text).. " ✨",
                             ["inline"] = true
-                        }, {
-                            ["name"] = "Items Acquired:",
-                            ["value"] = tostring(game.Players.LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text).. " ✨",
-                            ["inline"] = false
                         }
 					}
 				}
@@ -3552,9 +3552,9 @@ local function NormalItemWebhook(test)
             print("No Webhook Found!")
 			return
 		end
-		warn("1")
+		
         local itemDifference = getItemChangesNormal(getgenv().startingInventoryNormalItems, getNormalItems())
-        warn("1")
+        
 		local data = {
 			["content"] = "",
 			["username"] = "Professional Gamer",
@@ -3572,42 +3572,22 @@ local function NormalItemWebhook(test)
 				}
 			}
 		}
-		
-		warn("1")
-		function dump(o)
-			if type(o) == 'table' then
-			   local s = '{ '
-			   for k, v in pairs(o) do
-				  if type(k) ~= 'number' then k = '"'..k..'"' end
-				  s = s .. '['..k..'] = ' .. dump(v) .. ','
-			   end
-			   return s .. '} '
-			else
-			   return tostring(o)
-			end
-		 end
 
 		if itemDifference ~= nil and itemDifference ~= {} then
 			
-			warn("1")
-			print(dump(itemDifference))
 			for name, amount in pairs(itemDifference) do
 				if data["embeds"][1]["fields"] == nil then
 					data["embeds"][1]["fields"] = {}
 				end
-				warn("2")
 				item_stats = {
 					["name"] = name,
 					["value"] = amount,
 					["inline"] = true
 				}
-				warn("3")
 				table.insert(data["embeds"][1]["fields"], item_stats)
-				warn("4")
 			end
-			warn("1")
 		end
-        warn("1")
+        
 		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
 		local headers = {["content-type"] = "application/json"}
 		request = http_request or request or HttpPost or syn.request or http.request
