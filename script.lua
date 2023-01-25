@@ -6097,6 +6097,8 @@ coroutine.resume(coroutine.create(function()
             repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
             task.wait()
             pcall(function() Webhook() end)
+			pcall(function() NormalItemWebhook() end)
+			pcall(function() UniqueWebhook() end)
             print("next button pressed")
             task.wait(2.1)
 
