@@ -2512,24 +2512,25 @@ function getNormalItems()
     end
 end
 
-function printItemChangesNormal(preGameTable, currentTable)
+function getItemChangesNormal(preGameTable, currentTable)
     local itemChanges = {}
     
     for item, amount in pairs(currentTable) do
         if preGameTable[item] == nil then
             print(item .. ": +" .. amount)
-            itemChanges[item] = ": +" .. amount
+            itemChanges[item] = "+" .. amount
         else
             if preGameTable[item] > amount then
                 print(item .. ": -" .. preGameTable[item] - amount)
-                itemChanges[item] = ": -" .. preGameTable[item] - amount
+                itemChanges[item] = "-" .. preGameTable[item] - amount
             elseif preGameTable[item] < amount then
-                print(item .. ": +" .. amount - preGameTable[item])
-                itemChanges[item] = ": +" .. amount - preGameTable[item]
+                print(item .. "+" .. amount - preGameTable[item])
+                itemChanges[item] = "+" .. amount - preGameTable[item]
             end
         end
         
     end
+	return itemChanges
 end
 
 function getUniqueItems()
@@ -2552,12 +2553,12 @@ function getUniqueItems()
     end
 end
 
-function printItemChangesUnique(preGameTable, postGameTable)
+function getItemChangesUnique(preGameTable, postGameTable)
     local itemAdditions = {}
     
-    for _, item in pairs(currentTable) do
-        currentItemUUID = item['uuid']
-        currentItemIsNew = true
+    for _, item in pairs(postGameTable) do
+        local currentItemUUID = item['uuid']
+        local currentItemIsNew = true
         for i, itemToCompare in pairs(preGameTable) do
             if itemToCompare['uuid'] == currentItemUUID then
                 currentItemIsNew = false
@@ -2568,8 +2569,9 @@ function printItemChangesUnique(preGameTable, postGameTable)
             table.insert(itemAdditions, item["item_id"])
         end
     end
-end
 
+	return itemAdditions
+end
 
 function shallowCopy(original)
     local copy = {}
@@ -2578,6 +2580,10 @@ function shallowCopy(original)
     end
     return copy
 end
+
+getgenv().startingInventoryNormalItems = shallowCopy(getNormalItems())
+getgenv().startingInventoryUniqueItems = shallowCopy(getUniqueItems())
+
 
 local function writeMacroToFile(filename)
 	writefile("AAMacros" .. scriptVersion .. "\\" .. filename, "repeat task.wait() until game:GetService(\"Workspace\")[\"_waves_started\"].Value == true")
@@ -3323,18 +3329,7 @@ local function ShopSniperWebhook(test)
             print("No Webhook Found!")
 			return
 		end
-		function dump(o)
-           if type(o) == 'table' then
-              local s = '{ '
-              for k, v in pairs(o) do
-                 if type(k) ~= 'number' then k = '"'..k..'"' end
-                 s = s .. '['..k..'] = ' .. dump(v) .. ','
-              end
-              return s .. '} '
-           else
-              return tostring(o)
-           end
-        end
+		
 		print(game:GetService("ReplicatedStorage").src.client.Services.TravellingMerchantServiceClient)
 
         shop_items = require(game:GetService("ReplicatedStorage").src.client.Services["TravellingMerchantServiceClient"]).SELLING_ITEMS
@@ -3545,6 +3540,135 @@ local function StandardSummonSniperWebhook(test)
             warn("Sending standard sniper webhook notification...")
             request(discordMessageData)
         end
+	end)
+end
+
+local function NormalItemWebhook(test)
+    test = test or false
+	pcall(function()
+		local url = tostring(getgenv().webUrl) --webhook
+		print("Normal Item Webhook?")
+		if url == "" then
+            print("No Webhook Found!")
+			return
+		end
+		warn("1")
+        local itemDifference = getItemChangesNormal(getgenv().startingInventoryNormalItems, getNormalItems())
+        warn("1")
+		local data = {
+			["content"] = "",
+			["username"] = "Professional Gamer",
+			["avatar_url"] = "https://i.pinimg.com/originals/1c/6c/55/1c6c55a47126ddf97931d9463876594c.jpg",
+			["embeds"] = {
+				{
+					["author"] = {
+						["name"] = "New Normal Items Acquired!",
+						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
+					},
+					["color"] = 0xFF00FF,
+					["thumbnail"] = {
+						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
+					}
+				}
+			}
+		}
+		
+		warn("1")
+		function dump(o)
+			if type(o) == 'table' then
+			   local s = '{ '
+			   for k, v in pairs(o) do
+				  if type(k) ~= 'number' then k = '"'..k..'"' end
+				  s = s .. '['..k..'] = ' .. dump(v) .. ','
+			   end
+			   return s .. '} '
+			else
+			   return tostring(o)
+			end
+		 end
+
+		if itemDifference ~= nil and itemDifference ~= {} then
+			
+			warn("1")
+			print(dump(itemDifference))
+			for name, amount in pairs(itemDifference) do
+				if data["embeds"][1]["fields"] == nil then
+					data["embeds"][1]["fields"] = {}
+				end
+				warn("2")
+				item_stats = {
+					["name"] = name,
+					["value"] = amount,
+					["inline"] = true
+				}
+				warn("3")
+				table.insert(data["embeds"][1]["fields"], item_stats)
+				warn("4")
+			end
+			warn("1")
+		end
+        warn("1")
+		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
+		local headers = {["content-type"] = "application/json"}
+		request = http_request or request or HttpPost or syn.request or http.request
+		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
+        
+        warn("Sending normal item webhook notification...")
+        request(discordMessageData)
+	end)
+end
+
+local function UniqueItemWebhook(test)
+    test = test or false
+	pcall(function()
+		local url = tostring(getgenv().webUrl) --webhook
+		print("Unique Item Webhook?")
+		if url == "" then
+            print("No Webhook Found!")
+			return
+		end
+
+        local itemDifference = getItemChangesUnique(getgenv().startingInventoryUniqueItems, getUniqueItems())
+        
+		local data = {
+			["content"] = "",
+			["username"] = "Professional Gamer",
+			["avatar_url"] = "https://i.pinimg.com/originals/1c/6c/55/1c6c55a47126ddf97931d9463876594c.jpg",
+			["embeds"] = {
+				{
+					["author"] = {
+						["name"] = "New Unique Items Acquired!",
+						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
+					},
+					["color"] = 0xFF00FF,
+					["thumbnail"] = {
+						['url'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.userId .. "&width=420&height=420&format=png"
+					}
+				}
+			}
+		}
+
+		if itemDifference ~= nil and itemDifference ~= {} then
+			if data["embeds"][1]["fields"] == nil then
+				data["embeds"][1]["fields"] = {}
+			end
+			for _, item in pairs(itemDifference) do
+				item_stats = {
+					["name"] = tostring(item),
+					["value"] = "+1",
+					["inline"] = true
+				}
+				table.insert(data["embeds"][1]["fields"], item_stats)
+			end
+		end
+        
+		local discordMessageBody = game:GetService("HttpService"):JSONEncode(data)
+		local headers = {["content-type"] = "application/json"}
+		request = http_request or request or HttpPost or syn.request or http.request
+		local discordMessageData = {Url = url, Body = discordMessageBody, Method = "POST", Headers = headers}
+        
+		warn("Sending unique item webhook notification...")
+        request(discordMessageData)
 	end)
 end
 
@@ -4640,6 +4764,8 @@ function MainModule()
 			Callback = function()
 				Webhook()
 				BabyWebhook()
+				NormalItemWebhook(true)
+				UniqueItemWebhook(true)
 			end})
 	
 		webhookTab:CreateButton({
@@ -5153,6 +5279,8 @@ function MainModule()
             Callback = function()
                 Webhook()
                 BabyWebhook()
+				NormalItemWebhook(true)
+				UniqueItemWebhook(true)
             end})
     
         webhookTab:CreateButton({
