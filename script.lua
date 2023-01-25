@@ -2498,7 +2498,7 @@ function getNormalItems()
     for i,v in next, reg do
         if type(v) == 'function' then --> Checks if the current iteration is a function
             if getfenv(v).script then --> Checks if the function's environment is in a script
-                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
                     for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
                         if type(v) == 'table' then
                             if v["session"] then
@@ -2539,7 +2539,7 @@ function getUniqueItems()
     for i,v in next, reg do
         if type(v) == 'function' then --> Checks if the current iteration is a function
             if getfenv(v).script then --> Checks if the function's environment is in a script
-                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
                     for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
                         if type(v) == 'table' then
                             if v["session"] then
