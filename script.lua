@@ -2727,8 +2727,10 @@ local function writeMacroToFile(filename)
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nfor _, unit in pairs(unitPositions) do")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    if math.abs(unit[2] - positionToUpgrade[1]) <= 0.01 and math.abs(unit[3] - positionToUpgrade[2]) <= 0.01 then")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        print(\"Attempting to upgrade unit: \" .. unit[1][\"Name\"] .. \" from \" .. tostring(unit[1][\"_stats\"][\"upgrade\"].Value) ..  \" to \" .. tostring(unit[1][\"_stats\"][\"upgrade\"].Value + 1))")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        if tostring(unit[1][\"_stats\"][\"upgrade\"].Value + 1)) == " .. tostring(arguments[1]["_stats"]["upgrade"].Value) .. " then")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            print(\"Attempting to upgrade unit: \" .. unit[1][\"Name\"] .. \" from \" .. tostring(unit[1][\"_stats\"][\"upgrade\"].Value) ..  \" to \" .. tostring(unit[1][\"_stats\"][\"upgrade\"].Value + 1))")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        game:GetService(\"ReplicatedStorage\").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unit[1])")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        end")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    end")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nend")
 
@@ -6174,7 +6176,7 @@ getgenv().autoUpgrader = false
 
 function autoUpgradefunc()
     local success, err = pcall(function() --///
-		if not getgenv().lockautofunctions then
+		if not getgenv().lockAutoFunctions then
 			repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
 
 			unitList = {}
