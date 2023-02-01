@@ -4796,7 +4796,7 @@ function MainModule()
 
 	else -- When in a match
 		local specialPlaceTab = mainWindow:CreateTab("Special Placement")
-
+		local Units = {}
 		local function LoadUnits()
             repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
             task.wait(2)
