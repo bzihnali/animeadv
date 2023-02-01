@@ -4910,7 +4910,7 @@ function MainModule()
 				SpecialPlace(getgenv().SelectedUnits["U1"]:split(" #")[2])
             end})
 
-			specialPlaceTab:autoFarmTab:CreateButton({
+			specialPlaceTab:CreateButton({
 				Name = "Place Unit 2", 
 				Callback = function()
 					RayfieldLib:Notify({
