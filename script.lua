@@ -3154,6 +3154,33 @@ local storyLevels = {
 				id = "jojo_infinite"
 			}
 		}
+	},
+	["13"] = {
+		name = "Alien Ship", 
+		map = "alien_ship", 
+		levels = {
+			["1"] = {
+				id = "opm_level_1"
+			}, 
+			["2"] = {
+				id = "opm_level_2"
+			}, 
+			["3"] = {
+				id = "opm_level_3"
+			}, 
+			["4"] = {
+				id = "opm_level_4"
+			}, 
+			["5"] = {
+				id = "opm_level_5"
+			}, 
+			["6"] = {
+				id = "opm_level_6"
+			},
+            ["inf"] = {
+				id = "opm_infinite"
+			}
+		}
 	}
 }
 
@@ -3835,7 +3862,7 @@ function MainModule()
             Name = "Select Macro World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
         				"Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", 
-						"Cape Canaveral", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]", "Chainsaw Man Contract"},
+						"Cape Canaveral", "Alien Ship", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]", "Chainsaw Man Contract"},
         CurrentOption = getgenv().macroWorld, 
         Callback = function(world)
             getgenv().macroWorld = world
@@ -3934,6 +3961,13 @@ function MainModule()
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"jojo_infinite","jojo_level_1","jojo_level_2","jojo_level_3","jojo_level_4","jojo_level_5","jojo_level_6",}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Alien Ship" then
+                getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"opm_infinite","opm_level_1","opm_level_2","opm_level_3","opm_level_4","opm_level_5","opm_level_6","opm_portal"}
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
@@ -4761,6 +4795,221 @@ function MainModule()
 		getgenv().lockAutoFunctions = false
 
 	else -- When in a match
+		local specialPlaceTab = mainWindow:CreateTab("Special Placement")
+
+		local function LoadUnits()
+            repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
+            task.wait(2)
+            table.clear(Units)
+            for i, v in pairs(game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
+                if v.Name == "CollectionUnitFrame" then
+                    repeat task.wait() until v:FindFirstChild("_uuid")
+                    table.insert(Units, v.name.Text .. " #" .. v._uuid.Value)
+                end
+            end
+        end
+
+        LoadUnits()
+
+		local function Check(x, y)
+            for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
+                if v:IsA("ImageButton") then
+                    if v.EquippedList.Equipped.Visible == true then
+                        if v.Main.petimage:GetChildren()[2].Name == x then
+                            getgenv().SelectedUnits["U"..tostring(y)] = tostring(v.name.Text.." #"..v._uuid.Value)
+                            updatejson()
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+
+		specialPlaceTab:CreateButton({
+            Name = "Get Equipped Units", 
+            Callback = function()
+                for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui["spawn_units"].Lives.Frame.Units:GetChildren()) do
+                    if v:IsA("ImageButton") then
+                        local unitxx = v.Main.petimage.WorldModel:GetChildren()[1]
+                        if unitxx ~= nil then
+                            if Check(unitxx.Name,v) then
+                                print(unitxx, v)
+                            end
+                        end
+                    end
+                end
+                
+                RayfieldLib:Notify({
+                Title = "Equipped Units Are Selected!",
+                Content = "The dropdowns may not show the unit names now, but it will show next time you execute!",
+                Duration = 6.5,
+                Image = 4483362458,
+                Actions = { -- Notification Buttons
+                    Ignore = {
+                        Name = "Okay!",
+                        Callback = function()
+                            print("The user tapped Okay!")
+                        end},
+                    },
+                })
+            end
+        })
+
+		function SpecialPlace(unitUUID)
+            local connection
+            local _map = game:GetService("Workspace")["_BASES"].player.base["fake_unit"]:WaitForChild("HumanoidRootPart")
+            connection = UserInputService.InputBegan:Connect(
+                function(input, gameProcessed)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        connection:Disconnect()
+                        local a = Instance.new("Part", game.Workspace)
+                        a.Size = Vector3.new(1, 1, 1)
+                        a.Material = Enum.Material.Neon
+                        a.Position = mouse.hit.p
+                        task.wait()
+                        a.Anchored = true
+                        RayfieldLib:Notify({
+                            Title = "Spawn Unit Position:",
+                            Content =  tostring(a.Position),
+                            Duration = 6.5
+                        })
+                        a.CanCollide = false
+                        for i = 0, 1, 0.1 do
+                            a.Transparency = i
+                            task.wait()
+                        end
+                        a:Destroy()
+						
+						local args = {
+                            [1] = unitUUID,
+                            [2] = CFrame.new(Vector3.new(a.Position.X, a.Position.Y, a.Position.Z), Vector3.new(0, 0, -1))
+                        }
+
+						game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+                    end
+                end)
+        end
+
+		specialPlaceTab:CreateButton({
+            Name = "Place Unit 1", 
+            Callback = function()
+                RayfieldLib:Notify({
+                    Title = "Place Unit 1",
+                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+                    Duration = 99999999,
+                    Actions = { -- Notification Buttons
+                        Ignore = {
+                            Name = "Done",
+                            Callback = function()
+                            print("The user tapped Okay!")
+                        end
+                    }
+                }
+            })
+				
+				SpecialPlace(getgenv().SelectedUnits["U1"]:split(" #")[2])
+            end})
+
+			specialPlaceTab:autoFarmTab:CreateButton({
+				Name = "Place Unit 2", 
+				Callback = function()
+					RayfieldLib:Notify({
+						Title = "Place Unit 2",
+						Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+						Duration = 99999999,
+						Actions = { -- Notification Buttons
+							Ignore = {
+								Name = "Done",
+								Callback = function()
+								print("The user tapped Okay!")
+							end
+						}
+					}
+				})
+					
+					SpecialPlace(getgenv().SelectedUnits["U2"]:split(" #")[2])
+				end})
+
+			specialPlaceTab:CreateButton({
+			Name = "Place Unit 3", 
+			Callback = function()
+				RayfieldLib:Notify({
+					Title = "Place Unit 3",
+					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+					Duration = 99999999,
+					Actions = { -- Notification Buttons
+						Ignore = {
+							Name = "Done",
+							Callback = function()
+							print("The user tapped Okay!")
+						end
+					}
+				}
+			})
+				
+				SpecialPlace(getgenv().SelectedUnits["U3"]:split(" #")[2])
+			end})	
+		
+			specialPlaceTab:CreateButton({
+			Name = "Place Unit 4", 
+			Callback = function()
+				RayfieldLib:Notify({
+					Title = "Place Unit 4",
+					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+					Duration = 99999999,
+					Actions = { -- Notification Buttons
+						Ignore = {
+							Name = "Done",
+							Callback = function()
+							print("The user tapped Okay!")
+						end
+					}
+				}
+			})
+				
+				SpecialPlace(getgenv().SelectedUnits["U4"]:split(" #")[2])
+			end})
+
+			specialPlaceTab:CreateButton({
+			Name = "Place Unit 5", 
+			Callback = function()
+				RayfieldLib:Notify({
+					Title = "Place Unit 5",
+					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+					Duration = 99999999,
+					Actions = { -- Notification Buttons
+						Ignore = {
+							Name = "Done",
+							Callback = function()
+							print("The user tapped Okay!")
+						end
+					}
+				}
+			})
+				
+				SpecialPlace(getgenv().SelectedUnits["U5"]:split(" #")[2])
+			end})
+
+			specialPlaceTab:CreateButton({
+			Name = "Place Unit 6", 
+			Callback = function()
+				RayfieldLib:Notify({
+					Title = "Place Unit 6",
+					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
+					Duration = 99999999,
+					Actions = { -- Notification Buttons
+						Ignore = {
+							Name = "Done",
+							Callback = function()
+							print("The user tapped Okay!")
+						end
+					}
+				}
+			})
+				
+				SpecialPlace(getgenv().SelectedUnits["U6"]:split(" #")[2])
+			end})	
+
 		if getgenv().recordMacroOnTeleport then
 			getgenv().recordMacroOnTeleport = false
 			getgenv().recordingMacro = true
@@ -5170,6 +5419,11 @@ function MainModule()
                             SpawnUnitPos["csm_event"][UnitPos]["x"] = a.Position.X
                             SpawnUnitPos["csm_event"][UnitPos]["y"] = a.Position.Y
                             SpawnUnitPos["csm_event"][UnitPos]["z"] = a.Position.Z
+						elseif game.Workspace._map:FindFirstChild("Capybara") then
+							print("One Punch Man")    
+                            SpawnUnitPos["opm"][UnitPos]["x"] = a.Position.X
+                            SpawnUnitPos["opm"][UnitPos]["y"] = a.Position.Y
+                            SpawnUnitPos["opm"][UnitPos]["z"] = a.Position.Z
 						end
                         updatejson()
                     end
@@ -5335,6 +5589,38 @@ else
 		mainaccount = "nil",
     
         xspawnUnitPos  = {
+			opm  = {
+				UP1  = {
+				  y  = 1.4244641065597535,
+				  x  = -109.30056762695313,
+				  z  = -54.575347900390628
+			   },
+				UP3  = {
+				  y  = 1.4322717189788819,
+				  x  = -114.2433853149414,
+				  z  = -55.260982513427737
+			   },
+				UP2  = {
+				  y  = 1.7082736492156983,
+				  x  = -127.53932189941406,
+				  z  = -55.277626037597659
+			   },
+				UP6  = {
+				  y  = 1.4487617015838624,
+				  x  = -107.07078552246094,
+				  z  = -51.333045959472659
+			   },
+				UP5  = {
+				  y  = 1.8965977430343629,
+				  x  = -118.5692138671875,
+				  z  = -57.20484161376953
+			   },
+				UP4  = {
+				  y  = 1.4205386638641358,
+				  x  = -105.46223449707031,
+				  z  = -51.20615005493164
+			   }
+			 },
             csm_event  = {
 				UP1  = {
 				  y  = 1.4244641065597535,
@@ -5963,6 +6249,9 @@ coroutine.resume(coroutine.create(function()
                 elseif game.Workspace._map:FindFirstChild("Big_Stairs") then
                     print("Chainsaw Man")
                     PlaceUnits("csm_event", _wave, xOffset, yOffset, zOffset)
+				elseif game.Workspace._map:FindFirstChild("Capybara") then
+                    print("One Punch Man")
+                    PlaceUnits("opm", _wave, xOffset, yOffset, zOffset)
                 else
                     print("Something bad happened")
                 end
