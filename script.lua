@@ -6347,7 +6347,7 @@ function TPReturner()
 					task.wait(5)
 					loadfile("TeleportTo.lua")()
 				end
-               task.wait(400)
+               	task.wait(400)
            end
        end
    end
@@ -6422,14 +6422,10 @@ coroutine.resume(coroutine.create(function()
                     task.wait(1)
                 end
             elseif getgenv().AutoLeave then
+				previousTP = readfile("TeleportTo.lua")
 				repeat
-					local mainAccountFound = false
-					for _, v in pairs(game.Players:GetPlayers()) do
-						if tostring(v.UserId) == getgenv().mainAccount then
-							mainAccountFound = true
-						end
-					end
-				until mainAccountFound == false
+					task.wait()
+				until previousTP ~= readfile("TeleportTo.lua")
 				Teleport()
             end
         end
@@ -6680,7 +6676,16 @@ local function startfarming()
 										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
 										break
 									end
-								until #v.Parent.Players:GetChildren() == 4
+								until #v.Parent.Players:GetChildren() <= 4
+
+								local args = { 
+									[1] = tostring(v.Parent.Name)
+								}
+
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+								getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+								player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+								break
 							else
 								local args = { 
 									[1] = tostring(v.Parent.Name)
@@ -6690,9 +6695,7 @@ local function startfarming()
 								getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
 								player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
 								break
-							end
-
-							
+							end		
 						end
 					end
 				end
