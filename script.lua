@@ -4795,6 +4795,8 @@ function MainModule()
 		getgenv().lockAutoFunctions = false
 
 	else -- When in a match
+		local previousTP = readfile("TeleportTo.lua")
+
 		local specialPlaceTab = mainWindow:CreateTab("Special Placement")
 		local Units = {}
 		local function LoadUnits()
@@ -6422,10 +6424,9 @@ coroutine.resume(coroutine.create(function()
                     task.wait(1)
                 end
             elseif getgenv().AutoLeave then
-				previousTP = readfile("TeleportTo.lua")
 				repeat
 					task.wait()
-				until previousTP ~= readfile("TeleportTo.lua")
+				until tostring(previousTP) ~= tostring(readfile("TeleportTo.lua"))
 				Teleport()
             end
         end
