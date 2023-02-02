@@ -3855,7 +3855,7 @@ function MainModule()
 			until altsInGame
 		end
 
-		if getgenv().altMode and getgenv.isAlt then
+		if getgenv().altMode and getgenv.isAlt() then
 			local mainAccountFound = false
 
 			for _, v in pairs(game.Players:GetPlayers()) do
