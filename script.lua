@@ -6410,12 +6410,9 @@ coroutine.resume(coroutine.create(function()
                 else
                     getgenv().level = GetCurrentLevelId()
                     updatejson()
-                    for i = 1, 25 do
-                        local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
-                        local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
-                        local a={[1]="replay"} game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(a))
-                        task.wait(1)
-                    end
+                    if getgenv().isAlt ~= true then
+						Teleport()
+					end
                 end
                 updatejson()
             end
