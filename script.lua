@@ -6425,8 +6425,13 @@ coroutine.resume(coroutine.create(function()
                 end
             elseif getgenv().AutoLeave then
 				repeat
-					task.wait()
-				until tostring(previousTP) ~= tostring(readfile("TeleportTo.lua"))
+					local mainAccountFound = false
+					for _, v in pairs(game.Players:GetPlayers()) do
+						if tostring(v.UserId) == getgenv().mainAccount then
+							mainAccountFound = true
+						end
+					end
+				until mainAccountFound == false
 				Teleport()
             end
         end
