@@ -6677,7 +6677,7 @@ local function startfarming()
 										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
 										break
 									end
-								until #v.Parent.Players:GetChildren() <= 4
+								until #v.Parent.Players:GetChildren() >= 4
 
 								local args = { 
 									[1] = tostring(v.Parent.Name)
