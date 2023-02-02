@@ -3742,6 +3742,7 @@ function MainModule()
 
 	getgenv().altList = data.altlist
 	getgenv().mainAccount = data.mainaccount
+	getgenv().altMode = data.altmode
 
     function updatejson()
         local xdata = {
@@ -3787,7 +3788,8 @@ function MainModule()
 			levelmacros = getgenv().levelMacros,
 
 			altlist = getgenv().altList,
-			mainaccount = getgenv().mainAccount
+			mainaccount = getgenv().mainAccount,
+			altmode = getgenv().altMode
         }
 
         local json = HttpService:JSONEncode(xdata)
@@ -3837,6 +3839,34 @@ function MainModule()
     local creditsTab = mainWindow:CreateTab("Credits")
 
     if game.PlaceId == 8304191830 then
+		local altsInGame = false
+		if getgenv().altMode and not getgenv().isAlt then
+			repeat
+				task.wait(1)
+				for _, val in pairs(game.Players:GetPlayers()) do
+					print(val.Name)
+					for i, alt in pairs(getgenv().altList) do
+						if tostring(val.Name) == tostring(alt) then
+							altsInGame = true
+							break
+						end
+					end
+				end
+			until altsInGame
+		end
+
+		if getgenv().altMode and getgenv.isAlt then
+			local mainAccountFound = false
+
+			for _, v in pairs(game.Players:GetPlayers()) do
+				if tostring(v.UserId) == getgenv().mainAccount then
+					mainAccountFound = true
+				end
+			end
+
+			loadfile("TeleportTo.lua")()
+		end
+
 		getgenv().recordingMacro = false
 		autoMacroTab:CreateToggle({
 			Name = "Record Macro on Map Join",
@@ -5079,6 +5109,14 @@ function MainModule()
         local autoFarmSection = autoFarmTab:CreateSection("Auto Farm")
 
         --#region Auto Farm Tab
+		autoFarmTab:CreateToggle({
+            Name = "Alt Mode", 
+            CurrentValue = getgenv().altMode, 
+            Callback = function(bool)
+                getgenv().altMode = bool
+                updatejson()
+            end})
+
         autoFarmTab:CreateToggle({
             Name = "Auto Continue", 
             CurrentValue = getgenv().AutoContinue, 
@@ -5589,6 +5627,7 @@ else
 		macrotoreplay = "",
 		altlist = {},
 		mainaccount = "nil",
+		altmode = false,
     
         xspawnUnitPos  = {
 			opm  = {
@@ -6374,6 +6413,7 @@ function Teleport()
 				end
 			end
 		until mainAccountFound == false
+		task.wait(5)
 		loadfile("TeleportTo.lua")()
 	end
 end
@@ -6629,7 +6669,38 @@ local function startfarming()
                            and getgenv().AutoFarmTP == false and getgenv().AutoFarmIC == false then
         if game.PlaceId == 8304191830 then
             local cpos = player.Character.HumanoidRootPart.CFrame
-			if getgenv().isAlt ~= true then
+			if getgenv().altMode then
+				if not getgenv().isAlt then
+					repeat 
+						local altsInGame = false
+						for _, val in pairs(game.Players:GetPlayers()) do
+							print(val.Name)
+							for i, alt in pairs(getgenv().altList) do
+								if tostring(val.Name) == tostring(alt) then
+									altsInGame = true
+									break
+								end
+							end
+						end
+					until altsInGame
+				else
+					local timer = 0
+					repeat
+						task.wait(1)
+						timer += 1
+						local mainAccountFound = false
+						for _, v in pairs(game.Players:GetPlayers()) do
+							if tostring(v.UserId) == getgenv().mainAccount then
+								mainAccountFound = true
+							end
+						end
+					until mainAccountFound or timer >= 10
+
+					if not mainAccountFound then
+						loadfile("TeleportTo.lua")()
+					end
+				end
+
 				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
 					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
 						if v.Name == "Owner" and v.Value == nil then
