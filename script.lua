@@ -3841,30 +3841,39 @@ function MainModule()
     if game.PlaceId == 8304191830 then
 		local altsInGame = false
 		if getgenv().altMode and not getgenv().isAlt then
-			repeat
+			repeat 
 				task.wait(1)
+				local altsInGame = 0
 				for _, val in pairs(game.Players:GetPlayers()) do
-					print(val.Name)
 					for i, alt in pairs(getgenv().altList) do
 						if tostring(val.Name) == tostring(alt) then
-							altsInGame = true
+							print(val.Name)
+							altsInGame += 1
 							break
 						end
 					end
 				end
-			until altsInGame
+			until altsInGame >= 3
 		end
 
-		if getgenv().altMode and getgenv.isAlt() then
+		if getgenv().altMode and getgenv().isAlt then
+			local timer = 0
 			local mainAccountFound = false
-
-			for _, v in pairs(game.Players:GetPlayers()) do
-				if tostring(v.UserId) == getgenv().mainAccount then
-					mainAccountFound = true
+			repeat
+				task.wait(1)
+				timer += 1
+				mainAccountFound = false
+				for _, v in pairs(game.Players:GetPlayers()) do
+					if tostring(v) == getgenv().mainAccount then
+						mainAccountFound = true
+						print("FOUND")
+					end
 				end
-			end
+			until mainAccountFound
 
-			loadfile("TeleportTo.lua")()
+			if mainAccountFound ~= true then
+				loadfile("TeleportTo.lua")()
+			end
 		end
 
 		getgenv().recordingMacro = false
@@ -4482,7 +4491,15 @@ function MainModule()
 		--------------------------------------------------
         
         local autoFarmSection = autoFarmTab:CreateSection("Auto-Farm")
-
+		
+		autoFarmTab:CreateToggle({
+            Name = "Alt Mode", 
+            CurrentValue = getgenv().altMode, 
+            Callback = function(bool)
+                getgenv().altMode = bool
+                updatejson()
+            end})
+		
         autoFarmTab:CreateToggle({
             Name = "Auto Continue", 
             CurrentValue = getgenv().AutoContinue, 
@@ -5109,14 +5126,6 @@ function MainModule()
         local autoFarmSection = autoFarmTab:CreateSection("Auto Farm")
 
         --#region Auto Farm Tab
-		autoFarmTab:CreateToggle({
-            Name = "Alt Mode", 
-            CurrentValue = getgenv().altMode, 
-            Callback = function(bool)
-                getgenv().altMode = bool
-                updatejson()
-            end})
-
         autoFarmTab:CreateToggle({
             Name = "Auto Continue", 
             CurrentValue = getgenv().AutoContinue, 
@@ -6408,7 +6417,7 @@ function Teleport()
 		repeat
 			local mainAccountFound = false
 			for _, v in pairs(game.Players:GetPlayers()) do
-				if tostring(v.UserId) == getgenv().mainAccount then
+				if tostring(v) == getgenv().mainAccount then
 					mainAccountFound = true
 				end
 			end
@@ -6467,7 +6476,7 @@ coroutine.resume(coroutine.create(function()
 				repeat
 					local mainAccountFound = false
 					for _, v in pairs(game.Players:GetPlayers()) do
-						if tostring(v.UserId) == getgenv().mainAccount then
+						if tostring(v) == getgenv().mainAccount then
 							mainAccountFound = true
 						end
 					end
@@ -6669,37 +6678,21 @@ local function startfarming()
                            and getgenv().AutoFarmTP == false and getgenv().AutoFarmIC == false then
         if game.PlaceId == 8304191830 then
             local cpos = player.Character.HumanoidRootPart.CFrame
-			if getgenv().altMode then
-				if not getgenv().isAlt then
-					repeat 
-						local altsInGame = false
-						for _, val in pairs(game.Players:GetPlayers()) do
-							print(val.Name)
-							for i, alt in pairs(getgenv().altList) do
-								if tostring(val.Name) == tostring(alt) then
-									altsInGame = true
-									break
-								end
+			
+			if not getgenv().isAlt then
+				repeat 
+					task.wait(1)
+					local altsInGame = 0
+					for _, val in pairs(game.Players:GetPlayers()) do
+						for i, alt in pairs(getgenv().altList) do
+							if tostring(val.Name) == tostring(alt) then
+								print(val.Name)
+								altsInGame += 1
+								break
 							end
 						end
-					until altsInGame
-				else
-					local timer = 0
-					repeat
-						task.wait(1)
-						timer += 1
-						local mainAccountFound = false
-						for _, v in pairs(game.Players:GetPlayers()) do
-							if tostring(v.UserId) == getgenv().mainAccount then
-								mainAccountFound = true
-							end
-						end
-					until mainAccountFound or timer >= 10
-
-					if not mainAccountFound then
-						loadfile("TeleportTo.lua")()
 					end
-				end
+				until altsInGame >= 3
 
 				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
 					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
@@ -6728,9 +6721,9 @@ local function startfarming()
 								}
 								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
 							end
-
+	
 							local altsInGame = false
-
+	
 							for _, val in pairs(game.Players:GetPlayers()) do
 								print(val.Name)
 								for i, alt in pairs(getgenv().altList) do
@@ -6749,16 +6742,16 @@ local function startfarming()
 										local leave_args = {
 											[1] = v.Parent.Name
 										}
-
+	
 										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
 										break
 									end
 								until #v.Parent.Players:GetChildren() >= 4
-
+	
 								local args = { 
 									[1] = tostring(v.Parent.Name)
 								}
-
+	
 								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
 								getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
 								player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
@@ -6777,7 +6770,26 @@ local function startfarming()
 					end
 				end
 			else
+				local timer = 0
+				local mainAccountFound = false
+				repeat
+					task.wait(1)
+					timer += 1
+					mainAccountFound = false
+					for _, v in pairs(game.Players:GetPlayers()) do
+						if tostring(v) == getgenv().mainAccount then
+							mainAccountFound = true
+							print("FOUND")
+						end
+					end
+				until mainAccountFound
+
+				if mainAccountFound ~= true then
+					loadfile("TeleportTo.lua")()
+				end
+
 				local inMainLobby = false
+				
 				repeat
 					print("WAITING ON MAIN TO SET LEVEL")
 					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
@@ -6814,8 +6826,7 @@ local function startfarming()
 					end
 					task.wait(0.5)
 				until (inMainLobby == true)
-            end
-
+			end
             task.wait()
 
             player.Character.HumanoidRootPart.CFrame = cpos
