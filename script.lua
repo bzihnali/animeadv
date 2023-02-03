@@ -6474,6 +6474,7 @@ coroutine.resume(coroutine.create(function()
                 end
             elseif getgenv().AutoLeave then
 				repeat
+					task.wait(1)
 					local mainAccountFound = false
 					for _, v in pairs(game.Players:GetPlayers()) do
 						if tostring(v) == getgenv().mainAccount then
