@@ -2458,7 +2458,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "1.6.6b"
+local scriptVersion = "1.6.7"
 
 if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
@@ -2686,7 +2686,7 @@ local function writeMacroToFile(filename)
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nprint(\"Attempting to spawn unit: " .. tostring(arguments[1]) .. "\")")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\ngame:GetService(\"ReplicatedStorage\").endpoints.client_to_server.spawn_unit:InvokeServer(\"" .. tostring(arguments[1]) .. "\",")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "CFrame.new(Vector3.new(" .. tostring(arguments[2].X) .. ", " .. tostring(arguments[2].Y) .. ", " .. tostring(arguments[2].Z) .. "), Vector3.new(0, 0, -1))")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "CFrame.new(" .. tostring(arguments[2].X) .. ", " .. tostring(arguments[2].Y) .. ", " .. tostring(arguments[2].Z) .. ")) * CFrame.Angles(0, -0, -0)")
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, ")")
 				
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nupdateUnitPositions()")
@@ -3744,6 +3744,8 @@ function MainModule()
 	getgenv().mainAccount = data.mainaccount
 	getgenv().altMode = data.altmode
 
+	getgenv().unitPlacementSettings = data.unitplacementsettings
+
     function updatejson()
         local xdata = {
             autoloadtp = getgenv().AutoLoadTP,
@@ -3789,7 +3791,9 @@ function MainModule()
 
 			altlist = getgenv().altList,
 			mainaccount = getgenv().mainAccount,
-			altmode = getgenv().altMode
+			altmode = getgenv().altMode,
+
+			unitplacementsettings = getgenv().unitPlacementSettings
         }
 
         local json = HttpService:JSONEncode(xdata)
@@ -4844,220 +4848,325 @@ function MainModule()
 	else -- When in a match
 		local previousTP = readfile("TeleportTo.lua")
 
-		local specialPlaceTab = mainWindow:CreateTab("Special Placement")
-		local Units = {}
-		local function LoadUnits()
-            repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
-            task.wait(2)
-            table.clear(Units)
-            for i, v in pairs(game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
-                if v.Name == "CollectionUnitFrame" then
-                    repeat task.wait() until v:FindFirstChild("_uuid")
-                    table.insert(Units, v.name.Text .. " #" .. v._uuid.Value)
-                end
-            end
-        end
+		unitPlacementTab = mainWindow:CreateTab("Unit Placement Settings")
+		local Paragraph = unitPlacementTab:CreateParagraph({Title = "How to Use", 
+															Content = "Placement Priority: If multiple units can be placed with current money, prioritizes higher numbered unit.\nUpgrade Priority: Same concept as Placement Priority.\nPlace From Wave: Will not place a unit until this wave.\nUpgrade From Wave: Will not upgrade a unit until this wave.\nUpgrade Cap: Will not upgrade a unit past this level."})
+		unitOneSection = unitPlacementTab:CreateSection("Unit 1 - " .. getgenv().SelectedUnits["U1"]:split(" #")[1])
 
-        LoadUnits()
+		unitOnePlacementPriority = unitPlacementTab:CreateInput({
+			Name = "Placement Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U1"]["placementPriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placementPriority)
+				getgenv().unitPlacementSettings["U1"]["placementPriority"] = placementPriority
+				updatejson()
+			end,
+		})
 
-		local function Check(x, y)
-            for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
-                if v:IsA("ImageButton") then
-                    if v.EquippedList.Equipped.Visible == true then
-                        if v.Main.petimage:GetChildren()[2].Name == x then
-                            getgenv().SelectedUnits["U"..tostring(y)] = tostring(v.name.Text.." #"..v._uuid.Value)
-                            updatejson()
-                            return true
-                        end
-                    end
-                end
-            end
-        end
+		unitOneUpgradePriority = unitPlacementTab:CreateInput({
+			Name = "Upgrade Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U1"]["upgradePriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradePriority)
+				getgenv().unitPlacementSettings["U1"]["upgradePriority"] = upgradePriority
+				updatejson()
+			end,
+		})
 
-		specialPlaceTab:CreateButton({
-            Name = "Get Equipped Units", 
-            Callback = function()
-                for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui["spawn_units"].Lives.Frame.Units:GetChildren()) do
-                    if v:IsA("ImageButton") then
-                        local unitxx = v.Main.petimage.WorldModel:GetChildren()[1]
-                        if unitxx ~= nil then
-                            if Check(unitxx.Name,v) then
-                                print(unitxx, v)
-                            end
-                        end
-                    end
-                end
-                
-                RayfieldLib:Notify({
-                Title = "Equipped Units Are Selected!",
-                Content = "The dropdowns may not show the unit names now, but it will show next time you execute!",
-                Duration = 6.5,
-                Image = 4483362458,
-                Actions = { -- Notification Buttons
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("The user tapped Okay!")
-                        end},
-                    },
-                })
-            end
-        })
+		unitOnePlaceFromWave = unitPlacementTab:CreateInput({
+			Name = "Place From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U1"]["placeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placeFromWave)
+				getgenv().unitPlacementSettings["U1"]["placeFromWave"] = placeFromWave
+				updatejson()
+			end,
+		})
 
-		function SpecialPlace(unitUUID)
-            local connection
-            local _map = game:GetService("Workspace")["_BASES"].player.base["fake_unit"]:WaitForChild("HumanoidRootPart")
-            connection = UserInputService.InputBegan:Connect(
-                function(input, gameProcessed)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        connection:Disconnect()
-                        local a = Instance.new("Part", game.Workspace)
-                        a.Size = Vector3.new(1, 1, 1)
-                        a.Material = Enum.Material.Neon
-                        a.Position = mouse.hit.p
-                        task.wait()
-                        a.Anchored = true
-                        RayfieldLib:Notify({
-                            Title = "Spawn Unit Position:",
-                            Content =  tostring(a.Position),
-                            Duration = 6.5
-                        })
-                        a.CanCollide = false
-                        for i = 0, 1, 0.1 do
-                            a.Transparency = i
-                            task.wait()
-                        end
-                        a:Destroy()
-						
-						local args = {
-                            [1] = unitUUID,
-                            [2] = CFrame.new(Vector3.new(a.Position.X, a.Position.Y, a.Position.Z), Vector3.new(0, 0, -1))
-                        }
+		unitOneUpgradeFromWave = unitPlacementTab:CreateInput({
+			Name = "Upgrade From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U1"]["upgradeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeFromWave)
+				getgenv().unitPlacementSettings["U1"]["upgradeFromWave"] = upgradeFromWave
+				updatejson()
+			end,
+		})
 
-						game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                    end
-                end)
-        end
+		unitOneUpgradeCap = unitPlacementTab:CreateInput({
+			Name = "Upgrade Cap",
+			PlaceholderText = getgenv().unitPlacementSettings["U1"]["upgradeCap"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeCap)
+				getgenv().unitPlacementSettings["U1"]["upgradeCap"] = upgradeCap
+				updatejson()
+			end,
+		})
 
-		specialPlaceTab:CreateButton({
-            Name = "Place Unit 1", 
-            Callback = function()
-                RayfieldLib:Notify({
-                    Title = "Place Unit 1",
-                    Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-                    Duration = 99999999,
-                    Actions = { -- Notification Buttons
-                        Ignore = {
-                            Name = "Done",
-                            Callback = function()
-                            print("The user tapped Okay!")
-                        end
-                    }
-                }
-            })
-				
-				SpecialPlace(getgenv().SelectedUnits["U1"]:split(" #")[2])
-            end})
+		unitTwoSection = unitPlacementTab:CreateSection("Unit 2 - " .. getgenv().SelectedUnits["U2"]:split(" #")[2])
 
-			specialPlaceTab:CreateButton({
-				Name = "Place Unit 2", 
-				Callback = function()
-					RayfieldLib:Notify({
-						Title = "Place Unit 2",
-						Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-						Duration = 99999999,
-						Actions = { -- Notification Buttons
-							Ignore = {
-								Name = "Done",
-								Callback = function()
-								print("The user tapped Okay!")
-							end
-						}
-					}
-				})
-					
-					SpecialPlace(getgenv().SelectedUnits["U2"]:split(" #")[2])
-				end})
+		unitTwoPlacementPriority = unitPlacementTab:CreateInput({
+			Name = "Placement Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U2"]["placementPriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placementPriority)
+				getgenv().unitPlacementSettings["U2"]["placementPriority"] = placementPriority
+				updatejson()
+			end,
+		})
 
-			specialPlaceTab:CreateButton({
-			Name = "Place Unit 3", 
-			Callback = function()
-				RayfieldLib:Notify({
-					Title = "Place Unit 3",
-					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-					Duration = 99999999,
-					Actions = { -- Notification Buttons
-						Ignore = {
-							Name = "Done",
-							Callback = function()
-							print("The user tapped Okay!")
-						end
-					}
-				}
+		unitTwoUpgradePriority = unitPlacementTab:CreateInput({
+			Name = "Upgrade Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U2"]["upgradePriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradePriority)
+				getgenv().unitPlacementSettings["U2"]["upgradePriority"] = upgradePriority
+				updatejson()
+			end,
+		})
+
+		unitTwoPlaceFromWave = unitPlacementTab:CreateInput({
+			Name = "Place From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U2"]["placeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placeFromWave)
+				getgenv().unitPlacementSettings["U2"]["placeFromWave"] = placeFromWave
+				updatejson()
+			end,
+		})
+
+		unitTwoUpgradeFromWave = unitPlacementTab:CreateInput({
+			Name = "Upgrade From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U2"]["upgradeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeFromWave)
+				getgenv().unitPlacementSettings["U2"]["upgradeFromWave"] = upgradeFromWave
+				updatejson()
+			end,
+		})
+
+		unitTwoUpgradeCap = unitPlacementTab:CreateInput({
+			Name = "Upgrade Cap",
+			PlaceholderText = getgenv().unitPlacementSettings["U2"]["upgradeCap"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeCap)
+				getgenv().unitPlacementSettings["U2"]["upgradeCap"] = upgradeCap
+				updatejson()
+			end,
+		})
+
+		unitThreeSection = unitPlacementTab:CreateSection("Unit 3 - " .. getgenv().SelectedUnits["U3"]:split(" #")[3])
+
+		unitThreePlacementPriority = unitPlacementTab:CreateInput({
+			Name = "Placement Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U3"]["placementPriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placementPriority)
+				getgenv().unitPlacementSettings["U3"]["placementPriority"] = placementPriority
+				updatejson()
+			end,
+		})
+
+		unitThreeUpgradePriority = unitPlacementTab:CreateInput({
+			Name = "Upgrade Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U3"]["upgradePriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradePriority)
+				getgenv().unitPlacementSettings["U3"]["upgradePriority"] = upgradePriority
+				updatejson()
+			end,
+		})
+
+		unitThreePlaceFromWave = unitPlacementTab:CreateInput({
+			Name = "Place From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U3"]["placeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placeFromWave)
+				getgenv().unitPlacementSettings["U3"]["placeFromWave"] = placeFromWave
+				updatejson()
+			end,
+		})
+
+		unitThreeUpgradeFromWave = unitPlacementTab:CreateInput({
+			Name = "Upgrade From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U3"]["upgradeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeFromWave)
+				getgenv().unitPlacementSettings["U3"]["upgradeFromWave"] = upgradeFromWave
+				updatejson()
+			end,
+		})
+
+		unitThreeUpgradeCap = unitPlacementTab:CreateInput({
+			Name = "Upgrade Cap",
+			PlaceholderText = getgenv().unitPlacementSettings["U3"]["upgradeCap"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeCap)
+				getgenv().unitPlacementSettings["U3"]["upgradeCap"] = upgradeCap
+				updatejson()
+			end,
+		})
+
+		unitFourSection = unitPlacementTab:CreateSection("Unit 4 - " .. getgenv().SelectedUnits["U4"]:split(" #")[4])
+
+		unitFourPlacementPriority = unitPlacementTab:CreateInput({
+			Name = "Placement Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U4"]["placementPriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placementPriority)
+				getgenv().unitPlacementSettings["U4"]["placementPriority"] = placementPriority
+				updatejson()
+			end,
+		})
+
+		unitFourUpgradePriority = unitPlacementTab:CreateInput({
+			Name = "Upgrade Priority",
+			PlaceholderText = getgenv().unitPlacementSettings["U4"]["upgradePriority"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradePriority)
+				getgenv().unitPlacementSettings["U4"]["upgradePriority"] = upgradePriority
+				updatejson()
+			end,
+		})
+
+		unitFourPlaceFromWave = unitPlacementTab:CreateInput({
+			Name = "Place From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U4"]["placeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(placeFromWave)
+				getgenv().unitPlacementSettings["U4"]["placeFromWave"] = placeFromWave
+				updatejson()
+			end,
+		})
+
+		unitFourUpgradeFromWave = unitPlacementTab:CreateInput({
+			Name = "Upgrade From Wave",
+			PlaceholderText = getgenv().unitPlacementSettings["U4"]["upgradeFromWave"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeFromWave)
+				getgenv().unitPlacementSettings["U4"]["upgradeFromWave"] = upgradeFromWave
+				updatejson()
+			end,
+		})
+
+		unitFourUpgradeCap = unitPlacementTab:CreateInput({
+			Name = "Upgrade Cap",
+			PlaceholderText = getgenv().unitPlacementSettings["U4"]["upgradeCap"],
+			RemoveTextAfterFocusLost = false,
+			Callback = function(upgradeCap)
+				getgenv().unitPlacementSettings["U4"]["upgradeCap"] = upgradeCap
+				updatejson()
+			end,
+		})
+
+		if tonumber(game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")[2]) >= 20 then
+			unitFiveSection = unitPlacementTab:CreateSection("Unit 5 - " .. getgenv().SelectedUnits["U5"]:split(" #")[5])
+
+			unitFivePlacementPriority = unitPlacementTab:CreateInput({
+				Name = "Placement Priority",
+				PlaceholderText = getgenv().unitPlacementSettings["U5"]["placementPriority"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(placementPriority)
+					getgenv().unitPlacementSettings["U5"]["placementPriority"] = placementPriority
+					updatejson()
+				end,
 			})
-				
-				SpecialPlace(getgenv().SelectedUnits["U3"]:split(" #")[2])
-			end})	
+
+			unitFiveUpgradePriority = unitPlacementTab:CreateInput({
+				Name = "Upgrade Priority",
+				PlaceholderText = getgenv().unitPlacementSettings["U5"]["upgradePriority"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(upgradePriority)
+					getgenv().unitPlacementSettings["U5"]["upgradePriority"] = upgradePriority
+					updatejson()
+				end,
+			})
+
+			unitFivePlaceFromWave = unitPlacementTab:CreateInput({
+				Name = "Place From Wave",
+				PlaceholderText = getgenv().unitPlacementSettings["U5"]["placeFromWave"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(placeFromWave)
+					getgenv().unitPlacementSettings["U5"]["placeFromWave"] = placeFromWave
+					updatejson()
+				end,
+			})
+
+			unitFiveUpgradeFromWave = unitPlacementTab:CreateInput({
+				Name = "Upgrade From Wave",
+				PlaceholderText = getgenv().unitPlacementSettings["U5"]["upgradeFromWave"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(upgradeFromWave)
+					getgenv().unitPlacementSettings["U5"]["upgradeFromWave"] = upgradeFromWave
+					updatejson()
+				end,
+			})
+
+			unitFiveUpgradeCap = unitPlacementTab:CreateInput({
+				Name = "Upgrade Cap",
+				PlaceholderText = getgenv().unitPlacementSettings["U5"]["upgradeCap"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(upgradeCap)
+					getgenv().unitPlacementSettings["U5"]["upgradeCap"] = upgradeCap
+					updatejson()
+				end,
+			})
+		end
+
+		if tonumber(game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")[2]) >= 50 then
+			unitSixSection = unitPlacementTab:CreateSection("Unit 6 - " .. getgenv().SelectedUnits["U6"]:split(" #")[6])
 		
-			specialPlaceTab:CreateButton({
-			Name = "Place Unit 4", 
-			Callback = function()
-				RayfieldLib:Notify({
-					Title = "Place Unit 4",
-					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-					Duration = 99999999,
-					Actions = { -- Notification Buttons
-						Ignore = {
-							Name = "Done",
-							Callback = function()
-							print("The user tapped Okay!")
-						end
-					}
-				}
+			unitSixPlacementPriority = unitPlacementTab:CreateInput({
+				Name = "Placement Priority",
+				PlaceholderText = getgenv().unitPlacementSettings["U6"]["placementPriority"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(placementPriority)
+					getgenv().unitPlacementSettings["U6"]["placementPriority"] = placementPriority
+					updatejson()
+				end,
 			})
-				
-				SpecialPlace(getgenv().SelectedUnits["U4"]:split(" #")[2])
-			end})
-
-			specialPlaceTab:CreateButton({
-			Name = "Place Unit 5", 
-			Callback = function()
-				RayfieldLib:Notify({
-					Title = "Place Unit 5",
-					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-					Duration = 99999999,
-					Actions = { -- Notification Buttons
-						Ignore = {
-							Name = "Done",
-							Callback = function()
-							print("The user tapped Okay!")
-						end
-					}
-				}
+		
+			unitSixUpgradePriority = unitPlacementTab:CreateInput({
+				Name = "Upgrade Priority",
+				PlaceholderText = getgenv().unitPlacementSettings["U6"]["upgradePriority"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(upgradePriority)
+					getgenv().unitPlacementSettings["U6"]["upgradePriority"] = upgradePriority
+					updatejson()
+				end,
 			})
-				
-				SpecialPlace(getgenv().SelectedUnits["U5"]:split(" #")[2])
-			end})
-
-			specialPlaceTab:CreateButton({
-			Name = "Place Unit 6", 
-			Callback = function()
-				RayfieldLib:Notify({
-					Title = "Place Unit 6",
-					Content = "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
-					Duration = 99999999,
-					Actions = { -- Notification Buttons
-						Ignore = {
-							Name = "Done",
-							Callback = function()
-							print("The user tapped Okay!")
-						end
-					}
-				}
+		
+			unitSixPlaceFromWave = unitPlacementTab:CreateInput({
+				Name = "Place From Wave",
+				PlaceholderText = getgenv().unitPlacementSettings["U6"]["placeFromWave"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(placeFromWave)
+					getgenv().unitPlacementSettings["U6"]["placeFromWave"] = placeFromWave
+					updatejson()
+				end,
 			})
-				
-				SpecialPlace(getgenv().SelectedUnits["U6"]:split(" #")[2])
-			end})	
+		
+			unitSixUpgradeFromWave = unitPlacementTab:CreateInput({
+				Name = "Upgrade From Wave",
+				PlaceholderText = getgenv().unitPlacementSettings["U6"]["upgradeFromWave"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(upgradeFromWave)
+					getgenv().unitPlacementSettings["U6"]["upgradeFromWave"] = upgradeFromWave
+					updatejson()
+				end,
+			})
+		
+			unitSixUpgradeCap = unitPlacementTab:CreateInput({
+				Name = "Upgrade Cap",
+				PlaceholderText = getgenv().unitPlacementSettings["U6"]["upgradeCap"],
+				RemoveTextAfterFocusLost = false,
+				Callback = function(upgradeCap)
+					getgenv().unitPlacementSettings["U6"]["upgradeCap"] = upgradeCap
+					updatejson()
+				end,
+			})
+		end
+		
 
 		if getgenv().recordMacroOnTeleport then
 			getgenv().recordMacroOnTeleport = false
@@ -5637,6 +5746,50 @@ else
 		altlist = {},
 		mainaccount = "nil",
 		altmode = false,
+		unitplacementsettings = {
+			U1 = {
+				placementPriority = 0,
+				upgradePriority = 0,
+				placeFromWave = 0,
+				upgradeFromWave = 0,
+				upgradeCap = 999
+			},
+			U2 = {
+				placementPriority = 0,
+				upgradePriority = 0,
+				placeFromWave = 0,
+				upgradeFromWave = 0,
+				upgradeCap = 999
+			},
+			U3 = {
+				placementPriority = 0,
+				upgradePriority = 0,
+				placeFromWave = 0,
+				upgradeFromWave = 0,
+				upgradeCap = 999
+			},
+			U4 = {
+				placementPriority = 0,
+				upgradePriority = 0,
+				placeFromWave = 0,
+				upgradeFromWave = 0,
+				upgradeCap = 999
+			},
+			U5 = {
+				placementPriority = 0,
+				upgradePriority = 0,
+				placeFromWave = 0,
+				upgradeFromWave = 0,
+				upgradeCap = 999
+			},
+			U6 = {
+				placementPriority = 0,
+				upgradePriority = 0,
+				placeFromWave = 0,
+				upgradeFromWave = 0,
+				upgradeCap = 999
+			}
+		},
     
         xspawnUnitPos  = {
 			opm  = {
@@ -6216,8 +6369,31 @@ coroutine.resume(coroutine.create(function()
     local wave = 0
 
     PlaceUnits = function(mapName, waveNum, x, y, z)
+		local raycastParams = RaycastParams.new()
+
+		raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
+		raycastParams.FilterDescendantsInstances = {game:GetService("Workspace")["_terrain"]}
+
+		local rayOrigin = CFrame.new(xPos, 100, zPos).p
+		local rayDestination = CFrame.new(xPos, -50, zPos).p
+
+		local rayDirection = (rayDestination - rayOrigin)
+
+		local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+		local units = {}
+
+		for i = 1, 6 do
+            local unitInfo = getgenv().SelectedUnits["U" .. i]
+			table.insert(units, {"U" .. i, unitInfo})
+		end
+
+		table.sort(units, function(a, b)
+			return getgenv().unitPlacementSettings.placementPriority[a[1]] > getgenv().unitPlacementSettings.placementPriority[b[1]]
+		end)
+		
         for i = 1, 6 do
-            local unitinfo = getgenv().SelectedUnits["U" .. i]
+            local unitinfo = units[i][2]
 
             if unitinfo ~= nil then
                 local unitinfo_ = unitinfo:split(" #")
@@ -6225,10 +6401,16 @@ coroutine.resume(coroutine.create(function()
                 
                 for j = 1, 9 do
                     if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
-                    --place units
+						local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 100, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+						local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -50, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+						local rayDirection = (rayDestination - rayOrigin)
+
+						local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+                    	--place units
                         local args = {
                             [1] = unitinfo_[2],
-                            [2] = CFrame.new(Vector3.new(pos["x"] + (x * (((j - 1) % 3) - 1)), pos["y"] - y, pos["z"] + (z * (math.ceil(j / 3) - 2))), Vector3.new(0, 0, -1))
+                            [2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
                         }
                         game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
                     end
@@ -6249,7 +6431,7 @@ coroutine.resume(coroutine.create(function()
             if game.PlaceId ~= 8304191830 then
                 --print("AutoFarming")
                 xOffset = 1
-                yOffset = 0.2
+                yOffset = -0.5
                 zOffset = 1
 
 				repeat task.wait() until game:GetService("Workspace"):WaitForChild("_map")
@@ -6528,27 +6710,64 @@ function autoUpgradefunc()
 			for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
 				if v:FindFirstChild("_stats") then
 					if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
-						table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["upgrade"].Value, v})
+						table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["uuid"].Value, v})
 					end
 				end
 			end
-			
-			-- Sort By Upgrade (prioritize Bulma/Speedwagon)
-			table.sort(unitList, function (a, b)
-				if (a[1] == "bulma" and b[1] == "speedwagon") or (b[1] == "bulma" and a[1] == "speedwagon") or (a[1] == "bulma" and b[1] == "bulma") or (a[1] == "speedwagon" and b[1] == "speedwagon") then
-					return a[2] > b[2]
+
+			local currentUnitUUIDs = {}
+
+			for i = 1, 6 do
+				local unitUUID = getgenv().SelectedUnits["U" .. i]:split(" #")[2]
+				table.insert(currentUnitUUIDs, {"U" .. i, unitUUID})
+			end
+
+			table.sort(unitList, function(a, b)
+				local unitAFound = false
+				local unitBFound = false
+
+				for i = 1, 6 do
+					if currentUnitUUIDs[i][2] == a[2] then
+						unitAFound = true
+					end
 				end
-				if a[1] == "bulma" or a[1] == "speedwagon" then
+
+				for i = 1, 6 do
+					if currentUnitUUIDs[i][2] == b[2] then
+						unitBFound = true
+					end
+				end
+
+				if (unitAFound == false and unitBFound == false) then
 					return true
-				end
-				if b[1] == "bulma" or b[1] == "speedwagon" then
+				elseif (unitAFound == true and unitBFound == false) then
+					return true
+				elseif (unitAFound == false and unitBFound == true) then
 					return false
+				else
+					local unitAIdentifier
+					local unitBIdentifier
+
+					for i = 1, 6 do
+						if currentUnitUUIDs[i][2] == a[2] then
+							unitAIdentifier = currentUnitUUIDs[i][1]
+						end
+					end
+	
+					for i = 1, 6 do
+						if currentUnitUUIDs[i][2] == b[2] then
+							unitBIdentifier = currentUnitUUIDs[i][1]
+						end
+					end
+	
+					return getgenv().unitPlacementSettings[unitAIdentifier]["placementPriority"] > getgenv().unitPlacementSettings[unitBIdentifier]["placementPriority"]
 				end
-				return a[2] > b[2]
 			end)
 
 			for _, unitEntry in pairs(unitList) do
-				game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
+				if unitEntry[1] ~= "metal_knight_drone" and unitEntry[1] ~= "metal_knight_drone:shiny" then
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
+				end
 			end
         end
     end)
