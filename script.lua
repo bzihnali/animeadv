@@ -4955,7 +4955,7 @@ function MainModule()
 			end,
 		})
 
-		unitThreeSection = unitPlacementTab:CreateSection("Unit 3 - " .. getgenv().SelectedUnits["U3"]:split(" #")[3])
+		unitThreeSection = unitPlacementTab:CreateSection("Unit 3 - " .. getgenv().SelectedUnits["U3"]:split(" #")[2])
 
 		unitThreePlacementPriority = unitPlacementTab:CreateInput({
 			Name = "Placement Priority",
@@ -5007,7 +5007,7 @@ function MainModule()
 			end,
 		})
 
-		unitFourSection = unitPlacementTab:CreateSection("Unit 4 - " .. getgenv().SelectedUnits["U4"]:split(" #")[4])
+		unitFourSection = unitPlacementTab:CreateSection("Unit 4 - " .. getgenv().SelectedUnits["U4"]:split(" #")[2])
 
 		unitFourPlacementPriority = unitPlacementTab:CreateInput({
 			Name = "Placement Priority",
@@ -5060,7 +5060,7 @@ function MainModule()
 		})
 
 		if tonumber(game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")[2]) >= 20 then
-			unitFiveSection = unitPlacementTab:CreateSection("Unit 5 - " .. getgenv().SelectedUnits["U5"]:split(" #")[5])
+			unitFiveSection = unitPlacementTab:CreateSection("Unit 5 - " .. getgenv().SelectedUnits["U5"]:split(" #")[2])
 
 			unitFivePlacementPriority = unitPlacementTab:CreateInput({
 				Name = "Placement Priority",
@@ -5114,7 +5114,7 @@ function MainModule()
 		end
 
 		if tonumber(game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")[2]) >= 50 then
-			unitSixSection = unitPlacementTab:CreateSection("Unit 6 - " .. getgenv().SelectedUnits["U6"]:split(" #")[6])
+			unitSixSection = unitPlacementTab:CreateSection("Unit 6 - " .. getgenv().SelectedUnits["U6"]:split(" #")[2])
 		
 			unitSixPlacementPriority = unitPlacementTab:CreateInput({
 				Name = "Placement Priority",
