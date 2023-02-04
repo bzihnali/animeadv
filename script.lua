@@ -2485,7 +2485,7 @@ local RunService = game:GetService("RunService")
 local mouse = game.Players.LocalPlayer:GetMouse()
 local UserInputService = game:GetService("UserInputService")
 
-getgenv().saveFileName = "Anime-Adventures_UPD9"..game.Players.LocalPlayer.Name.."-"..scriptVersion..".json"
+getgenv().saveFileName = "Anime-Adventures_UPD10"..game.Players.LocalPlayer.Name.."-"..scriptVersion..".json"
 getgenv().door = "_lobbytemplategreen1"
 getgenv().selectedMacroFile = "nil"
 
@@ -3751,7 +3751,7 @@ function MainModule()
             autoloadtp = getgenv().AutoLoadTP,
             AutoLeave = getgenv().AutoLeave,
             AutoReplay = getgenv().AutoReplay,
-            AutoChallenge  = getgenv().AutoChallenge, 
+            AutoChallenge = getgenv().AutoChallenge, 
             selectedreward = getgenv().selectedreward,
             AutoChallengeAll = getgenv().AutoChallengeAll, 
             sellatwave = getgenv().sellatwave,
@@ -3838,9 +3838,8 @@ function MainModule()
     })
 
     local autoFarmTab = mainWindow:CreateTab("Auto Farm")
-	local autoMacroTab = mainWindow:CreateTab("Auto Macro")
+	local autoMacroTab = mainWindow:CreateTab("Auto Macro [BETA]")
     local webhookTab = mainWindow:CreateTab("Webhooks")
-    local creditsTab = mainWindow:CreateTab("Credits")
 
     if game.PlaceId == 8304191830 then
 		local altsInGame = false
@@ -4903,7 +4902,7 @@ function MainModule()
 			end,
 		})
 
-		unitTwoSection = unitPlacementTab:CreateSection("Unit 2 - " .. getgenv().SelectedUnits["U2"]:split(" #")[2])
+		unitTwoSection = unitPlacementTab:CreateSection("Unit 2 - " .. getgenv().SelectedUnits["U2"]:split(" #")[1])
 
 		unitTwoPlacementPriority = unitPlacementTab:CreateInput({
 			Name = "Placement Priority",
@@ -4955,7 +4954,7 @@ function MainModule()
 			end,
 		})
 
-		unitThreeSection = unitPlacementTab:CreateSection("Unit 3 - " .. getgenv().SelectedUnits["U3"]:split(" #")[2])
+		unitThreeSection = unitPlacementTab:CreateSection("Unit 3 - " .. getgenv().SelectedUnits["U3"]:split(" #")[1])
 
 		unitThreePlacementPriority = unitPlacementTab:CreateInput({
 			Name = "Placement Priority",
@@ -5007,7 +5006,7 @@ function MainModule()
 			end,
 		})
 
-		unitFourSection = unitPlacementTab:CreateSection("Unit 4 - " .. getgenv().SelectedUnits["U4"]:split(" #")[2])
+		unitFourSection = unitPlacementTab:CreateSection("Unit 4 - " .. getgenv().SelectedUnits["U4"]:split(" #")[1])
 
 		unitFourPlacementPriority = unitPlacementTab:CreateInput({
 			Name = "Placement Priority",
@@ -5060,7 +5059,7 @@ function MainModule()
 		})
 
 		if tonumber(game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")[2]) >= 20 then
-			unitFiveSection = unitPlacementTab:CreateSection("Unit 5 - " .. getgenv().SelectedUnits["U5"]:split(" #")[2])
+			unitFiveSection = unitPlacementTab:CreateSection("Unit 5 - " .. getgenv().SelectedUnits["U5"]:split(" #")[1])
 
 			unitFivePlacementPriority = unitPlacementTab:CreateInput({
 				Name = "Placement Priority",
@@ -5114,7 +5113,7 @@ function MainModule()
 		end
 
 		if tonumber(game.Players.LocalPlayer.PlayerGui["spawn_units"].Lives.Main.Desc.Level.Text:split(" ")[2]) >= 50 then
-			unitSixSection = unitPlacementTab:CreateSection("Unit 6 - " .. getgenv().SelectedUnits["U6"]:split(" #")[2])
+			unitSixSection = unitPlacementTab:CreateSection("Unit 6 - " .. getgenv().SelectedUnits["U6"]:split(" #")[1])
 		
 			unitSixPlacementPriority = unitPlacementTab:CreateInput({
 				Name = "Placement Priority",
@@ -5590,15 +5589,6 @@ function MainModule()
 
 
         -- set unit position end--
-        autoFarmTab:CreateLabel("--- Saved Config (Doesn't Refresh) ---")
-        autoFarmTab:CreateLabel("Auto Sell at Wave: " .. tostring(getgenv().sellatwave))
-        autoFarmTab:CreateLabel("Auto Farm: " .. tostring(getgenv().AutoFarm))
-        autoFarmTab:CreateLabel("Auto Start: " .. tostring(getgenv().autoStart))
-        autoFarmTab:CreateLabel("Auto Sell: " .. tostring(getgenv().autoSell))
-        autoFarmTab:CreateLabel("Auto Upgrade: " .. tostring(getgenv().autoUpgrade))
-        autoFarmTab:CreateLabel("Difficulty: " .. tostring(getgenv().difficulty))
-        autoFarmTab:CreateLabel("Selected World: " .. tostring(getgenv().world))
-        autoFarmTab:CreateLabel("Selected Level: " .. tostring(getgenv().level))
 
 --#endregion
 
@@ -5690,6 +5680,7 @@ function MainModule()
 
 --#endregion
 
+	local creditsTab = mainWindow:CreateTab("Credits")
     local credits = creditsTab:CreateSection("Credits")
     creditsTab:CreateLabel("Arpon AG#6612")
     creditsTab:CreateLabel("Forever4D#0001")
@@ -6309,12 +6300,12 @@ else
          },
 
         xselectedUnits = {
-            U1 = nil,
-            U2 = nil,
-            U3 = nil,
-            U4 = nil,
-            U5 = nil,
-            U6 = nil
+            U1 = "nil #nil",
+            U2 = "nil #nil",
+            U3 = "nil #nil",
+            U4 = "nil #nil",
+            U5 = "nil #nil",
+            U6 = "nil #nil"
         }
     
     }
@@ -6389,32 +6380,34 @@ coroutine.resume(coroutine.create(function()
 		end
 
 		table.sort(units, function(a, b)
-			return getgenv().unitPlacementSettings.placementPriority[a[1]] > getgenv().unitPlacementSettings.placementPriority[b[1]]
+			return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
 		end)
 		
         for i = 1, 6 do
             local unitinfo = units[i][2]
 
-            if unitinfo ~= nil then
-                local unitinfo_ = unitinfo:split(" #")
-                local pos = getgenv().SpawnUnitPos[mapName]["UP" .. i]
-                
-                for j = 1, 9 do
-                    if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
-						local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 100, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-						local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -50, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-						local rayDirection = (rayDestination - rayOrigin)
+			if unitinfo ~= nil then
+				if tonumber(getgenv().unitPlacementSettings[units[i][1]]["placeFromWave"]) <= tonumber(game:GetService("Workspace"):WaitForChild("_wave_num").Value) then
+					local unitinfo_ = unitinfo:split(" #")
+					local pos = getgenv().SpawnUnitPos[mapName][string.gsub(units[i][1], "U", "UP")]
+					
+					for j = 1, 9 do
+						--if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
+							local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 100, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+							local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -50, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+							local rayDirection = (rayDestination - rayOrigin)
 
-						local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+							local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
 
-                    	--place units
-                        local args = {
-                            [1] = unitinfo_[2],
-                            [2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
-                        }
-                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-                    end
-                end
+							--place units
+							local args = {
+								[1] = unitinfo_[2],
+								[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
+							}
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+						--end
+					end
+				end
             end
         end
     end
@@ -6760,7 +6753,7 @@ function autoUpgradefunc()
 						end
 					end
 	
-					return getgenv().unitPlacementSettings[unitAIdentifier]["placementPriority"] > getgenv().unitPlacementSettings[unitBIdentifier]["placementPriority"]
+					return tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) > tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"])
 				end
 			end)
 
@@ -6900,20 +6893,22 @@ local function startfarming()
             local cpos = player.Character.HumanoidRootPart.CFrame
 			
 			if not getgenv().isAlt then
-				repeat 
-					task.wait(1)
-					local altsInGame = 0
-					for _, val in pairs(game.Players:GetPlayers()) do
-						for i, alt in pairs(getgenv().altList) do
-							if tostring(val.Name) == tostring(alt) then
-								print(val.Name)
-								altsInGame += 1
-								break
+				if getgenv().altMode then
+					repeat 
+						task.wait(1)
+						local altsInGame = 0
+						for _, val in pairs(game.Players:GetPlayers()) do
+							for i, alt in pairs(getgenv().altList) do
+								if tostring(val.Name) == tostring(alt) then
+									print(val.Name)
+									altsInGame += 1
+									break
+								end
 							end
 						end
-					end
-				until altsInGame >= 3
-
+					until altsInGame >= 3
+				end
+				
 				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
 					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
 						if v.Name == "Owner" and v.Value == nil then
