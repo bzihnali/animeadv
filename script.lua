@@ -6380,7 +6380,8 @@ coroutine.resume(coroutine.create(function()
 		end
 
 		table.sort(units, function(a, b)
-			return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
+			
+			return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) or 0 > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]) or 0
 		end)
 		
         for i = 1, 6 do
