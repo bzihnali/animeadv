@@ -3699,6 +3699,8 @@ function MainModule()
     local jsonData = readfile(saveFileName)
     local data = HttpService:JSONDecode(jsonData)
 
+	getgenv().altCount = data.altcount
+
     getgenv().AutoLeave = data.AutoLeave
     getgenv().AutoReplay = data.AutoReplay
     getgenv().AutoChallenge = data.AutoChallenge  
@@ -3748,6 +3750,8 @@ function MainModule()
 
     function updatejson()
         local xdata = {
+			altcount = getgenv().altCount,
+
             autoloadtp = getgenv().AutoLoadTP,
             AutoLeave = getgenv().AutoLeave,
             AutoReplay = getgenv().AutoReplay,
@@ -3987,7 +3991,7 @@ function MainModule()
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"jjk_infinite","jjk_level_1","jjk_level_2","jjk_level_3",
-                                    "jjk_level_4","jjk_level_5","jjk_level_6",}
+                                    "jjk_level_4","jjk_level_5","jjk_level_6","jjk_finger"}
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
@@ -5699,6 +5703,7 @@ if isfile(saveFileName) then
 else
 --#region CREATES JSON
     local xdata = {
+		altcount = 3,
         AutoReplay = false,
         AutoLeave = false,
         AutoChallenge = false,
@@ -6969,7 +6974,7 @@ local function startfarming()
 										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
 										break
 									end
-								until #v.Parent.Players:GetChildren() >= 4
+								until #v.Parent.Players:GetChildren() >= getgenv().altCount + 1
 	
 								local args = { 
 									[1] = tostring(v.Parent.Name)
