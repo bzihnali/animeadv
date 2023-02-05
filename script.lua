@@ -4426,7 +4426,7 @@ function MainModule()
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"jjk_infinite","jjk_level_1","jjk_level_2","jjk_level_3",
-                                    "jjk_level_4","jjk_level_5","jjk_level_6",}
+                                    "jjk_level_4","jjk_level_5","jjk_level_6","jjk_finger"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
