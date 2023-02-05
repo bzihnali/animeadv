@@ -6481,7 +6481,7 @@ coroutine.resume(coroutine.create(function()
                     PlaceUnits("black_clover", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("graves") then
                     print("Hollow Legend")
-                    PlaceUnits("hollow_legend", _wave, xOffset, yOffset, zOffset)
+                    PlaceUnits("hollow_leg", _wave, xOffset, yOffset, zOffset)
                 elseif game.Workspace._map:FindFirstChild("SpaceCenter") then
                     print("Cape Canaveral")
                     PlaceUnits("jojo", _wave, xOffset, yOffset, zOffset)
