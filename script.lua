@@ -6771,7 +6771,8 @@ function autoUpgradefunc()
 							unitBIdentifier = currentUnitUUIDs[i][1]
 						end
 					end
-					if tonumber(getgenv().unitPlacementSettings[unitAIdentifier]) ~= nil and tonumber(getgenv().unitPlacementSettings[unitBIdentifier]) ~= nil then
+
+					if tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"]) ~= nil then
 						return tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) > tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"])
 					end
 				end
