@@ -6627,7 +6627,7 @@ coroutine.resume(coroutine.create(function()
                 end
             end
 
-            if getgenv().AutoContinue then
+            if getgenv().AutoContinue then	
                 if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win ~= nil then
                     getgenv().level = GetNextLevel(GetCurrentLevelId())
                     updatejson()
@@ -6650,16 +6650,20 @@ coroutine.resume(coroutine.create(function()
                     task.wait(1)
                 end
             elseif getgenv().AutoLeave then
-				repeat
-					task.wait(1)
-					local mainAccountFound = false
-					for _, v in pairs(game.Players:GetPlayers()) do
-						if tostring(v) == getgenv().mainAccount then
-							mainAccountFound = true
+				if getgenv().isAlt then
+					repeat
+						task.wait(1)
+						local mainAccountFound = false
+						for _, v in pairs(game.Players:GetPlayers()) do
+							if tostring(v) == getgenv().mainAccount then
+								mainAccountFound = true
+							end
 						end
-					end
-				until mainAccountFound == false
-				Teleport()
+					until mainAccountFound == false
+					Teleport()
+				else
+					Teleport()
+				end
             end
         end
 	end)
