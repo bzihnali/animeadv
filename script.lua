@@ -6378,7 +6378,7 @@ coroutine.resume(coroutine.create(function()
 		end
 
 		table.sort(units, function(a, b)
-			if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil then
+			if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]) ~= nil then
 				return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
 			else
 				return true
@@ -6759,7 +6759,7 @@ function autoUpgradefunc()
 							unitBIdentifier = currentUnitUUIDs[i][1]
 						end
 					end
-					if tonumber(getgenv().unitPlacementSettings[a[1]]["upgradePriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[a[1]]["upgradePriority"]) ~= nil then
+					if tonumber(getgenv().unitPlacementSettings[a[1]]["upgradePriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[b[1]]["upgradePriority"]) ~= nil then
 						return tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) > tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"])
 					end
 				end
