@@ -4845,8 +4845,6 @@ function MainModule()
 		getgenv().lockAutoFunctions = false
 
 	else -- When in a match
-		local previousTP = readfile("TeleportTo.lua")
-
 		unitPlacementTab = mainWindow:CreateTab("Unit Placement Settings")
 		local Paragraph = unitPlacementTab:CreateParagraph({Title = "How to Use", 
 															Content = "Placement Priority: If multiple units can be placed with current money, prioritizes higher numbered unit.\nUpgrade Priority: Same concept as Placement Priority.\nPlace From Wave: Will not place a unit until this wave.\nUpgrade From Wave: Will not upgrade a unit until this wave.\nUpgrade Cap: Will not upgrade a unit past this level."})
