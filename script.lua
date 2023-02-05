@@ -6382,8 +6382,9 @@ coroutine.resume(coroutine.create(function()
 		table.sort(units, function(a, b)
 			if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil then
 				return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
+			else
+				return true
 			end
-			return true
 		end)
 		
         for i = 1, 6 do
