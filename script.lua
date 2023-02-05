@@ -6380,8 +6380,10 @@ coroutine.resume(coroutine.create(function()
 		end
 
 		table.sort(units, function(a, b)
-			
-			return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) or 0 > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]) or 0
+			if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil then
+				return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
+			end
+			return true
 		end)
 		
         for i = 1, 6 do
