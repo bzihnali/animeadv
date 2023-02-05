@@ -6592,6 +6592,7 @@ function Teleport()
 		end
 	else
 		repeat
+			task.wait()
 			local mainAccountFound = false
 			for _, v in pairs(game.Players:GetPlayers()) do
 				if tostring(v) == getgenv().mainAccount then
