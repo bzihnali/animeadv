@@ -4342,7 +4342,7 @@ function MainModule()
         local worlddrop = autoFarmTab:CreateDropdown({
             Name = "Select World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
-        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral"},
+        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral", "Alien Ship"},
         CurrentOption = getgenv().world, 
         Callback = function(world)
             getgenv().world = world
@@ -4457,6 +4457,13 @@ function MainModule()
                 table.clear(levels)
                 getgenv().levels = {"jojo_infinite","jojo_level_1","jojo_level_2","jojo_level_3","jojo_level_4","jojo_level_5","jojo_level_6",}
                 for i, v in ipairs(levels) do
+                    getgenv().leveldrop:Add(v)
+                end
+			elseif world == "Alien Ship" then
+                getgenv().leveldrop:Clear()
+                table.clear(macroLevels)
+                getgenv().levels = {"opm_infinite","opm_level_1","opm_level_2","opm_level_3","opm_level_4","opm_level_5","opm_level_6","opm_portal"}
+                for i, v in ipairs(macroLevels) do
                     getgenv().leveldrop:Add(v)
                 end
             elseif world == "Clover Kingdom [Elf Invasion]" then
