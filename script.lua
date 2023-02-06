@@ -3852,6 +3852,10 @@ function MainModule()
     --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
     --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
 
+	if (getgenv().altCount == nil) then
+		getgenv().altCount = 1
+	end
+
     local exec = tostring(identifyexecutor())
     RayfieldLib = RayfieldLibrary
 
