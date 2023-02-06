@@ -6491,7 +6491,7 @@ coroutine.resume(coroutine.create(function()
                     PlaceUnits("csm_event", _wave, xOffset, yOffset, zOffset)
 				elseif game.Workspace._map:FindFirstChild("Capybara") then
                     print("One Punch Man")
-                    PlaceUunits("opm", _wave, xOffset, yOffset, zOffset)
+                    PlaceUnits("opm", _wave, xOffset, yOffset, zOffset)
                 else
                     print("Something bad happened")
                 end
