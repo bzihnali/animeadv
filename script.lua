@@ -6491,7 +6491,7 @@ coroutine.resume(coroutine.create(function()
                     PlaceUnits("csm_event", _wave, xOffset, yOffset, zOffset)
 				elseif game.Workspace._map:FindFirstChild("Capybara") then
                     print("One Punch Man")
-                    PlaceUnits("opm", _wave, xOffset, yOffset, zOffset)
+                    PlaceUunits("opm", _wave, xOffset, yOffset, zOffset)
                 else
                     print("Something bad happened")
                 end
@@ -6723,7 +6723,7 @@ function autoUpgradefunc()
 			for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
 				if v:FindFirstChild("_stats") then
 					if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
-						table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["uuid"].Value, v})
+						table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["uuid"].Value, v, v["_stats"]["upgrade"]})
 					end
 				end
 			end
@@ -6780,8 +6780,17 @@ function autoUpgradefunc()
 			end)
 
 			for _, unitEntry in pairs(unitList) do
-				if unitEntry[1] ~= "metal_knight_drone" and unitEntry[1] ~= "metal_knight_drone:shiny" then
-					game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
+				for i = 1, 6 do
+					if currentUnitUUIDs[i][2] == unitEntry[2] then
+						local unitIdentifier = currentUnitUUIDs[i][1]
+					end
+				end
+
+
+				if localIdentifier ~= nil then
+					if getgenv().unitPlacementSettings[localIdentifier]["upgradeCap"] < unitEntry[4] and unitEntry[1] ~= "metal_knight_drone" and unitEntry[1] ~= "metal_knight_drone:shiny" then
+						game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
+					end
 				end
 			end
         end
