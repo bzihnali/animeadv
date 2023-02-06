@@ -4058,7 +4058,7 @@ function MainModule()
 			elseif world == "Alien Ship" then
                 getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
-                getgenv().macroLevels = {"opm_infinite","opm_level_1","opm_level_2","opm_level_3","opm_level_4","opm_level_5","opm_level_6","opm_portal"}
+                getgenv().macroLevels = {"opm_infinite","opm_level_1","opm_level_2","opm_level_3","opm_level_4","opm_level_5","opm_level_6","opm_portal_g"}
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
@@ -4507,7 +4507,7 @@ function MainModule()
 			elseif world == "Alien Ship" then
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
-                getgenv().levels = {"opm_infinite","opm_level_1","opm_level_2","opm_level_3","opm_level_4","opm_level_5","opm_level_6","opm_portal"}
+                getgenv().levels = {"opm_infinite","opm_level_1","opm_level_2","opm_level_3","opm_level_4","opm_level_5","opm_level_6","opm_portal_g"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
@@ -6689,11 +6689,11 @@ coroutine.resume(coroutine.create(function()
 
             if getgenv().AutoContinue then	
                 if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win ~= nil then
-                    getgenv().level = GetNextLevel(GetCurrentLevelId())
-                    updatejson()
-                    if getgenv().isAlt ~= true then
-						Teleport()
-					end
+                    local args = {
+						[1] = "next_story"
+					}
+					
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(args))
                 else
                     getgenv().level = GetCurrentLevelId()
                     updatejson()
