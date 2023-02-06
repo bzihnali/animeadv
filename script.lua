@@ -2492,6 +2492,47 @@ getgenv().selectedMacroFile = "nil"
 local startTime = os.time(os.date("!*t"))
 local startGems = game.Players.LocalPlayer._stats.gem_amount.Value
 
+function getBorosPortals()
+    local reg = getreg() --> returns Roblox's registry in a table
+
+    for i,v in next, reg do
+        if type(v) == 'function' then --> Checks if the current iteration is a function
+            if getfenv(v).script then --> Checks if the function's environment is in a script
+                --if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                    for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+                        if type(v) == 'table' then
+                            if v["session"] then
+                                local portals = {}
+                                for _, item in pairs(v["session"]["inventory"]['inventory_profile_data']['unique_items']) do
+                                  if item["item_id"] == "portal_boros_g" then
+                                    table.insert(portals, item)
+                                  end
+                                end
+                                return portals
+                            end
+                        end
+                    end
+                --end
+            end
+        end
+    end
+end
+
+function tprint (tbl, indent)
+  if not indent then indent = 0 end
+  for k, v in pairs(tbl) do
+    formatting = string.rep("  ", indent) .. k .. ": "
+    if type(v) == "table" then
+      print(formatting)
+      tprint(v, indent+1)
+    elseif type(v) == 'boolean' then
+      print(formatting .. tostring(v))      
+    else
+      print(formatting .. v)
+    end
+  end
+end
+
 function getNormalItems()
     local reg = getreg() --> returns Roblox's registry in a table
 
@@ -2670,7 +2711,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "spawn_unit" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Spawn Command")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2701,7 +2743,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "upgrade_unit_ingame" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Upgrade Command")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2744,7 +2787,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "sell_unit_ingame" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Sell Command")
 				
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2784,7 +2828,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "use_active_attack" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Active Command")
 
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -6399,6 +6444,7 @@ coroutine.resume(coroutine.create(function()
 		
         for i = 1, 6 do
             local unitinfo = units[i][2]
+			local spacer = 2
 
 			if unitinfo ~= nil then
 				if tonumber(getgenv().unitPlacementSettings[units[i][1]]["placeFromWave"]) <= tonumber(game:GetService("Workspace"):WaitForChild("_wave_num").Value) then
@@ -6438,9 +6484,9 @@ coroutine.resume(coroutine.create(function()
         if getgenv().AutoFarm and not getgenv().disableAutoFarm and not getgenv().lockAutoFunctions then
             if game.PlaceId ~= 8304191830 then
                 --print("AutoFarming")
-                xOffset = 1
+                xOffset = 2
                 yOffset = -0.5
-                zOffset = 1
+                zOffset = 2
 
 				repeat task.wait() until game:GetService("Workspace"):WaitForChild("_map")
 
