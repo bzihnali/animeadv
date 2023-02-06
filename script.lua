@@ -6390,10 +6390,14 @@ coroutine.resume(coroutine.create(function()
 		end
 
 		table.sort(units, function(a, b)
+			--print(a[1])
+			--print(b[1])
+			--print(tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]))
+			--print(tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]))
 			if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]) ~= nil then
 				return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
 			else
-				return true
+				return false
 			end
 		end)
 		
