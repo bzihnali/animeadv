@@ -6375,8 +6375,8 @@ coroutine.resume(coroutine.create(function()
 		raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
 		raycastParams.FilterDescendantsInstances = {game:GetService("Workspace")["_terrain"]}
 
-		local rayOrigin = CFrame.new(xPos, 100, zPos).p
-		local rayDestination = CFrame.new(xPos, -50, zPos).p
+		local rayOrigin = CFrame.new(xPos, 1000, zPos).p
+		local rayDestination = CFrame.new(xPos, -1000, zPos).p
 
 		local rayDirection = (rayDestination - rayOrigin)
 
@@ -6407,8 +6407,8 @@ coroutine.resume(coroutine.create(function()
 					
 					for j = 1, 9 do
 						--if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
-							local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 100, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-							local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -50, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+							local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+							local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
 							local rayDirection = (rayDestination - rayOrigin)
 
 							local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
