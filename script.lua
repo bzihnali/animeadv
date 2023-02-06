@@ -6390,10 +6390,6 @@ coroutine.resume(coroutine.create(function()
 		end
 
 		table.sort(units, function(a, b)
-			--print(a[1])
-			--print(b[1])
-			--print(tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]))
-			--print(tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]))
 			if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]) ~= nil then
 				return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
 			else
@@ -6411,20 +6407,20 @@ coroutine.resume(coroutine.create(function()
 					
 					for j = 1, 9 do
 						--if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
-							local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-							local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-							local rayDirection = (rayDestination - rayOrigin)
+						local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+						local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+						local rayDirection = (rayDestination - rayOrigin)
 
-							local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+						local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
 
-							--place units
-							if raycastResult ~= nil then
-								local args = {
-									[1] = unitinfo_[2],
-									[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
-								}
-								game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-							end
+						--place units
+						if raycastResult ~= nil then
+							local args = {
+								[1] = unitinfo_[2],
+								[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
+							}
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+						end
 					end
 				end
             end
@@ -6508,7 +6504,7 @@ coroutine.resume(coroutine.create(function()
                     autoUpgradefunc()
                 end)
             end
-            if  getgenv().autoUpgrader == true then
+            if getgenv().autoUpgrader == true then
                 task.wait()
                 autoUpgradefunc()
                 getgenv().autoUpgrader = false
@@ -6718,94 +6714,84 @@ end))
 getgenv().autoUpgrader = false
 
 function autoUpgradefunc()
-    local success, err = pcall(function() --///
-		if not getgenv().lockAutoFunctions then
-			repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
+	if not getgenv().lockAutoFunctions then
+		repeat task.wait() until game:GetService("Workspace"):WaitForChild("_UNITS")
 
-			unitList = {}
+		unitList = {}
+		for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
+			if v:FindFirstChild("_stats") then
+				if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
+					table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["uuid"].Value, v, v["_stats"]["upgrade"].Value})
+				end
+			end
+		end
 
-			for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
-				if v:FindFirstChild("_stats") then
-					if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0 then
-						table.insert(unitList, {v["_stats"]["id"].Value, v["_stats"]["uuid"].Value, v, v["_stats"]["upgrade"]})
-					end
+		local currentUnitUUIDs = {}
+		for i = 1, 6 do
+			local unitUUID = getgenv().SelectedUnits["U" .. i]:split(" #")[2]
+			table.insert(currentUnitUUIDs, {"U" .. i, unitUUID})
+		end
+
+		table.sort(unitList, function(a, b)
+			local unitAFound = false
+			local unitBFound = false
+
+			for i = 1, 6 do
+				if currentUnitUUIDs[i][2] == a[2] then
+					unitAFound = true
 				end
 			end
 
-			local currentUnitUUIDs = {}
-
 			for i = 1, 6 do
-				local unitUUID = getgenv().SelectedUnits["U" .. i]:split(" #")[2]
-				table.insert(currentUnitUUIDs, {"U" .. i, unitUUID})
+				if currentUnitUUIDs[i][2] == b[2] then
+					unitBFound = true
+				end
 			end
 
-			table.sort(unitList, function(a, b)
-				local unitAFound = false
-				local unitBFound = false
+			if (unitAFound == false and unitBFound == false) then
+				return true
+			elseif (unitAFound == true and unitBFound == false) then
+				return true
+			elseif (unitAFound == false and unitBFound == true) then
+				return false
+			else
+				local unitAIdentifier
+				local unitBIdentifier
 
 				for i = 1, 6 do
 					if currentUnitUUIDs[i][2] == a[2] then
-						unitAFound = true
+						unitAIdentifier = currentUnitUUIDs[i][1]
 					end
 				end
 
 				for i = 1, 6 do
 					if currentUnitUUIDs[i][2] == b[2] then
-						unitBFound = true
+						unitBIdentifier = currentUnitUUIDs[i][1]
 					end
 				end
 
-				if (unitAFound == false and unitBFound == false) then
-					return true
-				elseif (unitAFound == true and unitBFound == false) then
-					return true
-				elseif (unitAFound == false and unitBFound == true) then
-					return false
-				else
-					local unitAIdentifier
-					local unitBIdentifier
-
-					for i = 1, 6 do
-						if currentUnitUUIDs[i][2] == a[2] then
-							unitAIdentifier = currentUnitUUIDs[i][1]
-						end
-					end
-	
-					for i = 1, 6 do
-						if currentUnitUUIDs[i][2] == b[2] then
-							unitBIdentifier = currentUnitUUIDs[i][1]
-						end
-					end
-
-					if tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"]) ~= nil then
-						return tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) > tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"])
-					end
-				end
-			end)
-
-			for _, unitEntry in pairs(unitList) do
-				for i = 1, 6 do
-					if currentUnitUUIDs[i][2] == unitEntry[2] then
-						local unitIdentifier = currentUnitUUIDs[i][1]
-					end
-				end
-
-
-				if localIdentifier ~= nil then
-					if getgenv().unitPlacementSettings[localIdentifier]["upgradeCap"] < unitEntry[4] and unitEntry[1] ~= "metal_knight_drone" and unitEntry[1] ~= "metal_knight_drone:shiny" then
-						game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
-					end
+				if tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"]) ~= nil then
+					return tonumber(getgenv().unitPlacementSettings[unitAIdentifier]["upgradePriority"]) > tonumber(getgenv().unitPlacementSettings[unitBIdentifier]["upgradePriority"])
 				end
 			end
-        end
-    end)
-
-    if err then
-        warn("//////////////////////////////////////////////////")
-        warn("//////////////////////////////////////////////////")
-        getgenv().autoUpgrader = true
-        error(err)
-    end
+		end)
+		for _, unitEntry in pairs(unitList) do
+			
+			for i = 1, 6 do
+				if currentUnitUUIDs[i][2] == unitEntry[2] then
+					localIdentifier = currentUnitUUIDs[i][1]
+				end
+			end
+			print("localIDENT"..localIdentifier)
+			if localIdentifier ~= nil then
+				
+				if tonumber(getgenv().unitPlacementSettings[localIdentifier]["upgradeCap"]) > unitEntry[4] and unitEntry[1] ~= "metal_knight_drone" and unitEntry[1] ~= "metal_knight_drone:shiny" then
+					
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
+				end
+			end
+		end
+	end
 end
 
 --#endregion
