@@ -6414,12 +6414,13 @@ coroutine.resume(coroutine.create(function()
 							local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
 
 							--place units
-							local args = {
-								[1] = unitinfo_[2],
-								[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
-							}
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
-						--end
+							if raycastResult ~= nil then
+								local args = {
+									[1] = unitinfo_[2],
+									[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
+								}
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+							end
 					end
 				end
             end
