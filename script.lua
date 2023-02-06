@@ -3905,7 +3905,7 @@ function MainModule()
 						end
 					end
 				end
-			until altsInGame >= 3
+			until altsInGame >= altCount
 		end
 
 		if getgenv().altMode and getgenv().isAlt then
@@ -6973,7 +6973,7 @@ local function startfarming()
 								end
 							end
 						end
-					until altsInGame >= 3
+					until altsInGame >= getgenv().altCount
 				end
 
 				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
