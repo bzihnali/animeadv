@@ -3749,6 +3749,7 @@ function MainModule()
     getgenv().AutoLeave = data.AutoLeave
     getgenv().AutoReplay = data.AutoReplay
     getgenv().AutoChallenge = data.AutoChallenge  
+	getgenv().autoPortal = data.autoportal
     getgenv().selectedreward = data.selectedreward
     getgenv().AutoChallengeAll = data.AutoChallengeAll
     getgenv().disableAutoFarm = false
@@ -3801,6 +3802,7 @@ function MainModule()
             AutoLeave = getgenv().AutoLeave,
             AutoReplay = getgenv().AutoReplay,
             AutoChallenge = getgenv().AutoChallenge, 
+			autoportal = getgenv().autoPortal,
             selectedreward = getgenv().selectedreward,
             AutoChallengeAll = getgenv().AutoChallengeAll, 
             sellatwave = getgenv().sellatwave,
@@ -3854,6 +3856,10 @@ function MainModule()
 
 	if (getgenv().altCount == nil) then
 		getgenv().altCount = 1
+	end
+
+	if getgenv().autoPortal == nil then
+		getgenv().autoPortal = false
 	end
 
     local exec = tostring(identifyexecutor())
@@ -4391,7 +4397,7 @@ function MainModule()
         local worlddrop = autoFarmTab:CreateDropdown({
             Name = "Select World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
-        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral", "Alien Ship"},
+        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral", "Alien Ship", "PORTALS"},
         CurrentOption = getgenv().world, 
         Callback = function(world)
             getgenv().world = world
@@ -4592,6 +4598,14 @@ function MainModule()
             CurrentValue = getgenv().AutoFarmTP, 
             Callback = function(bool)
                 getgenv().AutoFarmTP = bool
+                updatejson()
+            end})
+
+		autoFarmTab:CreateToggle({
+            Name = "Auto Farm Boros Portals", 
+            CurrentValue = getgenv().autoPortal, 
+            Callback = function(bool)
+                getgenv().autoPortal = bool
                 updatejson()
             end})
         
@@ -5763,6 +5777,7 @@ else
         AutoReplay = false,
         AutoLeave = false,
         AutoChallenge = false,
+		autoportal = false,
         selectedreward = "star_fruit_random",
         AutoChallengeAll = false,
         autoabilities = false,
@@ -6980,6 +6995,52 @@ local function startfarming()
 					until altsInGame >= getgenv().altCount
 				end
 
+				if getgenv().autoPortal then
+					for _, val in pairs(game.Players:GetPlayers()) do
+						print(val.Name)
+						for i, alt in pairs(getgenv().altList) do
+							if tostring(val.Name) == tostring(alt) then
+								altsInGame = true
+								break
+							end
+						end
+					end
+
+					local args = {
+						[1] = getBorosPortals()[1]["uuid"],
+						[2] = {
+							["friends_only"] = true
+						}
+					}
+					  
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.use_portal:InvokeServer(unpack(args))
+					  
+					for i, v in pairs(game:GetService("Workspace")["_PORTALS"].Lobbies:GetDescendants()) do
+						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
+							if altsInGame then
+								repeat 
+									task.wait(1)
+									print(v.Parent.Timer.Value)
+									if v.Parent.Timer.Value <= 50 then
+										local leave_args = {
+											[1] = v.Parent.Name
+										}
+		
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
+										break
+									end
+								until #v.Parent.Players:GetChildren() >= getgenv().altCount + 1
+							end
+
+							local args = {
+								[1] = v.Parent.Name
+							}
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+							return(1)
+						end
+					end
+				end
+
 				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
 					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
 						if v.Name == "Owner" and v.Value == nil then
@@ -7146,7 +7207,7 @@ local function startChallenge()
     if game.PlaceId == 8304191830 then
         local cpos = player.Character.HumanoidRootPart.CFrame
 
-        if getgenv().AutoChallenge and getgenv().autoStart and getgenv().AutoFarm  and checkReward() == true then
+        if getgenv().AutoChallenge and getgenv().autoStart and getgenv().AutoFarm and checkReward() == true then
 
             for i, v in pairs(game:GetService("Workspace")["_CHALLENGES"].Challenges:GetDescendants()) do
                 if v.Name == "Owner" and v.Value == nil then
@@ -7185,7 +7246,7 @@ end))
 --#endregion
 
 
-------// Auto Start Infiniy Castle && Thriller Park \\------
+------// Auto Start Infinity Castle && Thriller Park \\------
 
 local function FarmCastlePark()
     if getgenv().AutoFarmIC and getgenv().AutoFarm then
