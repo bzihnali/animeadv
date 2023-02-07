@@ -6707,12 +6707,17 @@ coroutine.resume(coroutine.create(function()
             end
 
             if getgenv().AutoContinue then	
+				
                 if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win ~= nil then
+					getgenv().level = GetNextLevel(GetCurrentLevelId())
+					task.wait(10)
                     local args = {
 						[1] = "next_story"
 					}
-					
-					game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(args))
+					for i = 1, 25 do
+						task.wait(1)
+						game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer(unpack(args))
+					end
                 else
                     getgenv().level = GetCurrentLevelId()
                     updatejson()
