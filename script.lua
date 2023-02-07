@@ -2686,7 +2686,7 @@ local function writeMacroToFile(filename)
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    ")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n    for i, v in ipairs(game.Workspace[\"_UNITS\"]:GetChildren()) do")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        if v:FindFirstChild(\"_stats\") then")
-	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            if tostring(v[\"_stats\"].player.Value) == game.Players.LocalPlayer.Name and v[\"_stats\"].xp.Value >= 0  and v[\"_stats\"].id.Value ~= \"metal_knight_drone\" and v[\"_stats\"].id.Value ~= \"metal_knight_drone:shiny\" and v[\"_stats\"].id.Value ~= \"aot_generic\" then")
+	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            if v:FindFirstChild(\"_hitbox\") and tostring(v[\"_stats\"].player.Value) == game.Players.LocalPlayer.Name and v[\"_stats\"].xp.Value >= 0  and v[\"_stats\"].id.Value ~= \"metal_knight_drone\" and v[\"_stats\"].id.Value ~= \"metal_knight_drone:shiny\" and v[\"_stats\"].id.Value ~= \"aot_generic\" then")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n                table.insert(unitPositions, {v, v._hitbox.CFrame.X, v._hitbox.CFrame.Z})")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n            end")
 	appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n        end")
@@ -2711,8 +2711,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "spawn_unit" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Spawn Command")
 
-				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2743,8 +2743,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "upgrade_unit_ingame" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Upgrade Command")
 
-				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2787,8 +2787,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "sell_unit_ingame" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Sell Command")
 				
-				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -2828,8 +2828,8 @@ local function writeMacroToFile(filename)
 			if tostring(remote) == "use_active_attack" then
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n\n--Start Active Command")
 
-				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation and game.Players.LocalPlayer._stats.resource.Value >= " .. tostring(game.Players.LocalPlayer._stats.resource.Value) .. ")")
-				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
+				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (game.Workspace[\"_wave_num\"].Value >= " .. game.Workspace["_wave_num"].Value .." and os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
+				--appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\nrepeat task.wait() until (os.clock() - getgenv().macroStartTime >= " .. os.clock() - getgenv().macroStartTime .. " - deviation)")
 
 				appendfile("AAMacros" .. scriptVersion .. "\\" .. filename, "\n")
 
@@ -6708,7 +6708,7 @@ coroutine.resume(coroutine.create(function()
 
             if getgenv().AutoContinue then	
 				
-                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg.Win ~= nil then
+                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.bg:FindFirstChild("Win") ~= nil then
 					getgenv().level = GetNextLevel(GetCurrentLevelId())
 					task.wait(10)
                     local args = {
