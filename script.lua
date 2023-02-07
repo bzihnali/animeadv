@@ -3915,7 +3915,7 @@ function MainModule()
 						end
 					end
 				end
-			until altsInGame >= altCount
+			until altsInGame >= getgenv().altCount
 		end
 
 		if getgenv().altMode and getgenv().isAlt then
@@ -4397,7 +4397,7 @@ function MainModule()
         local worlddrop = autoFarmTab:CreateDropdown({
             Name = "Select World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
-        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral", "Alien Ship", "PORTALS"},
+        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral", "Alien Ship"},
         CurrentOption = getgenv().world, 
         Callback = function(world)
             getgenv().world = world
