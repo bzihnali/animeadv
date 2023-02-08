@@ -7114,7 +7114,7 @@ local function startfarming()
 					end
 
 					local args = {
-						[1] = getBorosPortals()[1]["uuid"],
+						[1] = getCSMPortals()[1]["uuid"],
 						[2] = {
 							["friends_only"] = true
 						}
