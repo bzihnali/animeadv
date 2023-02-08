@@ -2489,6 +2489,10 @@ getgenv().saveFileName = "Anime-Adventures_UPD10"..game.Players.LocalPlayer.Name
 getgenv().door = "_lobbytemplategreen1"
 getgenv().selectedMacroFile = "nil"
 
+if getgenv().lowCpuMode == nil then
+	getgenv().lowCpuMode == true
+end
+
 local startTime = os.time(os.date("!*t"))
 local startGems = game.Players.LocalPlayer._stats.gem_amount.Value
 
@@ -3745,6 +3749,7 @@ function MainModule()
     local data = HttpService:JSONDecode(jsonData)
 
 	getgenv().altCount = data.altcount
+	getgenv().lowCpuMode = data.lowcpumode
 
     getgenv().AutoLeave = data.AutoLeave
     getgenv().AutoReplay = data.AutoReplay
@@ -3797,6 +3802,7 @@ function MainModule()
     function updatejson()
         local xdata = {
 			altcount = getgenv().altCount,
+			lowcpumode = getgenv().lowCpuMode,
 
             autoloadtp = getgenv().AutoLoadTP,
             AutoLeave = getgenv().AutoLeave,
@@ -3878,8 +3884,8 @@ function MainModule()
 	print(getgenv().isAlt)
 
 	coroutine.resume(coroutine.create(function()
-		while task.wait(0.5) do
-			if isrbxactive() ~= true then
+		while task.wait(0.1) do
+			if isrbxactive() ~= true and getgenv().lowCpuMode then
 				setfpscap(3)
 				game:GetService("RunService"):Set3dRenderingEnabled(false)
 			else
@@ -3899,6 +3905,14 @@ function MainModule()
     local autoFarmTab = mainWindow:CreateTab("Auto Farm")
 	local autoMacroTab = mainWindow:CreateTab("Auto Macro [BETA]")
     local webhookTab = mainWindow:CreateTab("Webhooks")
+
+	local lowCpuToggle = autoFarmTab:CreateToggle({
+			Name = "Record Macro on Map Join",
+			CurrentValue = getgenv().recordMacroOnTeleport,
+			Callback = function(bool)
+				getgenv().recordMacroOnTeleport = bool
+				updatejson()
+			end})
 
     if game.PlaceId == 8304191830 then
 		local altsInGame = false
@@ -3948,10 +3962,10 @@ function MainModule()
 			end})
 
 		autoMacroTab:CreateToggle({
-			Name = "Replay Macro on Map Join (DISABLE RECORD MACRO WHILE THIS IS ACTIVE)",
-			CurrentValue = getgenv().replayMacroOnTeleport,
+			Name = "Turn on Low CPU Mode",
+			CurrentValue = getgenv().lowCpuMode,
 			Callback = function(bool)
-				getgenv().replayMacroOnTeleport = bool
+				getgenv().lowCpuMode = bool
 				updatejson()
 			end})
 		
@@ -5774,6 +5788,7 @@ else
 --#region CREATES JSON
     local xdata = {
 		altcount = 3,
+		lowcpumode = false,
         AutoReplay = false,
         AutoLeave = false,
         AutoChallenge = false,
