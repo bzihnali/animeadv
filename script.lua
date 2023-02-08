@@ -3908,9 +3908,9 @@ function MainModule()
 
 	local lowCpuToggle = autoFarmTab:CreateToggle({
 			Name = "Turn on Low CPU Mode",
-			CurrentValue = getgenv().recordMacroOnTeleport,
+			CurrentValue = getgenv().lowCpuMode,
 			Callback = function(bool)
-				getgenv().recordMacroOnTeleport = bool
+				getgenv().lowCpuMode = bool
 				updatejson()
 			end})
 
