@@ -7034,6 +7034,7 @@ local function checkReward()
 end
 
 local function startfarming()
+	task.wait(1)
     if getgenv().autoStart and getgenv().AutoFarm and getgenv().teleporting 
                            and getgenv().AutoFarmTP == false and getgenv().AutoFarmIC == false then
         if game.PlaceId == 8304191830 then
