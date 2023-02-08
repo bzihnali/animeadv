@@ -2522,6 +2522,32 @@ function getBorosPortals()
     end
 end
 
+function getCSMPortals()
+    local reg = getreg() --> returns Roblox's registry in a table
+
+    for i,v in next, reg do
+        if type(v) == 'function' then --> Checks if the current iteration is a function
+            if getfenv(v).script then --> Checks if the function's environment is in a script
+                --if getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.DropService" or getfenv(v).script:GetFullName() == "ReplicatedStorage.src.client.Services.NPCServiceClient" then
+                    for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+                        if type(v) == 'table' then
+                            if v["session"] then
+                                local portals = {}
+                                for _, item in pairs(v["session"]["inventory"]['inventory_profile_data']['unique_items']) do
+                                  if item["item_id"] == "portal_csm" then
+                                    table.insert(portals, item)
+                                  end
+                                end
+                                return portals
+                            end
+                        end
+                    end
+                --end
+            end
+        end
+    end
+end
+
 function tprint (tbl, indent)
   if not indent then indent = 0 end
   for k, v in pairs(tbl) do
@@ -3755,6 +3781,7 @@ function MainModule()
     getgenv().AutoReplay = data.AutoReplay
     getgenv().AutoChallenge = data.AutoChallenge  
 	getgenv().autoPortal = data.autoportal
+	getgenv().autoPortalCSM = data.autoportalcsm
     getgenv().selectedreward = data.selectedreward
     getgenv().AutoChallengeAll = data.AutoChallengeAll
     getgenv().disableAutoFarm = false
@@ -3809,6 +3836,7 @@ function MainModule()
             AutoReplay = getgenv().AutoReplay,
             AutoChallenge = getgenv().AutoChallenge, 
 			autoportal = getgenv().autoPortal,
+			autoportalcsm = getgenv().autoPortalCSM,
             selectedreward = getgenv().selectedreward,
             AutoChallengeAll = getgenv().AutoChallengeAll, 
             sellatwave = getgenv().sellatwave,
@@ -3866,6 +3894,10 @@ function MainModule()
 
 	if getgenv().autoPortal == nil then
 		getgenv().autoPortal = false
+	end
+
+	if getgenv().autoPortalCSM == nil then
+		getgenv().autoPortalCSM = false
 	end
 
     local exec = tostring(identifyexecutor())
@@ -4620,6 +4652,14 @@ function MainModule()
             CurrentValue = getgenv().autoPortal, 
             Callback = function(bool)
                 getgenv().autoPortal = bool
+                updatejson()
+            end})
+
+		autoFarmTab:CreateToggle({
+            Name = "Auto Farm CSM Portals", 
+            CurrentValue = getgenv().autoPortalCSM, 
+            Callback = function(bool)
+                getgenv().autoPortalCSM = bool
                 updatejson()
             end})
         
@@ -5793,6 +5833,7 @@ else
         AutoLeave = false,
         AutoChallenge = false,
 		autoportal = false,
+		autoportalcsm = false,
         selectedreward = "star_fruit_random",
         AutoChallengeAll = false,
         autoabilities = false,
@@ -7016,6 +7057,52 @@ local function startfarming()
 				end
 
 				if getgenv().autoPortal then
+					for _, val in pairs(game.Players:GetPlayers()) do
+						print(val.Name)
+						for i, alt in pairs(getgenv().altList) do
+							if tostring(val.Name) == tostring(alt) then
+								altsInGame = true
+								break
+							end
+						end
+					end
+
+					local args = {
+						[1] = getBorosPortals()[1]["uuid"],
+						[2] = {
+							["friends_only"] = true
+						}
+					}
+					  
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.use_portal:InvokeServer(unpack(args))
+					  
+					for i, v in pairs(game:GetService("Workspace")["_PORTALS"].Lobbies:GetDescendants()) do
+						if v.Name == "Owner" and tostring(v.Value) == getgenv().mainAccount then
+							if altsInGame then
+								repeat 
+									task.wait(1)
+									print(v.Parent.Timer.Value)
+									if v.Parent.Timer.Value <= 50 then
+										local leave_args = {
+											[1] = v.Parent.Name
+										}
+		
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
+										break
+									end
+								until #v.Parent.Players:GetChildren() >= getgenv().altCount + 1
+							end
+
+							local args = {
+								[1] = v.Parent.Name
+							}
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+							return(1)
+						end
+					end
+				end
+
+				if getgenv().autoPortalCSM then
 					for _, val in pairs(game.Players:GetPlayers()) do
 						print(val.Name)
 						for i, alt in pairs(getgenv().altList) do
