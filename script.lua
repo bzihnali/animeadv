@@ -2490,7 +2490,7 @@ getgenv().door = "_lobbytemplategreen1"
 getgenv().selectedMacroFile = "nil"
 
 if getgenv().lowCpuMode == nil then
-	getgenv().lowCpuMode = true
+	getgenv().lowCpuMode == true
 end
 
 local startTime = os.time(os.date("!*t"))
@@ -3907,7 +3907,7 @@ function MainModule()
     local webhookTab = mainWindow:CreateTab("Webhooks")
 
 	local lowCpuToggle = autoFarmTab:CreateToggle({
-			Name = "Record Macro on Map Join",
+			Name = "Turn on Low CPU Mode",
 			CurrentValue = getgenv().recordMacroOnTeleport,
 			Callback = function(bool)
 				getgenv().recordMacroOnTeleport = bool
@@ -3962,10 +3962,10 @@ function MainModule()
 			end})
 
 		autoMacroTab:CreateToggle({
-			Name = "Turn on Low CPU Mode",
-			CurrentValue = getgenv().lowCpuMode,
+			Name = "Replay Macro on Map Join (TURN OFF RECORD MACRO)",
+			CurrentValue = getgenv().replayMacroOnTeleport,
 			Callback = function(bool)
-				getgenv().lowCpuMode = bool
+				getgenv().replayMacroOnTeleport = bool
 				updatejson()
 			end})
 		
