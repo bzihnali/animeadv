@@ -2490,7 +2490,7 @@ getgenv().door = "_lobbytemplategreen1"
 getgenv().selectedMacroFile = "nil"
 
 if getgenv().lowCpuMode == nil then
-	getgenv().lowCpuMode == true
+	getgenv().lowCpuMode = true
 end
 
 local startTime = os.time(os.date("!*t"))
