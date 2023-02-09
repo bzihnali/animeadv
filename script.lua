@@ -7162,6 +7162,7 @@ local function startfarming()
 							return(1)
 						end
 					end
+					return(1)
 				end
 
 				if getgenv().autoPortalCSM then
