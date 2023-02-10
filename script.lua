@@ -4948,7 +4948,7 @@ function MainModule()
 		
 		getgenv().lockAutoFunctions = false
 
-		
+
 		if getgenv().replayMacroOnTeleport then
 			coroutine.resume(coroutine.create(function()
 				getgenv().lockAutoFunctions = true
@@ -5381,8 +5381,6 @@ function MainModule()
 				end,
 			})
 		end
-		
-		getgenv().lockAutoFunctions = false
 
 		if getgenv().recordMacroOnTeleport then
 			getgenv().lockAutoFunctions = true
