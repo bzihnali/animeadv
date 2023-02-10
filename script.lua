@@ -4945,11 +4945,9 @@ function MainModule()
 
 
 	else -- When in a match
-		
 		getgenv().lockAutoFunctions = false
-
-
 		if getgenv().replayMacroOnTeleport then
+			getgenv().lockAutoFunctions = true
 			coroutine.resume(coroutine.create(function()
 				getgenv().lockAutoFunctions = true
 				if getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])] then
@@ -5388,7 +5386,7 @@ function MainModule()
 			getgenv().recordingMacro = true
 			updatejson()
 		else
-			getgenv().recordingMacro = false
+			--getgenv().recordingMacro = false
 			updatejson()
 		end
 
