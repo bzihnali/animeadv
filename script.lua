@@ -5012,11 +5012,11 @@ function MainModule()
 								if unitInfo[2] == decodedFile[tostring(instructionIncrement)]['unit'] then
 									if unitInfo[2] == "metal_knight_evolved" or unitInfo[2] == "metal_knight_evolved:shiny" then
 										task.spawn(function()
+											game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
 											instructionIncrement += 1
 											task.wait(2)
 											print(decodedFile[tostring(instructionIncrement)]['unit'])
 											print("spawn"..instructionIncrement)
-											game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
 											
 										end)
 									else
