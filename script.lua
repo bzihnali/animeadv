@@ -4943,9 +4943,130 @@ function MainModule()
 				StandardSummonSniperWebhook(true)
 			end})
 
-		getgenv().lockAutoFunctions = false
 
 	else -- When in a match
+		getgenv().lockAutoFunctions = false
+		if getgenv().replayMacroOnTeleport then
+			print("MACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAAMACRO STARTED AAAAAA")
+			print("SESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSESSES")
+			getgenv().lockAutoFunctions = true
+			coroutine.resume(coroutine.create(function()
+				getgenv().lockAutoFunctions = true
+				if getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])] then
+					decodedFile = game:GetService('HttpService'):JSONDecode(readfile('AAMacros1.6.7\\opm_portal_g-20230210-134824-QuantumDefrag.json'))
+					getgenv().macroUnitPositions = {}
+					instructionIncrement = 1
+					
+					local function updateUnitPositions()
+						getgenv().macroUnitPositions = {}
+						
+						for i, v in ipairs(game.Workspace["_UNITS"]:GetChildren()) do
+							if v:FindFirstChild("_stats") then
+								if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0  and v["_stats"].id.Value ~= "metal_knight_drone" and v["_stats"].id.Value ~= "metal_knight_drone:shiny" and v["_stats"].id.Value ~= "aot_generic" then
+									table.insert(getgenv().macroUnitPositions, {v, v._hitbox.CFrame.X, v._hitbox.CFrame.Z})
+								end
+							end
+						end
+					end
+					
+					local function getEquippedUnits()
+						equippedUnits = {}
+						local reg = getreg() --> returns Roblox's registry in a table
+					
+						for i,v in next, reg do
+							if type(v) == 'function' then --> Checks if the current iteration is a function
+								if getfenv(v).script then --> Checks if the function's environment is in a script
+									for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+										if type(v) == 'table' then
+											if v["session"] then
+												for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
+													table.insert(equippedUnits, {bak, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id']})
+												end
+												return equippedUnits
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+					
+					local function getCoordArgs(position)
+						coordArgs = {}
+						for coordArg in string.gmatch(position, "([^ ,]+)") do
+							table.insert(coordArgs, tonumber(coordArg))
+							print(coordArg)
+						end
+						return coordArgs
+					end
+					
+					repeat 
+						task.wait(0.5)
+					
+						if decodedFile[tostring(instructionIncrement)]['type'] == 'spawn_unit' then
+							repeat task.wait() until game.Players.LocalPlayer._stats.resource.Value >= decodedFile[tostring(instructionIncrement)]['money']
+							updateUnitPositions()
+							print(game.Players.LocalPlayer._stats.resource.Value)
+							print(decodedFile[tostring(instructionIncrement)]['money'])
+							for _, unitInfo in pairs(getEquippedUnits()) do
+								if unitInfo[2] == decodedFile[tostring(instructionIncrement)]['unit'] then
+									if unitInfo[2] == "metal_knight_evolved" or unitInfo[2] == "metal_knight_evolved:shiny" then
+										task.spawn(function()
+											instructionIncrement += 1
+											task.wait(2)
+											print(decodedFile[tostring(instructionIncrement)]['unit'])
+											print("spawn"..instructionIncrement)
+											game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
+											
+										end)
+									else
+										print(decodedFile[tostring(instructionIncrement)]['unit'])
+										print("spawn"..instructionIncrement)
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
+										instructionIncrement += 1
+									end
+								end
+							end
+						end
+					
+						if decodedFile[tostring(instructionIncrement)]['type'] == 'upgrade_unit_ingame' then
+							repeat task.wait() until game.Players.LocalPlayer._stats.resource.Value >= decodedFile[tostring(instructionIncrement)]['money']
+							updateUnitPositions()
+							
+							print(game.Players.LocalPlayer._stats.resource.Value)
+							print(decodedFile[tostring(instructionIncrement)]['money'])
+							for _, unitPosition in pairs(getgenv().macroUnitPositions) do
+								if getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])[1] == unitPosition[2] and getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])[3] == unitPosition[3] then
+									print("up")
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitPosition[1], unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])))
+								end
+							end
+							instructionIncrement += 1
+						end
+					
+						if decodedFile[tostring(instructionIncrement)]['type'] == 'sell_unit_ingame' then
+							repeat task.wait() until game.Players.LocalPlayer._stats.resource.Value >= decodedFile[tostring(instructionIncrement)]['money']
+					
+							for _, unitPosition in pairs(getgenv().macroUnitPositions) do
+								if getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'][1]) == unitPosition[2] and getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'][3]) == unitPosition[3] then
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.sell_unit_ingame:InvokeServer(unitPosition[1], unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])))
+								end
+							end
+							instructionIncrement += 1
+						end
+					
+						
+					until decodedFile[tostring(instructionIncrement)] == nil	
+				else
+					RayfieldLib:Notify({
+						Title = "No macro for level " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]),
+						Content = "No macro for this level!",
+						Duration = 6.5
+					})
+				end
+			end))
+		end
+
 		unitPlacementTab = mainWindow:CreateTab("Unit Placement Settings")
 		local Paragraph = unitPlacementTab:CreateParagraph({Title = "How to Use", 
 															Content = "Placement Priority: If multiple units can be placed with current money, prioritizes higher numbered unit.\nUpgrade Priority: Same concept as Placement Priority.\nPlace From Wave: Will not place a unit until this wave.\nUpgrade From Wave: Will not upgrade a unit until this wave.\nUpgrade Cap: Will not upgrade a unit past this level."})
@@ -5264,8 +5385,6 @@ function MainModule()
 				end,
 			})
 		end
-		
-		getgenv().lockAutoFunctions = false
 
 		if getgenv().recordMacroOnTeleport then
 			getgenv().lockAutoFunctions = true
@@ -5273,123 +5392,11 @@ function MainModule()
 			getgenv().recordingMacro = true
 			updatejson()
 		else
-			getgenv().recordingMacro = false
+			--getgenv().recordingMacro = false
 			updatejson()
 		end
 
-		if getgenv().replayMacroOnTeleport then
-			coroutine.resume(coroutine.create(function()
-				getgenv().lockAutoFunctions = true
-				if getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])] then
-					decodedFile = game:GetService('HttpService'):JSONDecode(readfile('AAMacros1.6.7\\opm_portal_g-20230210-134824-QuantumDefrag.json'))
-					getgenv().macroUnitPositions = {}
-					instructionIncrement = 1
-					
-					local function updateUnitPositions()
-						getgenv().macroUnitPositions = {}
-						
-						for i, v in ipairs(game.Workspace["_UNITS"]:GetChildren()) do
-							if v:FindFirstChild("_stats") then
-								if tostring(v["_stats"].player.Value) == game.Players.LocalPlayer.Name and v["_stats"].xp.Value >= 0  and v["_stats"].id.Value ~= "metal_knight_drone" and v["_stats"].id.Value ~= "metal_knight_drone:shiny" and v["_stats"].id.Value ~= "aot_generic" then
-									table.insert(getgenv().macroUnitPositions, {v, v._hitbox.CFrame.X, v._hitbox.CFrame.Z})
-								end
-							end
-						end
-					end
-					
-					local function getEquippedUnits()
-						equippedUnits = {}
-						local reg = getreg() --> returns Roblox's registry in a table
-					
-						for i,v in next, reg do
-							if type(v) == 'function' then --> Checks if the current iteration is a function
-								if getfenv(v).script then --> Checks if the function's environment is in a script
-									for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
-										if type(v) == 'table' then
-											if v["session"] then
-												for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
-													table.insert(equippedUnits, {bak, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id']})
-												end
-												return equippedUnits
-											end
-										end
-									end
-								end
-							end
-						end
-					end
-					
-					local function getCoordArgs(position)
-						coordArgs = {}
-						for coordArg in string.gmatch(position, "([^ ,]+)") do
-							table.insert(coordArgs, tonumber(coordArg))
-							print(coordArg)
-						end
-						return coordArgs
-					end
-					
-					repeat 
-						task.wait(0.5)
-					
-						if decodedFile[tostring(instructionIncrement)]['type'] == 'spawn_unit' then
-							repeat task.wait() until game.Players.LocalPlayer._stats.resource.Value >= decodedFile[tostring(instructionIncrement)]['money']
-							updateUnitPositions()
-							print(game.Players.LocalPlayer._stats.resource.Value)
-							print(decodedFile[tostring(instructionIncrement)]['money'])
-							for _, unitInfo in pairs(getEquippedUnits()) do
-								if unitInfo[2] == decodedFile[tostring(instructionIncrement)]['unit'] then
-									if unitInfo[2] == "metal_knight_evolved" or unitInfo[2] == "metal_knight_evolved:shiny" then
-										task.spawn(function()
-											task.wait(2)
-											print(decodedFile[tostring(instructionIncrement)]['unit'])
-											print("spawn"..instructionIncrement)
-											game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
-										end)
-									else
-										print(decodedFile[tostring(instructionIncrement)]['unit'])
-										print("spawn"..instructionIncrement)
-										game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
-									end
-								end
-							end
-							
-						end
-					
-						if decodedFile[tostring(instructionIncrement)]['type'] == 'upgrade_unit_ingame' then
-							repeat task.wait() until game.Players.LocalPlayer._stats.resource.Value >= decodedFile[tostring(instructionIncrement)]['money']
-							updateUnitPositions()
-							
-							print(game.Players.LocalPlayer._stats.resource.Value)
-							print(decodedFile[tostring(instructionIncrement)]['money'])
-							for _, unitPosition in pairs(getgenv().macroUnitPositions) do
-								if getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])[1] == unitPosition[2] and getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])[3] == unitPosition[3] then
-									print("up")
-									game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitPosition[1], unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])))
-								end
-							end
-						end
-					
-						if decodedFile[tostring(instructionIncrement)]['type'] == 'sell_unit_ingame' then
-							repeat task.wait() until game.Players.LocalPlayer._stats.resource.Value >= decodedFile[tostring(instructionIncrement)]['money']
-					
-							for _, unitPosition in pairs(getgenv().macroUnitPositions) do
-								if getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'][1]) == unitPosition[2] and getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'][3]) == unitPosition[3] then
-									game:GetService("ReplicatedStorage").endpoints.client_to_server.sell_unit_ingame:InvokeServer(unitPosition[1], unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])))
-								end
-							end
-						end
-					
-						instructionIncrement += 1
-					until decodedFile[tostring(instructionIncrement)] == nil	
-				else
-					RayfieldLib:Notify({
-						Title = "No macro for level " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]),
-						Content = "No macro for this level!",
-						Duration = 6.5
-					})
-				end
-			end))
-		end
+		
 
 		if getgenv().recordingMacro then
 			getgenv().lockAutoFunctions = true
