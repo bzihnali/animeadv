@@ -2873,7 +2873,7 @@ local function writeMacroToFile(filename)
 	GameFinished:GetPropertyChangedSignal("Value"):Connect(function()
 		print("Changed", GameFinished.Value == true)
 		if GameFinished.Value == true then
-			writefile(tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]).."-"..tostring("AAMacros" .. scriptVersion .. "\\" .. os.date('%Y%m%d-%H%M%S')).."-"..game.Players.LocalPlayer.Name..".json", game:GetService("HttpService"):JSONEncode(getgenv().newMacroFile)) 
+			writefile("AAMacros" .. scriptVersion .. "\\" .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]).."-"..tostring(os.date('%Y%m%d-%H%M%S')).."-"..game.Players.LocalPlayer.Name..".json", game:GetService("HttpService"):JSONEncode(getgenv().newMacroFile)) 
 		end
 	end)
 end
@@ -5265,6 +5265,7 @@ function MainModule()
 			})
 		end
 		
+		getgenv().lockAutoFunctions = false
 
 		if getgenv().recordMacroOnTeleport then
 			getgenv().lockAutoFunctions = true
@@ -6584,33 +6585,44 @@ coroutine.resume(coroutine.create(function()
 		end)
 		
         for i = 1, 6 do
-            local unitinfo = units[i][2]
-			local spacer = 2
+            
 
-			if unitinfo ~= nil then
-				if tonumber(getgenv().unitPlacementSettings[units[i][1]]["placeFromWave"]) <= tonumber(game:GetService("Workspace"):WaitForChild("_wave_num").Value) then
-					local unitinfo_ = unitinfo:split(" #")
-					local pos = getgenv().SpawnUnitPos[mapName][string.gsub(units[i][1], "U", "UP")]
-					
-					for j = 1, 9 do
-						--if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
-						local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-						local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-						local rayDirection = (rayDestination - rayOrigin)
+			task.spawn(function ()
+				local unitinfo = units[i][2]
+				local spacer = 2
 
-						local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+				if unitinfo ~= nil then
+					if tonumber(getgenv().unitPlacementSettings[units[i][1]]["placeFromWave"]) <= tonumber(game:GetService("Workspace"):WaitForChild("_wave_num").Value) then
+						local unitinfo_ = unitinfo:split(" #")
+						local pos = getgenv().SpawnUnitPos[mapName][string.gsub(units[i][1], "U", "UP")]
+						
+						for j = 1, 9 do
+							if unitinfo_[2] == "Metal Knight (Arsenal)" then
+								task.wait(j)
+								j += 2
+								if j == 3 then
+									j -= 1
+								end
+							end
+							--if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
+							local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+							local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+							local rayDirection = (rayDestination - rayOrigin)
 
-						--place units
-						if raycastResult ~= nil then
-							local args = {
-								[1] = unitinfo_[2],
-								[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
-							}
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+							local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+							--place units
+							if raycastResult ~= nil then
+								local args = {
+									[1] = unitinfo_[2],
+									[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
+								}
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+							end
 						end
 					end
 				end
-            end
+            end)
         end
     end
 
