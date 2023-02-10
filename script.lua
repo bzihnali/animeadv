@@ -5010,19 +5010,21 @@ function MainModule()
 								if unitInfo[2] == decodedFile[tostring(instructionIncrement)]['unit'] then
 									if unitInfo[2] == "metal_knight_evolved" or unitInfo[2] == "metal_knight_evolved:shiny" then
 										task.spawn(function()
+											instructionIncrement += 1
 											task.wait(2)
 											print(decodedFile[tostring(instructionIncrement)]['unit'])
 											print("spawn"..instructionIncrement)
 											game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
+											
 										end)
 									else
 										print(decodedFile[tostring(instructionIncrement)]['unit'])
 										print("spawn"..instructionIncrement)
 										game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unitInfo[1], CFrame.new(unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['cframe']))))
+										instructionIncrement += 1
 									end
 								end
 							end
-							
 						end
 					
 						if decodedFile[tostring(instructionIncrement)]['type'] == 'upgrade_unit_ingame' then
@@ -5037,6 +5039,7 @@ function MainModule()
 									game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitPosition[1], unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])))
 								end
 							end
+							instructionIncrement += 1
 						end
 					
 						if decodedFile[tostring(instructionIncrement)]['type'] == 'sell_unit_ingame' then
@@ -5047,9 +5050,10 @@ function MainModule()
 									game:GetService("ReplicatedStorage").endpoints.client_to_server.sell_unit_ingame:InvokeServer(unitPosition[1], unpack(getCoordArgs(decodedFile[tostring(instructionIncrement)]['pos'])))
 								end
 							end
+							instructionIncrement += 1
 						end
 					
-						instructionIncrement += 1
+						
 					until decodedFile[tostring(instructionIncrement)] == nil	
 				else
 					RayfieldLib:Notify({
