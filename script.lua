@@ -4953,7 +4953,7 @@ function MainModule()
 			coroutine.resume(coroutine.create(function()
 				getgenv().lockAutoFunctions = true
 				if getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])] then
-					decodedFile = game:GetService('HttpService'):JSONDecode(readfile('AAMacros1.6.7\\opm_portal_g-20230210-134824-QuantumDefrag.json'))
+					decodedFile = game:GetService('HttpService'):JSONDecode(readfile(getgenv().levelMacros[tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"])]))
 					getgenv().macroUnitPositions = {}
 					instructionIncrement = 1
 					
@@ -4995,7 +4995,7 @@ function MainModule()
 						coordArgs = {}
 						for coordArg in string.gmatch(position, "([^ ,]+)") do
 							table.insert(coordArgs, tonumber(coordArg))
-							print(coordArg)
+							--print(coordArg)
 						end
 						return coordArgs
 					end
@@ -5017,7 +5017,6 @@ function MainModule()
 											task.wait(2)
 											print(decodedFile[tostring(instructionIncrement)]['unit'])
 											print("spawn"..instructionIncrement)
-											
 										end)
 									else
 										print(decodedFile[tostring(instructionIncrement)]['unit'])
@@ -5057,12 +5056,6 @@ function MainModule()
 					
 						
 					until decodedFile[tostring(instructionIncrement)] == nil	
-				else
-					RayfieldLib:Notify({
-						Title = "No macro for level " .. tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]),
-						Content = "No macro for this level!",
-						Duration = 6.5
-					})
 				end
 			end))
 		end
