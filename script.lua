@@ -4417,7 +4417,7 @@ function MainModule()
         local worlddrop = autoFarmTab:CreateDropdown({
             Name = "Select World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
-        "Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Legend - HARD","Hollow Legend - HARD","Cape Canaveral","Cape Canaveral [Legend]", "Alien Ship"},
+        "Ghoul City", "Hollow World", "Hollow Invasion", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Kingdom [Elf Invasion]", "Cape Canaveral","Cape Canaveral [Legend]", "Alien Ship"},
         CurrentOption = getgenv().world, 
         Callback = function(world)
             getgenv().world = world
