@@ -4679,7 +4679,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Sell at Specific Wave", 
-            CurrentValue = getgenv().autoabilities, 
+            CurrentValue = getgenv().autoSell, 
             Callback = function(bool)
                 getgenv().autoSell = bool
                 updatejson()
@@ -5628,7 +5628,7 @@ function MainModule()
 
         autoFarmTab:CreateToggle({
             Name = "Auto Sell at Specific Wave", 
-            CurrentValue = getgenv().autoabilities, 
+            CurrentValue = getgenv().autoSell, 
             Callback = function(bool)
                 getgenv().autoSell = bool
                 updatejson()
@@ -6554,67 +6554,66 @@ end))
 
 ------// Auto Farm \\------
 --#region Auto Farm Loop
+PlaceUnits = function(mapName, waveNum, x, y, z)
+	local raycastParams = RaycastParams.new()
 
-coroutine.resume(coroutine.create(function()
-    local wave = 0
+	raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
+	raycastParams.FilterDescendantsInstances = {game:GetService("Workspace")["_terrain"]}
 
-    PlaceUnits = function(mapName, waveNum, x, y, z)
-		local raycastParams = RaycastParams.new()
+	local rayOrigin = CFrame.new(xPos, 1000, zPos).p
+	local rayDestination = CFrame.new(xPos, -1000, zPos).p
 
-		raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
-		raycastParams.FilterDescendantsInstances = {game:GetService("Workspace")["_terrain"]}
+	local rayDirection = (rayDestination - rayOrigin)
 
-		local rayOrigin = CFrame.new(xPos, 1000, zPos).p
-		local rayDestination = CFrame.new(xPos, -1000, zPos).p
+	local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
 
-		local rayDirection = (rayDestination - rayOrigin)
+	local units = {}
 
-		local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+	for i = 1, 6 do
+		local unitInfo = getgenv().SelectedUnits["U" .. i]
+		table.insert(units, {"U" .. i, unitInfo})
+	end
 
-		local units = {}
-
-		for i = 1, 6 do
-            local unitInfo = getgenv().SelectedUnits["U" .. i]
-			table.insert(units, {"U" .. i, unitInfo})
+	table.sort(units, function(a, b)
+		if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]) ~= nil then
+			return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
+		else
+			return false
 		end
+	end)
+	
+	for i = 1, 6 do
+			print(i)
+			local unitinfo = units[i][2]
+			local spacer = 2
 
-		table.sort(units, function(a, b)
-			if tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) ~= nil and tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"]) ~= nil then
-				return tonumber(getgenv().unitPlacementSettings[a[1]]["placementPriority"]) > tonumber(getgenv().unitPlacementSettings[b[1]]["placementPriority"])
-			else
-				return false
-			end
-		end)
-		
-        for i = 1, 6 do
-            
-
-			task.spawn(function ()
-				local unitinfo = units[i][2]
-				local spacer = 2
-
-				if unitinfo ~= nil then
-					if tonumber(getgenv().unitPlacementSettings[units[i][1]]["placeFromWave"]) <= tonumber(game:GetService("Workspace"):WaitForChild("_wave_num").Value) then
-						local unitinfo_ = unitinfo:split(" #")
-						local pos = getgenv().SpawnUnitPos[mapName][string.gsub(units[i][1], "U", "UP")]
+			if unitinfo ~= nil then
+				if tonumber(getgenv().unitPlacementSettings[units[i][1]]["placeFromWave"]) <= tonumber(game:GetService("Workspace"):WaitForChild("_wave_num").Value) then
+					local unitinfo_ = unitinfo:split(" #")
+					local pos = getgenv().SpawnUnitPos[mapName][string.gsub(units[i][1], "U", "UP")]
+					
+					for j = 1, 9 do
 						
-						for j = 1, 9 do
-							if unitinfo_[2] == "Metal Knight (Arsenal)" then
-								task.wait(j)
-								j += 2
-								if j == 3 then
-									j -= 1
-								end
-							end
-							--if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
-							local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-							local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
-							local rayDirection = (rayDestination - rayOrigin)
+						--if not ((unitinfo_[1] == "Bulmy" or unitinfo_[1] == "Speedcart") and waveNum < 4) then
+						local rayOrigin = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), 1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+						local rayDestination = CFrame.new(pos["x"] + (x * (((j - 1) % 3) - 1)), -1000, pos["z"] + (z * (math.ceil(j / 3) - 2))).p
+						local rayDirection = (rayDestination - rayOrigin)
 
-							local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+						local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
 
-							--place units
-							if raycastResult ~= nil then
+						--place units
+						if raycastResult ~= nil then
+							if unitinfo_[1] == "Metal Knight (Arsenal)" then
+								
+								task.spawn(function()
+									task.wait(j)
+									local args = {
+										[1] = unitinfo_[2],
+										[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
+									}
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+								end)
+							else
 								local args = {
 									[1] = unitinfo_[2],
 									[2] = CFrame.new(raycastResult.Position) * CFrame.Angles(0, -0, -0)
@@ -6624,10 +6623,12 @@ coroutine.resume(coroutine.create(function()
 						end
 					end
 				end
-            end)
-        end
-    end
+			end
+	end
+end
 
+coroutine.resume(coroutine.create(function()
+    local wave = 0
 
     while task.wait(1.5) do
         local _wave = game:GetService("Workspace"):WaitForChild("_wave_num").Value
