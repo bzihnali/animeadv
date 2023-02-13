@@ -1,3 +1,17 @@
+---### Loading Section ###---
+task.wait(2)
+repeat task.wait() until game:IsLoaded()
+if game.PlaceId == 8304191830 then
+    repeat task.wait() until game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+    repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
+else
+    repeat task.wait() until game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+    game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
+    repeat task.wait() until game:GetService("Workspace")["_waves_started"].Value == true
+end
+	
+---### Loading Section End ###---
+
 --[[
 
 Rayfield Interface Suite
@@ -2464,20 +2478,6 @@ if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
 end
 
----### Loading Section ###---
-task.wait(2)
-repeat task.wait() until game:IsLoaded()
-if game.PlaceId == 8304191830 then
-    repeat task.wait() until game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
-    repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
-else
-    repeat task.wait() until game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
-    game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
-    repeat task.wait() until game:GetService("Workspace")["_waves_started"].Value == true
-end
-	
----### Loading Section End ###---
-
 local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace") 
 local player = game:GetService("Players").LocalPlayer
@@ -4622,7 +4622,7 @@ function MainModule()
             end})
 
 		autoFarmTab:CreateToggle({
-            Name = "Auto Farm Boros Portals", 
+            Name = "Auto Farm OPM Portals", 
             CurrentValue = getgenv().autoPortal, 
             Callback = function(bool)
                 getgenv().autoPortal = bool
