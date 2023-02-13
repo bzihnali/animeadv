@@ -3867,6 +3867,9 @@ function MainModule()
 
     --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
     --\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\--
+	if (getgenv().mainAccount == "nil") then
+		getgenv().mainAccount = game.Players.LocalPlayer.Name
+	end
 
 	if (getgenv().altCount == nil) then
 		getgenv().altCount = 1
@@ -4230,6 +4233,34 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
+			elseif world == "West City" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"west_city_raid"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Infinity Train" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"demonslayer_raid_1"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Shiganshinu District [Raid]" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"aot_raid_1"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Hidden Sand Village [Raid]" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"naruto_raid_1"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
 			end
         end})
         
@@ -4590,7 +4621,6 @@ function MainModule()
 			end
         end})
         
-        
 		getgenv().raiddrop = autoFarmTab:CreateDropdown({
             Name = "Select Raid Level", 
             Options = getgenv().raidLevels, 
@@ -4602,28 +4632,43 @@ function MainModule()
 
 		local raiddrop = autoFarmTab:CreateDropdown({
             Name = "Select Raid World", 
-            Options = {"Storm Hideout", "Storm Hideout2"},
+            Options = {"Storm Hideout", "West City", "Infinity Train", "Shiganshinu District [Raid]","Hidden Sand Village [Raid]"},
         CurrentOption = getgenv().raidWorld, 
         Callback = function(raidWorld)
             getgenv().raidWorld = raidWorld
             updatejson()
 
-            if raidWorld == "Storm Hideout" then
-                getgenv().raiddrop:Clear()
-                table.clear(raidLevels)
-                getgenv().raidLevels = {"uchiha_level_1", "uchiha_level_2", "uchiha_level_3", "uchiha_level_4", "uchiha_level_5"}
-                for i, v in ipairs(raidLevels) do
-                    getgenv().raiddrop:Add(v)
-                end
-            end
-			if raidWorld == "Storm Hideout2" then
-                getgenv().raiddrop:Clear()
-                table.clear(raidLevels)
-                getgenv().raidLevels = {"uchiha_level_1", "uchiha_level_2", "uchiha_level_3", "uchiha_level_4", "uchiha_level_5"}
-                for i, v in ipairs(raidLevels) do
-                    getgenv().raiddrop:Add(v)
-                end
-            end
+			if raidWorld == "Storm Hideout" then
+				getgenv().raiddrop:Clear()
+				getgenv().raidLevels = {"uchiha_level_1","uchiha_level_2","uchiha_level_3","uchiha_level_4","uchiha_level_5"}
+				for i, v in ipairs(getgenv().raidLevels) do
+					getgenv().raiddrop:Add(v)
+				end
+			elseif raidWorld == "West City" then
+				getgenv().raiddrop:Clear()
+				getgenv().raidLevels = {"west_city_raid"}
+				for i, v in ipairs(getgenv().raidLevels) do
+					getgenv().raiddrop:Add(v)
+				end
+			elseif raidWorld == "Infinity Train" then
+				getgenv().raiddrop:Clear()
+				getgenv().raidLevels = {"demonslayer_raid_1"}
+				for i, v in ipairs(getgenv().raidLevels) do
+					getgenv().raiddrop:Add(v)
+				end
+			elseif raidWorld == "Shiganshinu District [Raid]" then
+				getgenv().raiddrop:Clear()
+				getgenv().raidLevels = {"aot_raid_1"}
+				for i, v in ipairs(getgenv().raidLevels) do
+					getgenv().raiddrop:Add(v)
+				end
+			elseif raidWorld == "Hidden Sand Village [Raid]" then
+				getgenv().raiddrop:Clear()
+				getgenv().raidLevels = {"naruto_raid_1"}
+				for i, v in ipairs(getgenv().raidLevels) do
+					getgenv().raiddrop:Add(v)
+				end
+			end
         end})
 
 		--------------------------------------------------
@@ -5983,6 +6028,7 @@ else
 		macroworld = "nil",
         level = "nil",
 		macrolevel = "nil",
+		raidlevel = 'nil',
 		levelmacros = {},
         door = "nil",
         currentmerchantitems = {},
