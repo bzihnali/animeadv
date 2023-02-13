@@ -2472,7 +2472,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "1.6.7"
+local scriptVersion = "1.6.8"
 
 if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
@@ -2487,6 +2487,7 @@ local UserInputService = game:GetService("UserInputService")
 
 getgenv().saveFileName = "Anime-Adventures_UPD10"..game.Players.LocalPlayer.Name.."-"..scriptVersion..".json"
 getgenv().door = "_lobbytemplategreen1"
+getgenv().raiddoor = "_lobbytemplate211"
 getgenv().selectedMacroFile = "nil"
 
 if getgenv().lowCpuMode == nil then
@@ -3753,6 +3754,7 @@ function MainModule()
     getgenv().AutoLeave = data.AutoLeave
     getgenv().AutoReplay = data.AutoReplay
     getgenv().AutoChallenge = data.AutoChallenge  
+	getgenv().autoRaid = data.autoraid
 	getgenv().autoPortal = data.autoportal
 	getgenv().autoPortalCSM = data.autoportalcsm
     getgenv().selectedreward = data.selectedreward
@@ -3773,7 +3775,9 @@ function MainModule()
     getgenv().difficulty = data.difficulty
     getgenv().world = data.world
 	getgenv().macroWorld = data.macroworld
+	getgenv().raidWorld = data.raidworld
     getgenv().level = data.level
+	getgenv().raidLevel = data.raidlevel
 	getgenv().macroLevel = data.macrolevel
     getgenv().AutoContinue = data.autocontinue
     getgenv().nextLevel = data.nextlevel
@@ -3808,6 +3812,7 @@ function MainModule()
             AutoLeave = getgenv().AutoLeave,
             AutoReplay = getgenv().AutoReplay,
             AutoChallenge = getgenv().AutoChallenge, 
+			autoraid = getgenv().autoRaid,
 			autoportal = getgenv().autoPortal,
 			autoportalcsm = getgenv().autoPortalCSM,
             selectedreward = getgenv().selectedreward,
@@ -3826,7 +3831,9 @@ function MainModule()
             difficulty = getgenv().difficulty,
             world = getgenv().world,
 			macroworld = getgenv().macroWorld,
+			raidworld = getgenv().raidWorld,
             level = getgenv().level,
+			raidlevel = getgenv().raidLevel,
 			macrolevel = getgenv().macroLevel,
             autocontinue = getgenv().AutoContinue,
             nextlevel = getgenv().nextLevel,
@@ -3983,7 +3990,7 @@ function MainModule()
             Name = "Select Macro World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
         				"Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", 
-						"Cape Canaveral", "Alien Ship", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]", "Chainsaw Man Contract"},
+						"Cape Canaveral", "Alien Ship", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]", "Chainsaw Man Contract", "Storm Hideout"},
         CurrentOption = getgenv().macroWorld, 
         Callback = function(world)
             getgenv().macroWorld = world
@@ -4216,6 +4223,13 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
+			elseif world == "Storm Hideout" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"uchiha_level_1","uchiha_level_2","uchiha_level_3","uchiha_level_4","uchiha_level_5"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
 			end
         end})
         
@@ -4403,6 +4417,7 @@ function MainModule()
         local selectWorldSection = autoFarmTab:CreateSection("Select World")
 
         getgenv().levels = {"nil"}
+		getgenv().raidLevels = {"nil"}
 
         getgenv().diff = autoFarmTab:CreateDropdown({
             Name = "Select Difficulty",
@@ -4413,6 +4428,16 @@ function MainModule()
                 updatejson()
             end,
         })
+
+		getgenv().leveldrop = autoFarmTab:CreateDropdown({
+            Name = "Select Level", 
+            Options = getgenv().levels, 
+            CurrentOption = getgenv().level, 
+            Callback = function(level)
+                getgenv().level = level
+                updatejson()
+            end})
+		
 
         local worlddrop = autoFarmTab:CreateDropdown({
             Name = "Select World", 
@@ -4565,15 +4590,41 @@ function MainModule()
 			end
         end})
         
-        getgenv().leveldrop = autoFarmTab:CreateDropdown({
-            Name = "Select Level", 
-            Options = getgenv().levels, 
-            CurrentOption = getgenv().level, 
-            Callback = function(level)
-                getgenv().level = level
+        
+		getgenv().raiddrop = autoFarmTab:CreateDropdown({
+            Name = "Select Raid Level", 
+            Options = getgenv().raidLevels, 
+            CurrentOption = getgenv().raidLevel, 
+            Callback = function(raidLevel)
+                getgenv().raidLevel = raidLevel
                 updatejson()
             end})
 
+		local raiddrop = autoFarmTab:CreateDropdown({
+            Name = "Select Raid World", 
+            Options = {"Storm Hideout", "Storm Hideout2"},
+        CurrentOption = getgenv().raidWorld, 
+        Callback = function(raidWorld)
+            getgenv().raidWorld = raidWorld
+            updatejson()
+
+            if raidWorld == "Storm Hideout" then
+                getgenv().raiddrop:Clear()
+                table.clear(raidLevels)
+                getgenv().raidLevels = {"uchiha_level_1", "uchiha_level_2", "uchiha_level_3", "uchiha_level_4", "uchiha_level_5"}
+                for i, v in ipairs(raidLevels) do
+                    getgenv().raiddrop:Add(v)
+                end
+            end
+			if raidWorld == "Storm Hideout2" then
+                getgenv().raiddrop:Clear()
+                table.clear(raidLevels)
+                getgenv().raidLevels = {"uchiha_level_1", "uchiha_level_2", "uchiha_level_3", "uchiha_level_4", "uchiha_level_5"}
+                for i, v in ipairs(raidLevels) do
+                    getgenv().raiddrop:Add(v)
+                end
+            end
+        end})
 
 		--------------------------------------------------
 		------------------ Auto Farm Tab -----------------
@@ -4620,6 +4671,14 @@ function MainModule()
                 getgenv().AutoFarmTP = bool
                 updatejson()
             end})
+
+		autoFarmTab:CreateToggle({
+			Name = "Auto Raid", 
+			CurrentValue = getgenv().autoRaid, 
+			Callback = function(bool)
+				getgenv().autoRaid = bool
+				updatejson()
+			end})
 
 		autoFarmTab:CreateToggle({
             Name = "Auto Farm OPM Portals", 
@@ -5982,6 +6041,38 @@ else
 		},
     
         xspawnUnitPos  = {
+			uchiha  = {
+				UP1  = {
+				  y  = 1.4244641065597535,
+				  x  = -109.30056762695313,
+				  z  = -54.575347900390628
+			   },
+				UP3  = {
+				  y  = 1.4322717189788819,
+				  x  = -114.2433853149414,
+				  z  = -55.260982513427737
+			   },
+				UP2  = {
+				  y  = 1.7082736492156983,
+				  x  = -127.53932189941406,
+				  z  = -55.277626037597659
+			   },
+				UP6  = {
+				  y  = 1.4487617015838624,
+				  x  = -107.07078552246094,
+				  z  = -51.333045959472659
+			   },
+				UP5  = {
+				  y  = 1.8965977430343629,
+				  x  = -118.5692138671875,
+				  z  = -57.20484161376953
+			   },
+				UP4  = {
+				  y  = 1.4205386638641358,
+				  x  = -105.46223449707031,
+				  z  = -51.20615005493164
+			   }
+			 },
 			opm  = {
 				UP1  = {
 				  y  = 1.4244641065597535,
@@ -7137,6 +7228,75 @@ local function startfarming()
 					until altsInGame >= getgenv().altCount
 				end
 
+				if getgenv().autoRaid then
+					if Workspace._RAID.Raid:FindFirstChild(getgenv().raiddoor) then
+						if tostring(Workspace._RAID.Raid[getgenv().raiddoor].Owner.Value) ~= player.Name then
+							for i, v in pairs(game:GetService("Workspace")["_RAID"].Raid:GetDescendants()) do
+								if v.Name == "Owner" and v.Value == nil then
+									local args = {
+										[1] = tostring(v.Parent.Name)
+									}
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+
+									local args = {
+										[1] = tostring(v.Parent.Name), -- Lobby 
+										[2] = getgenv().raidLevel, -- World
+										[3] = true, -- Friends Only or not
+										[4] = "Hard"
+									}
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+			
+									local altsInGame = false
+			
+									for _, val in pairs(game.Players:GetPlayers()) do
+										for i, alt in pairs(getgenv().altList) do
+											if tostring(val.Name) == tostring(alt) then
+												altsInGame = true
+												break
+											end
+										end
+									end
+									
+									if altsInGame then
+										repeat 
+											task.wait(1)
+											print(v.Parent.Timer.Value)
+											if v.Parent.Timer.Value <= 50 then
+												local leave_args = {
+													[1] = v.Parent.Name
+												}
+			
+												game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
+												break
+											end
+										until #v.Parent.Players:GetChildren() >= getgenv().altCount + 1
+			
+										local args = { 
+											[1] = tostring(v.Parent.Name)
+										}
+			
+										task.wait(0.1)
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+										getgenv().raiddoor = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+										player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+										break
+									else
+										local args = { 
+											[1] = tostring(v.Parent.Name)
+										}
+										
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+										getgenv().raiddoor = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+										player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+										return(1)
+									end		
+								end
+							end
+						end
+					end
+					return(1)
+				end
+
 				if getgenv().autoPortal then
 					for _, val in pairs(game.Players:GetPlayers()) do
 						print(val.Name)
@@ -7230,78 +7390,80 @@ local function startfarming()
 					end
 				end
 
-				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name then
-					for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
-						if v.Name == "Owner" and v.Value == nil then
-							local args = {
-								[1] = tostring(v.Parent.Name)
-							}
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
-						
-							task.wait()
-						
-							if getgenv().level:match("infinite") then
+				if Workspace._LOBBIES.Story:FindFirstChild(getgenv().door) then
+					if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name and not getgenv().autoRaid then
+						for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
+							if v.Name == "Owner" and v.Value == nil then
 								local args = {
-									[1] = tostring(v.Parent.Name), -- Lobby 
-									[2] = getgenv().level, -- World
-									[3] = true, -- Friends Only or not
-									[4] = "Hard"
+									[1] = tostring(v.Parent.Name)
 								}
-								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-							else
-								local args = {
-									[1] = tostring(v.Parent.Name), -- Lobby 
-									[2] = getgenv().level, -- World
-									[3] = true, -- Friends Only or not
-									[4] = getgenv().difficulty
-								}
-								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-							end
-	
-							local altsInGame = false
-	
-							for _, val in pairs(game.Players:GetPlayers()) do
-								print(val.Name)
-								for i, alt in pairs(getgenv().altList) do
-									if tostring(val.Name) == tostring(alt) then
-										altsInGame = true
-										break
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+							
+								task.wait()
+							
+								if getgenv().level:match("infinite") then
+									local args = {
+										[1] = tostring(v.Parent.Name), -- Lobby 
+										[2] = getgenv().level, -- World
+										[3] = true, -- Friends Only or not
+										[4] = "Hard"
+									}
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+								else
+									local args = {
+										[1] = tostring(v.Parent.Name), -- Lobby 
+										[2] = getgenv().level, -- World
+										[3] = true, -- Friends Only or not
+										[4] = getgenv().difficulty
+									}
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+								end
+		
+								local altsInGame = false
+		
+								for _, val in pairs(game.Players:GetPlayers()) do
+									print(val.Name)
+									for i, alt in pairs(getgenv().altList) do
+										if tostring(val.Name) == tostring(alt) then
+											altsInGame = true
+											break
+										end
 									end
 								end
-							end
-							
-							if altsInGame then
-								repeat 
-									task.wait(1)
-									print(v.Parent.Timer.Value)
-									if v.Parent.Timer.Value <= 50 then
-										local leave_args = {
-											[1] = v.Parent.Name
-										}
-	
-										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
-										break
-									end
-								until #v.Parent.Players:GetChildren() >= getgenv().altCount + 1
-	
-								local args = { 
-									[1] = tostring(v.Parent.Name)
-								}
-	
-								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
-								getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
-								player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
-								break
-							else
-								local args = { 
-									[1] = tostring(v.Parent.Name)
-								}
 								
-								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
-								getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
-								player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
-								break
-							end		
+								if altsInGame then
+									repeat 
+										task.wait(1)
+										print(v.Parent.Timer.Value)
+										if v.Parent.Timer.Value <= 50 then
+											local leave_args = {
+												[1] = v.Parent.Name
+											}
+		
+											game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
+											break
+										end
+									until #v.Parent.Players:GetChildren() >= getgenv().altCount + 1
+		
+									local args = { 
+										[1] = tostring(v.Parent.Name)
+									}
+		
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+									getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+									player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+									break
+								else
+									local args = { 
+										[1] = tostring(v.Parent.Name)
+									}
+									
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+									getgenv().door = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+									player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+									break
+								end		
+							end
 						end
 					end
 				end
@@ -7368,19 +7530,44 @@ local function startfarming()
             player.Character.HumanoidRootPart.CFrame = cpos
 
 			if not getgenv().isAlt then
-				if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name then
-					if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
-						getgenv().teleporting = false
-					else
-						getgenv().teleporting = true
+				if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name or Workspace._LOBBIES.Story[getgenv().raiddoor].Owner == player.Name then
+					if Workspace._RAID.Raid[getgenv().door].Owner == player.Name then
+						if Workspace._RAID.Raid[getgenv().door].Teleporting.Value == true then
+							getgenv().teleporting = false
+						else
+							getgenv().teleporting = true
+						end
 					end
 				end
+
+				if Workspace._LOBBIES.Story:FindFirstChild(getgenv().door) then
+					if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name or Workspace._LOBBIES.Story[getgenv().raiddoor].Owner == player.Name then
+						if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
+							getgenv().teleporting = false
+						else
+							getgenv().teleporting = true
+						end
+					end
+				end
+
 			else
-				if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner) == getgenv().mainAccount then
-					if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
-						getgenv().teleporting = false
-					else
-						getgenv().teleporting = true
+				if Workspace._RAID.Raid:FindFirstChild(getgenv().door) then
+					if tostring(Workspace._RAID.Raid[getgenv().door].Owner) == getgenv().mainAccount or tostring(Workspace._RAID.Raid[getgenv().raiddoor].Owner) == getgenv().mainAccount  then
+						if Workspace._RAID.Raid[getgenv().door].Teleporting.Value == true then
+							getgenv().teleporting = false
+						else
+							getgenv().teleporting = true
+						end
+					end
+				end
+
+				if Workspace._LOBBIES.Story:FindFirstChild(getgenv().door) then
+					if tostring(Workspace._RAID.Raid[getgenv().door].Owner) == getgenv().mainAccount or tostring(Workspace._RAID.Raid[getgenv().raiddoor].Owner) == getgenv().mainAccount then
+						if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
+							getgenv().teleporting = false
+						else
+							getgenv().teleporting = true
+						end
 					end
 				end
 			end
