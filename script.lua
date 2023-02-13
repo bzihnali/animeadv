@@ -6798,8 +6798,7 @@ PlaceUnits = function(mapName, waveNum, x, y, z)
 
 						--place units
 						if raycastResult ~= nil then
-							if unitinfo_[1] == "Metal Knight (Arsenal)" then
-								
+							if unitinfo_[1] == "metal_knight_evolved" then
 								task.spawn(function()
 									task.wait(j)
 									local args = {
