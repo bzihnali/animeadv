@@ -3775,7 +3775,7 @@ function MainModule()
     getgenv().difficulty = data.difficulty
     getgenv().world = data.world
 	getgenv().macroWorld = data.macroworld
-	getgenv().raidWorld = data.raidworld or "nil"
+	getgenv().raidWorld = data.raidworld
     getgenv().level = data.level
 	getgenv().raidLevel = data.raidlevel
 	getgenv().macroLevel = data.macrolevel
@@ -4389,7 +4389,7 @@ function MainModule()
 										local iter = 1
 										for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
 											equippedUnits[iter] = {bak, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id']}
-											iter++
+											iter += 1
 										end
 										break
 									end
