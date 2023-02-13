@@ -1,3 +1,5 @@
+getgenv().hidename = true
+
 ---### Loading Section ###---
 task.wait(2)
 repeat task.wait() until game:IsLoaded()
@@ -7810,11 +7812,19 @@ end
 --hide name
 task.spawn(function()  -- Hides name for yters (not sure if its Fe)
     while task.wait() do
-        pcall(function()
-            if game.Players.LocalPlayer.Character.Head:FindFirstChild("_overhead") then
-               workspace[game.Players.LocalPlayer.Name].Head["_overhead"]:Destroy()
-            end
-        end)
+		if getgenv().hidename == true then
+			pcall(function()
+				if game.Players.LocalPlayer.Character.Head:FindFirstChild("_overhead") then
+				workspace[game.Players.LocalPlayer.Name].Head["_overhead"].Enabled = false
+				end
+			end)
+		else
+			pcall(function()
+				if game.Players.LocalPlayer.Character.Head:FindFirstChild("_overhead") then
+				workspace[game.Players.LocalPlayer.Name].Head["_overhead"].Enabled = false
+				end
+			end)
+		end
     end
 end)
 
