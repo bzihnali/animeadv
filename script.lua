@@ -4312,7 +4312,7 @@ function MainModule()
 							if type(v) == 'table' then
 								if v["session"] then
 									for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
-										Units[sus] = v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id'].." #"..bak
+										table.insert(Units, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id'].." #"..bak)
 									end
 									return(1)
 								end
@@ -4376,6 +4376,8 @@ function MainModule()
             updatejson()
         end
 
+		
+
         autoFarmTab:CreateButton({
             Name = "Select Equipped Units", 
             Callback = function()
@@ -4390,7 +4392,7 @@ function MainModule()
 									if v["session"] then
 										local iter = 1
 										for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
-											equippedUnits[iter] = {bak, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id']}
+											equippedUnits[tonumber(sus)] = {bak, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id'], sus}
 											iter += 1
 										end
 										break
@@ -4402,8 +4404,13 @@ function MainModule()
 				end
 
 				for i = 1, 6 do
+					if equippedUnits[i] == nil then
+						equippedUnits[i] = {"nil", "nil"}
+					end
 					getgenv().SelectedUnits["U"..tostring(i)] = equippedUnits[i][2].." #"..equippedUnits[i][1]
 				end
+
+				updatejson()
                 
                 RayfieldLib:Notify({
                 Title = "Equipped Units Are Selected!",
