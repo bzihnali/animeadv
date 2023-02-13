@@ -2472,7 +2472,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "1.6.8"
+local scriptVersion = "1.6.8h1"
 
 if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
@@ -3775,7 +3775,7 @@ function MainModule()
     getgenv().difficulty = data.difficulty
     getgenv().world = data.world
 	getgenv().macroWorld = data.macroworld
-	getgenv().raidWorld = data.raidworld
+	getgenv().raidWorld = data.raidworld or "nil"
     getgenv().level = data.level
 	getgenv().raidLevel = data.raidlevel
 	getgenv().macroLevel = data.macrolevel
@@ -6642,7 +6642,8 @@ else
             U4 = "nil #nil",
             U5 = "nil #nil",
             U6 = "nil #nil"
-        }
+        },
+		raidworld = "nil"
     
     }
 
