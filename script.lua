@@ -4299,20 +4299,32 @@ function MainModule()
 		local Units = {}
 
         local function LoadUnits()
+			local reg = getreg() --> returns Roblox's registry in a table
             repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
             task.wait(2)
             table.clear(Units)
-            for i, v in pairs(game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
-                if v.Name == "CollectionUnitFrame" then
-                    repeat task.wait() until v:FindFirstChild("_uuid")
-                    table.insert(Units, v.name.Text .. " #" .. v._uuid.Value)
-                end
-            end
+            for i,v in next, reg do
+				if type(v) == 'function' then --> Checks if the current iteration is a function
+					if getfenv(v).script then --> Checks if the function's environment is in a script
+						for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+							if type(v) == 'table' then
+								if v["session"] then
+									for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
+										table.insert(Units, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id'].." #"..bak)
+									end
+									return(1)
+								end
+							end
+						end
+					end
+				end
+			end
         end
 
         LoadUnits()
 
         local function Check(x, y)
+			
             for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
                 if v:IsA("ImageButton") then
                     if v.EquippedList.Equipped.Visible == true then
@@ -4327,7 +4339,7 @@ function MainModule()
         end
 
         local function Equip()
-            game:GetService("ReplicatedStorage").endpoints.client_to_server.unequip_all:InvokeServer()
+            --[[game:GetService("ReplicatedStorage").endpoints.client_to_server.unequip_all:InvokeServer()
             
             for i = 1, 6 do
                 local unitinfo = getgenv().SelectedUnits["U" .. i]
@@ -4337,23 +4349,59 @@ function MainModule()
                     task.wait(0.5)
                     game:GetService("ReplicatedStorage").endpoints.client_to_server.equip_unit:InvokeServer(unitinfo_[2])
                 end
-            end
+            end]]
+
+			equippedUnits = {}
+			local reg = getreg() --> returns Roblox's registry in a table
+		
+			for i,v in next, reg do
+				if type(v) == 'function' then --> Checks if the current iteration is a function
+					if getfenv(v).script then --> Checks if the function's environment is in a script
+						for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+							if type(v) == 'table' then
+								if v["session"] then
+									for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
+										table.insert(equippedUnits, {bak, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id']})
+									end
+									break
+								end
+							end
+						end
+					end
+				end
+			end
+			
             updatejson()
         end
 
         autoFarmTab:CreateButton({
             Name = "Select Equipped Units", 
             Callback = function()
-                for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui["spawn_units"].Lives.Frame.Units:GetChildren()) do
-                    if v:IsA("ImageButton") then
-                        local unitxx = v.Main.petimage.WorldModel:GetChildren()[1]
-                        if unitxx ~= nil then
-                            if Check(unitxx.Name,v) then
-                                print(unitxx, v)
-                            end
-                        end
-                    end
-                end
+                equippedUnits = {}
+				local reg = getreg() --> returns Roblox's registry in a table
+			
+				for i,v in next, reg do
+					if type(v) == 'function' then --> Checks if the current iteration is a function
+						if getfenv(v).script then --> Checks if the function's environment is in a script
+							for _, v in pairs(debug.getupvalues(v)) do --> Basically a for loop that prints everything, but in one line
+								if type(v) == 'table' then
+									if v["session"] then
+										local iter = 1
+										for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
+											equippedUnits[iter] = {bak, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id']}
+											iter++
+										end
+										break
+									end
+								end
+							end
+						end
+					end
+				end
+
+				for i = 1, 6 do
+					getgenv().SelectedUnits["U"..tostring(i)] = equippedUnits[i][2].." #"..equippedUnits[i][1]
+				end
                 
                 RayfieldLib:Notify({
                 Title = "Equipped Units Are Selected!",
@@ -4952,7 +5000,7 @@ function MainModule()
             Callback = function(bool)
                 getgenv().autosummontickets = bool
                 while getgenv().autosummontickets do
-                    autobuyfunc("EventClover", "ticket")
+                    autobuyfunc("Standard", "ticket")
                 end
                 updatejson()
             end})
@@ -4963,7 +5011,7 @@ function MainModule()
             Callback = function(bool)
             getgenv().autosummongem = bool
             while getgenv().autosummongem do
-                autobuyfunc("EventClover", "gems")
+                autobuyfunc("Standard", "gems")
             end
             updatejson()
             end})
@@ -4974,7 +5022,7 @@ function MainModule()
             Callback = function(bool)
                 getgenv().autosummongem10 = bool
                 while getgenv().autosummongem10 do
-                    autobuyfunc("EventClover", "gems10")
+                    autobuyfunc("Standard", "gems10")
                 end
                 updatejson()
             end})
