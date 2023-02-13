@@ -4310,7 +4310,7 @@ function MainModule()
 							if type(v) == 'table' then
 								if v["session"] then
 									for sus, bak in pairs(v["session"]["profile_data"]['collection']['equipped_units']) do
-										table.insert(Units, v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id'].." #"..bak)
+										Units[sus] = v["session"]["profile_data"]['collection']['owned_units'][bak]['unit_id'].." #"..bak)
 									end
 									return(1)
 								end
