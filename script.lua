@@ -7186,8 +7186,7 @@ function autoUpgradefunc()
 			end
 			print("localIDENT"..localIdentifier)
 			if localIdentifier ~= nil then
-				
-				if tonumber(getgenv().unitPlacementSettings[localIdentifier]["upgradeCap"]) > unitEntry[4] and unitEntry[1] ~= "metal_knight_drone" and unitEntry[1] ~= "metal_knight_drone:shiny" then
+				if tonumber(getgenv().unitPlacementSettings[localIdentifier]["upgradeFromWave"]) < game:GetService("Workspace"):WaitForChild("_wave_num").Value and tonumber(getgenv().unitPlacementSettings[localIdentifier]["upgradeCap"]) > unitEntry[4] and unitEntry[1] ~= "metal_knight_drone" and unitEntry[1] ~= "metal_knight_drone:shiny" then
 					game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unitEntry[3])
 				end
 			end
