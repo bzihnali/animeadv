@@ -3885,6 +3885,10 @@ function MainModule()
 		getgenv().autoPortalCSM = false
 	end
 
+	if getgenv().level == nil then
+		getgenv().level = "namek_level_1"
+	end
+
     local exec = tostring(identifyexecutor())
     RayfieldLib = RayfieldLibrary
 
@@ -3903,7 +3907,7 @@ function MainModule()
 	coroutine.resume(coroutine.create(function()
 		while task.wait(0.1) do
 			if isrbxactive() ~= true and getgenv().lowCpuMode then
-				setfpscap(3)
+				setfpscap(20)
 				game:GetService("RunService"):Set3dRenderingEnabled(false)
 			else
 				setfpscap(100)
