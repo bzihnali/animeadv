@@ -7637,7 +7637,7 @@ local function startfarming()
 
 			if not getgenv().isAlt then
 				if Workspace._RAID.Raid:FindFirstChild(getgenv().raiddoor) then
-					if Workspace._RAID.Raid[getgenv().door].Owner == player.Name then
+					if Workspace._RAID.Raid[getgenv().raiddoor].Owner == player.Name then
 						if Workspace._RAID.Raid[getgenv().door].Teleporting.Value == true then
 							getgenv().teleporting = false
 						else
@@ -7658,7 +7658,7 @@ local function startfarming()
 
 			else
 				if Workspace._RAID.Raid:FindFirstChild(getgenv().raiddoor) then
-					if tostring(Workspace._RAID.Raid[getgenv().door].Owner) == getgenv().mainAccount or tostring(Workspace._RAID.Raid[getgenv().raiddoor].Owner) == getgenv().mainAccount  then
+					if tostring(Workspace._RAID.Raid[getgenv().raiddoor].Owner) == getgenv().mainAccount then
 						if Workspace._RAID.Raid[getgenv().door].Teleporting.Value == true then
 							getgenv().teleporting = false
 						else
@@ -7668,7 +7668,7 @@ local function startfarming()
 				end
 
 				if Workspace._LOBBIES.Story:FindFirstChild(getgenv().door) then
-					if tostring(Workspace._RAID.Raid[getgenv().door].Owner) == getgenv().mainAccount or tostring(Workspace._RAID.Raid[getgenv().raiddoor].Owner) == getgenv().mainAccount then
+					if tostring(Workspace._RAID.Raid[getgenv().door].Owner) == getgenv().mainAccount then
 						if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
 							getgenv().teleporting = false
 						else
