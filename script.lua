@@ -3907,10 +3907,10 @@ function MainModule()
 	coroutine.resume(coroutine.create(function()
 		while task.wait(0.1) do
 			if isrbxactive() ~= true and getgenv().lowCpuMode then
-				setfpscap(20)
+				setfpscap(30)
 				game:GetService("RunService"):Set3dRenderingEnabled(false)
 			else
-				setfpscap(100)
+				setfpscap(1000)
 				game:GetService("RunService"):Set3dRenderingEnabled(true)
 			end
 		end
@@ -7636,7 +7636,7 @@ local function startfarming()
             player.Character.HumanoidRootPart.CFrame = cpos
 
 			if not getgenv().isAlt then
-				if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name or Workspace._LOBBIES.Story[getgenv().raiddoor].Owner == player.Name then
+				if Workspace._RAID.Raid:FindFirstChild(getgenv().raiddoor) then
 					if Workspace._RAID.Raid[getgenv().door].Owner == player.Name then
 						if Workspace._RAID.Raid[getgenv().door].Teleporting.Value == true then
 							getgenv().teleporting = false
@@ -7647,7 +7647,7 @@ local function startfarming()
 				end
 
 				if Workspace._LOBBIES.Story:FindFirstChild(getgenv().door) then
-					if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name or Workspace._LOBBIES.Story[getgenv().raiddoor].Owner == player.Name then
+					if Workspace._LOBBIES.Story[getgenv().door].Owner == player.Name then
 						if Workspace._LOBBIES.Story[getgenv().door].Teleporting.Value == true then
 							getgenv().teleporting = false
 						else
@@ -7657,7 +7657,7 @@ local function startfarming()
 				end
 
 			else
-				if Workspace._RAID.Raid:FindFirstChild(getgenv().door) then
+				if Workspace._RAID.Raid:FindFirstChild(getgenv().raiddoor) then
 					if tostring(Workspace._RAID.Raid[getgenv().door].Owner) == getgenv().mainAccount or tostring(Workspace._RAID.Raid[getgenv().raiddoor].Owner) == getgenv().mainAccount  then
 						if Workspace._RAID.Raid[getgenv().door].Teleporting.Value == true then
 							getgenv().teleporting = false
