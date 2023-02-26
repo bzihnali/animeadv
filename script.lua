@@ -1,4 +1,5 @@
 getgenv().hidename = true
+getgenv().loopyLegends = false
 
 ---### Loading Section ###---
 task.wait(2)
@@ -2474,7 +2475,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "1.6.9"
+local scriptVersion = "1.7.0"
 
 if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
@@ -4306,7 +4307,7 @@ function MainModule()
 
         local function LoadUnits()
 			local reg = getreg() --> returns Roblox's registry in a table
-            repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
+            repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
             task.wait(2)
             table.clear(Units)
             for i,v in next, reg do
@@ -4331,7 +4332,7 @@ function MainModule()
 
         local function Check(x, y)
 			
-            for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
+            for i, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")) do
                 if v:IsA("ImageButton") then
                     if v.EquippedList.Equipped.Visible == true then
                         if v.Main.petimage:GetChildren()[2].Name == x then
@@ -7113,7 +7114,27 @@ coroutine.resume(coroutine.create(function()
 	local GameFinished = game:GetService("Workspace"):WaitForChild("_DATA"):WaitForChild("GameFinished")
     GameFinished:GetPropertyChangedSignal("Value"):Connect(function()
         print("Changed", GameFinished.Value == true)
+
         if GameFinished.Value == true then
+			if getgenv().loopyLegends then
+				if tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]) == "bleach_legend_1" then
+					getgenv().level = "bleach_legend_2"
+				end
+				if tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]) == "bleach_legend_2" then
+					getgenv().level = "bleach_legend_3"
+				end
+				if tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]) == "bleach_legend_3" then
+					getgenv().level = "bleach_legend_4"
+				end
+				if tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]) == "bleach_legend_4" then
+					getgenv().level = "bleach_legend_5"
+				end
+				if tostring(workspace._MAP_CONFIG.GetLevelData:InvokeServer()["id"]) == "bleach_legend_5" then
+					getgenv().level = "bleach_legend_1"
+				end
+				updatejson()
+			end
+
 			getgenv().recordingMacro = false
 			updatejson()
             repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
@@ -7122,7 +7143,7 @@ coroutine.resume(coroutine.create(function()
 			pcall(function() NormalItemWebhook() end)
 			pcall(function() UniqueWebhook() end)
             print("next button pressed")
-            task.wait(2.1)
+            task.wait(5)
 
             if getgenv().AutoFarmIC then
                 for i = 1, 25 do
@@ -7130,6 +7151,8 @@ coroutine.resume(coroutine.create(function()
                     task.wait(1)
                 end
             end
+			
+			
 
             if getgenv().AutoContinue then	
 				
