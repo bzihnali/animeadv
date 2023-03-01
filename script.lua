@@ -2475,7 +2475,7 @@ end
 ---############### ACTUAL CODE ################---
 ---############################################---
 
-local scriptVersion = "1.7.0"
+local scriptVersion = "1.7.2"
 
 if not isfolder("AAMacros" .. scriptVersion) then
 	makefolder("AAMacros" .. scriptVersion)
@@ -2488,9 +2488,10 @@ local RunService = game:GetService("RunService")
 local mouse = game.Players.LocalPlayer:GetMouse()
 local UserInputService = game:GetService("UserInputService")
 
-getgenv().saveFileName = "Anime-Adventures_UPD10"..game.Players.LocalPlayer.Name.."-"..scriptVersion..".json"
+getgenv().saveFileName = "Anime-Adventures_UPD11"..game.Players.LocalPlayer.Name.."-"..scriptVersion..".json"
 getgenv().door = "_lobbytemplategreen1"
 getgenv().raiddoor = "_lobbytemplate211"
+getgenv().dungeondoor = "_lobbytemplate_event222"
 getgenv().selectedMacroFile = "nil"
 
 if getgenv().lowCpuMode == nil then
@@ -3233,6 +3234,33 @@ local storyLevels = {
 				id = "opm_infinite"
 			}
 		}
+	},
+	["14"] = {
+		name = "Fabled Kingdom", 
+		map = "fabled", 
+		levels = {
+			["1"] = {
+				id = "7ds_level_1"
+			}, 
+			["2"] = {
+				id = "7ds_level_2"
+			}, 
+			["3"] = {
+				id = "7ds_level_3"
+			}, 
+			["4"] = {
+				id = "7ds_level_4"
+			}, 
+			["5"] = {
+				id = "7ds_level_5"
+			}, 
+			["6"] = {
+				id = "7ds_level_6"
+			},
+            ["inf"] = {
+				id = "7ds_infinite"
+			}
+		}
 	}
 }
 
@@ -3758,6 +3786,7 @@ function MainModule()
     getgenv().AutoReplay = data.AutoReplay
     getgenv().AutoChallenge = data.AutoChallenge  
 	getgenv().autoRaid = data.autoraid
+	getgenv().autoDungeon = data.autodungeon
 	getgenv().autoPortal = data.autoportal
 	getgenv().autoPortalCSM = data.autoportalcsm
     getgenv().selectedreward = data.selectedreward
@@ -3781,6 +3810,7 @@ function MainModule()
 	getgenv().raidWorld = data.raidworld
     getgenv().level = data.level
 	getgenv().raidLevel = data.raidlevel
+	getgenv().dungeonLevel = data.dungeonLevel
 	getgenv().macroLevel = data.macrolevel
     getgenv().AutoContinue = data.autocontinue
     getgenv().nextLevel = data.nextlevel
@@ -3816,6 +3846,7 @@ function MainModule()
             AutoReplay = getgenv().AutoReplay,
             AutoChallenge = getgenv().AutoChallenge, 
 			autoraid = getgenv().autoRaid,
+			autodungeon = getgenv().autoDungeon,
 			autoportal = getgenv().autoPortal,
 			autoportalcsm = getgenv().autoPortalCSM,
             selectedreward = getgenv().selectedreward,
@@ -3837,6 +3868,7 @@ function MainModule()
 			raidworld = getgenv().raidWorld,
             level = getgenv().level,
 			raidlevel = getgenv().raidLevel,
+			dungeonlevel = getgenv().dungeonLevel,
 			macrolevel = getgenv().macroLevel,
             autocontinue = getgenv().AutoContinue,
             nextlevel = getgenv().nextLevel,
@@ -4000,7 +4032,7 @@ function MainModule()
             Name = "Select Macro World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
         				"Ghoul City", "Hollow World", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", 
-						"Cape Canaveral", "Alien Ship", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]", "Chainsaw Man Contract", "Storm Hideout"},
+						"Cape Canaveral", "Alien Ship", "Fabled Kingdom", "Clover Kingdom [Elf Invasion]", "Hollow Invasion", "Cape Canaveral [Legend]",  "Fabled Kingdom [Legend]", "Chainsaw Man Contract", "Storm Hideout", "Dungeons"},
         CurrentOption = getgenv().macroWorld, 
         Callback = function(world)
             getgenv().macroWorld = world
@@ -4233,6 +4265,20 @@ function MainModule()
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
+			elseif world == "Fabled Kingdom" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"7ds_level_1","7ds_level_2","7ds_level_3","7ds_level_4","7ds_level_5","7ds_level_6"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Fabled Kingdom [Legend]" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"7ds_legend_1","7ds_legend_2","7ds_legend_3"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
 			elseif world == "Storm Hideout" then
 				getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
@@ -4265,6 +4311,13 @@ function MainModule()
 				getgenv().macroLevelDrop:Clear()
                 table.clear(macroLevels)
                 getgenv().macroLevels = {"naruto_raid_1"}
+                for i, v in ipairs(macroLevels) do
+                    getgenv().macroLevelDrop:Add(v)
+                end
+			elseif world == "Dungeons" then
+				getgenv().macroLevelDrop:Clear()
+                table.clear(macroLevels)
+                getgenv().macroLevels = {"jjk_finger"}
                 for i, v in ipairs(macroLevels) do
                     getgenv().macroLevelDrop:Add(v)
                 end
@@ -4307,7 +4360,6 @@ function MainModule()
 
         local function LoadUnits()
 			local reg = getreg() --> returns Roblox's registry in a table
-            repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
             task.wait(2)
             table.clear(Units)
             for i,v in next, reg do
@@ -4535,7 +4587,7 @@ function MainModule()
         local worlddrop = autoFarmTab:CreateDropdown({
             Name = "Select World", 
             Options = {"Planet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village", "Marine's Ford",
-        "Ghoul City", "Hollow World", "Hollow Invasion", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Kingdom [Elf Invasion]", "Cape Canaveral","Cape Canaveral [Legend]", "Alien Ship"},
+        "Ghoul City", "Hollow World", "Hollow Invasion", "Ant Kingdom", "Magic Town", "Cursed Academy","Clover Kingdom", "Clover Kingdom [Elf Invasion]", "Cape Canaveral","Cape Canaveral [Legend]", "Alien Ship", "Fabled Kingdom", "Fabled Kingdom [Legend]"},
         CurrentOption = getgenv().world, 
         Callback = function(world)
             getgenv().world = world
@@ -4659,6 +4711,13 @@ function MainModule()
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
+			elseif world == "Fabled Kingdom" then
+				getgenv().leveldrop:Clear()
+                table.clear(levels)
+                getgenv().levels = {"7ds_level_1","7ds_level_2","7ds_level_3","7ds_level_4","7ds_level_5","7ds_level_6"}
+                for i, v in ipairs(levels) do
+                    getgenv().leveldrop:Add(v)
+                end
             elseif world == "Clover Kingdom [Elf Invasion]" then
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
@@ -4677,6 +4736,13 @@ function MainModule()
                 getgenv().leveldrop:Clear()
                 table.clear(levels)
                 getgenv().levels = {"jojo_legend_1","jojo_legend_2","jojo_legend_3","jojo_portal_pucci"}
+                for i, v in ipairs(levels) do
+                    getgenv().leveldrop:Add(v)
+                end
+			elseif world == "Fabled Kingdom [Legend]" then
+				getgenv().leveldrop:Clear()
+                table.clear(levels)
+                getgenv().levels = {"7ds_legend_1","7ds_legend_2","7ds_legend_3"}
                 for i, v in ipairs(levels) do
                     getgenv().leveldrop:Add(v)
                 end
@@ -4733,6 +4799,15 @@ function MainModule()
 			end
         end})
 
+		getgenv().dungeondrop = autoFarmTab:CreateDropdown({
+            Name = "Select Dungeon Level", 
+            Options = {"Cursed Womb"}, 
+            CurrentOption = "nil", 
+            Callback = function(dungeonLevel)
+                getgenv().dungeonLevel = dungeonLevel
+                updatejson()
+            end})
+
 		--------------------------------------------------
 		------------------ Auto Farm Tab -----------------
 		--------------------------------------------------
@@ -4784,6 +4859,14 @@ function MainModule()
 			CurrentValue = getgenv().autoRaid, 
 			Callback = function(bool)
 				getgenv().autoRaid = bool
+				updatejson()
+			end})
+
+		autoFarmTab:CreateToggle({
+			Name = "Auto Dungeon", 
+			CurrentValue = getgenv().autoDungeon, 
+			Callback = function(bool)
+				getgenv().autoDungeon = bool
 				updatejson()
 			end})
 
@@ -6002,6 +6085,11 @@ function MainModule()
                             SpawnUnitPos["opm"][UnitPos]["x"] = a.Position.X
                             SpawnUnitPos["opm"][UnitPos]["y"] = a.Position.Y
                             SpawnUnitPos["opm"][UnitPos]["z"] = a.Position.Z
+						elseif game.Workspace._map:FindFirstChild("Steampunk_Capybara") then
+							print("Fabled")    
+                            SpawnUnitPos["fabled"][UnitPos]["x"] = a.Position.X
+                            SpawnUnitPos["fabled"][UnitPos]["y"] = a.Position.Y
+                            SpawnUnitPos["fabled"][UnitPos]["z"] = a.Position.Z
 						end
                         updatejson()
                     end
@@ -6127,6 +6215,8 @@ else
         AutoReplay = false,
         AutoLeave = false,
         AutoChallenge = false,
+		autoraid = false,
+		autodungeon = false,
 		autoportal = false,
 		autoportalcsm = false,
         selectedreward = "star_fruit_random",
@@ -6151,6 +6241,7 @@ else
         level = "nil",
 		macrolevel = "nil",
 		raidlevel = 'nil',
+		dungeonlevel = "nil",
 		levelmacros = {},
         door = "nil",
         currentmerchantitems = {},
@@ -6215,6 +6306,38 @@ else
 		},
     
         xspawnUnitPos  = {
+			fabled  = {
+				UP1  = {
+				  y  = 1.4244641065597535,
+				  x  = -109.30056762695313,
+				  z  = -54.575347900390628
+			   },
+				UP3  = {
+				  y  = 1.4322717189788819,
+				  x  = -114.2433853149414,
+				  z  = -55.260982513427737
+			   },
+				UP2  = {
+				  y  = 1.7082736492156983,
+				  x  = -127.53932189941406,
+				  z  = -55.277626037597659
+			   },
+				UP6  = {
+				  y  = 1.4487617015838624,
+				  x  = -107.07078552246094,
+				  z  = -51.333045959472659
+			   },
+				UP5  = {
+				  y  = 1.8965977430343629,
+				  x  = -118.5692138671875,
+				  z  = -57.20484161376953
+			   },
+				UP4  = {
+				  y  = 1.4205386638641358,
+				  x  = -105.46223449707031,
+				  z  = -51.20615005493164
+			   }
+			 },
 			uchiha  = {
 				UP1  = {
 				  y  = 1.4244641065597535,
@@ -6983,6 +7106,9 @@ coroutine.resume(coroutine.create(function()
 				elseif game.Workspace._map:FindFirstChild("Capybara") then
                     print("One Punch Man")
                     PlaceUnits("opm", _wave, xOffset, yOffset, zOffset)
+                elseif game.Workspace._map:FindFirstChild("Steampunk_Capybara") then
+                    print("Fabled")
+                    PlaceUnits("fabled", _wave, xOffset, yOffset, zOffset)
                 else
                     print("Something bad happened")
                 end
@@ -7517,6 +7643,70 @@ local function startfarming()
 					return(1)
 				end
 
+				if getgenv().autoDungeon then
+					if Workspace._DUNGEONS.Lobbies:FindFirstChild(getgenv().dungeondoor) then
+						if tostring(Workspace._DUNGEONS.Lobbies[getgenv().dungeondoor].Owner.Value) ~= player.Name then
+							for i, v in pairs(game:GetService("Workspace")["_DUNGEONS"].Lobbies:GetDescendants()) do
+								if v.Name == "Owner" and v.Value == nil and v.Parent.Name == "_lobbytemplate_event222" then
+									local args = {
+										[1] = tostring(v.Parent.Name),
+										[2] = {
+											["selected_key"] = "key_jjk_finger"
+										}
+									}
+									game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(unpack(args))
+			
+									local altsInGame = false
+			
+									for _, val in pairs(game.Players:GetPlayers()) do
+										for i, alt in pairs(getgenv().altList) do
+											if tostring(val.Name) == tostring(alt) then
+												altsInGame = true
+												break
+											end
+										end
+									end
+									
+									if altsInGame then
+										repeat 
+											task.wait(1)
+											print(v.Parent.Timer.Value)
+											if v.Parent.Timer.Value <= 50 then
+												local leave_args = {
+													[1] = v.Parent.Name
+												}
+			
+												game:GetService("ReplicatedStorage").endpoints.client_to_server.request_leave_lobby:InvokeServer(unpack(leave_args))
+												break
+											end
+										until #v.Parent.Players:GetChildren() >= getgenv().altCount + 1
+			
+										local args = { 
+											[1] = tostring(v.Parent.Name)
+										}
+			
+										task.wait(0.1)
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+										getgenv().dungeondoor = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+										player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+										break
+									else
+										local args = { 
+											[1] = tostring(v.Parent.Name)
+										}
+										
+										game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(unpack(args))
+										getgenv().dungeondoor = v.Parent.Name print(v.Parent.Name) --v.Parent:GetFullName()
+										player.Character.HumanoidRootPart.CFrame = v.Parent.Door.CFrame
+										return(1)
+									end		
+								end
+							end
+						end
+					end
+					return(1)
+				end
+
 				if getgenv().autoPortal then
 					for _, val in pairs(game.Players:GetPlayers()) do
 						print(val.Name)
@@ -7611,7 +7801,7 @@ local function startfarming()
 				end
 
 				if Workspace._LOBBIES.Story:FindFirstChild(getgenv().door) then
-					if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name and not getgenv().autoRaid then
+					if tostring(Workspace._LOBBIES.Story[getgenv().door].Owner.Value) ~= player.Name and not getgenv().autoRaid and not getgenv().autoDungeon then
 						for i, v in pairs(game:GetService("Workspace")["_LOBBIES"].Story:GetDescendants()) do
 							if v.Name == "Owner" and v.Value == nil then
 								local args = {
